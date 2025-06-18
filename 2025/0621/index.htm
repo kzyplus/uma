@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 STV杯 インタラクティブ分析ダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Stone, Slate, Amber, Sky) -->
+    <!-- Application Structure Plan: A single-page dashboard designed for horse racing analysis. The structure prioritizes user-driven exploration over the report's linear narrative. It starts with a high-level summary of key race factors (Key Factors). The core is a two-panel interactive section: a sortable list of all horses on the left and a detailed view panel on the right (on desktop) that updates on selection. This allows for quick comparison and deep dives without losing context. Visualizations (overall score bar chart, individual horse radar chart) are integrated to provide at-a-glance insights. The final section presents the report's concluding remarks and top picks. This task-oriented design (compare, analyze, conclude) is more effective for a user aiming to make informed decisions than a simple text document. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Overall horse rankings -> Goal: Compare field strength -> Viz: Horizontal Bar Chart (Chart.js) -> Interaction: Static overview -> Justification: Provides an immediate visual hierarchy of the contenders.
+        - Report Info: Individual horse scores across 12 criteria -> Goal: Analyze a horse's profile -> Viz: Radar Chart (Chart.js) -> Interaction: Updates when a horse is selected -> Justification: Shows the unique strengths and weaknesses of each horse in a digestible "shape".
+        - Report Info: Full horse list -> Goal: Organize & Select -> Viz: Interactive HTML Card List -> Interaction: Click to select, dropdown to sort -> Justification: The main navigation tool for the app, allowing users to control the data they see.
+        - Report Info: Detailed analysis (scorecard, comments) -> Goal: Inform -> Viz: Structured HTML Table & Text -> Interaction: Dynamically populated on selection -> Justification: Presents detailed data cleanly without cluttering the main view.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .active-horse-card {
+            background-color: #cffafe; /* cyan-100 */
+            border-left-width: 4px;
+            border-color: #06b6d4; /* cyan-500 */
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b; /* slate-800 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800">2025年6月21日 函館11R ＳＴＶ杯</h1>
+            <p class="text-lg text-slate-600 mt-1">インタラクティブ分析ダッシュボード</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-6">
+        
+        <section id="key-factors" class="mb-8">
+            <h2 class="section-title">函館芝1200m 攻略の鍵</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-sky-500">
+                    <h3 class="font-bold text-lg mb-1">コース形態: 短い直線</h3>
+                    <p class="text-sm">直線262mはJRA屈指の短さ。先行・好位差しが絶対的に有利。追い込みは展開の助けが必須。</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-sky-500">
+                    <h3 class="font-bold text-lg mb-1">馬場: パワーの要る洋芝</h3>
+                    <p class="text-sm">時計が掛かりやすい洋芝。スピードだけでなく、坂を駆け上がるパワーとスタミナが問われる。</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-amber-500">
+                    <h3 class="font-bold text-lg mb-1">血統: パワー血統優勢</h3>
+                    <p class="text-sm">ロードカナロア産駒に加え、モーリス、オルフェーヴルなどパワーを伝える血統に注目。</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-amber-500">
+                    <h3 class="font-bold text-lg mb-1">枠順: 6枠が好成績</h3>
+                    <p class="text-sm">過去データでは6枠の勝率・複勝率が突出。中枠からスムーズに先行できる馬が有利。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contenders" class="mb-8">
+            <h2 class="section-title">出走馬 総合評価リスト</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1">
+                    <div class="mb-4">
+                        <label for="sort-select" class="block text-sm font-medium text-slate-700 mb-1">並び替え:</label>
+                        <select id="sort-select" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                            <option value="rank">総合評価順</option>
+                            <option value="gate">馬番順</option>
+                            <option value="jockey">騎手評価順</option>
+                            <option value="pedigree">血統評価順</option>
+                            <option value="courseFit">函館適性順</option>
+                        </select>
+                    </div>
+                    <div id="horse-list-container" class="space-y-2 max-h-[1200px] overflow-y-auto pr-2">
+                    </div>
+                </div>
+
+                <div id="detail-panel" class="md:col-span-2 bg-white p-4 sm:p-6 rounded-lg shadow-lg sticky top-6">
+                </div>
+            </div>
+        </section>
+
+        <section id="visualizations" class="mb-8">
+            <h2 class="section-title">データビジュアライゼーション</h2>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">全馬総合評価スコア比較</h3>
+                <p class="text-center text-slate-600 mb-4 text-sm">各馬の総合的な能力評価を視覚的に比較します。スコアが高いほど、レポートでの評価が高いことを示します。</p>
+                <div class="chart-container">
+                    <canvas id="overall-score-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary">
+            <h2 class="section-title">最終結論 &amp; 上位期待馬</h2>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">展開予測と馬券戦略</h3>
+                    <p class="text-slate-600">明確な逃げ馬はコスモアディラートのみ。ペースは平均かやや速めと予測。短い直線を考慮すると、前々でレースを進められる馬が有利な展開となるだろう。馬券はコース実績と現級での能力を最重視し、特にコース適性の高い実力馬を狙うのがセオリー。</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">上位期待馬 Top 5</h3>
+                    <div id="top-picks-container" class="space-y-4">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-8 py-4">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2025 STV杯 分析レポート. All rights reserved.</p>
+            <p class="mt-1">このアプリケーションは提供されたレポートに基づき生成されたものであり、投票券の購入は自己責任でお願いします。</p>
+        </div>
+    </footer>
+
+    <script>
+        const horseData = [
+            { id: 1, gate: 1, name: 'ヴァリアント', rank: 9, totalScore: 36, scores: {着差:2, レースレベル:2, 血統:4, 函館適性:3, 輸送:3, 休み明け:3, 脚質展開:3, 枠順:2, 騎手:5, 調教:3, 馬体:3, 厩舎:3}, good: 'なんといっても鞍上の横山武史騎手は大きな魅力。血統背景も函館向きで、一発の可能性を秘める。', bad: '最内枠が最大の懸念。近走のレースレベルが低く、中央の速い流れに対応できるかどうかが未知数。', expect: '鞍上の神騎乗と血統のパワーが噛み合った時、人気薄での激走があっても驚けない。', baba: {ryo: 3, omo: 4} },
+            { id: 2, gate: 2, name: 'エコロデイジー', rank: 4, totalScore: 41, scores: {着差:3, レースレベル:3, 血統:4, 函館適性:4, 輸送:4, 休み明け:3, 脚質展開:3, 枠順:3, 騎手:5, 調教:3, 馬体:3, 厩舎:3}, good: '鞍上が名手・武豊騎手であること、そして函館コースへの適性が証明されている点は大きな強み。', bad: '決め手不足の感は否めず、勝ち切るには展開の助けが必要。', expect: '鞍上がインを巧みに捌き、ロスなく直線を迎えられれば、馬券圏内への食い込みは十分に可能。', baba: {ryo: 4, omo: 4} },
+            { id: 3, gate: 3, name: 'オウケンボルト', rank: 12, totalScore: 32, scores: {着差:2, レースレベル:2, 血統:3, 函館適性:2, 輸送:4, 休み明け:3, 脚質展開:2, 枠順:3, 騎手:3, 調教:2, 馬体:3, 厩舎:3}, good: '先行力があり、内枠を活かして前々のポジションを取れる可能性がある。', bad: '血統的にも実績的にも距離が短すぎる。追走だけで終わってしまう公算が大きい。', expect: '万が一、超スローペースになれば粘り込みの目もゼロではないが、可能性は低い。', baba: {ryo: 1, omo: 2} },
+            { id: 4, gate: 4, name: 'カフジエニア', rank: 3, totalScore: 45, scores: {着差:4, レースレベル:4, 血統:5, 函館適性:3, 輸送:4, 休み明け:3, 脚質展開:4, 枠順:4, 騎手:4, 調教:3, 馬体:4, 厩舎:3}, good: '3勝クラスでの実績、血統背景、自在な脚質と、好走条件が揃っている。', bad: '休み明けがどうか。100%の仕上がりでなくとも能力でカバーできるか。', expect: 'ここを勝ってオープン入りする資格は十分。軸馬候補の一頭。', baba: {ryo: 5, omo: 4} },
+            { id: 5, gate: 5, name: 'グランデマーレ', rank: 10, totalScore: 36, scores: {着差:3, レースレベル:3, 血統:5, 函館適性:3, 輸送:2, 休み明け:2, 脚質展開:3, 枠順:4, 騎手:4, 調教:2, 馬体:2, 厩舎:3}, good: '血統的なポテンシャルと鞍上の手腕。全盛期の走りができればアッサリも。', bad: '近走の不振と、転厩初戦という不確定要素。状態面が最大の鍵。', expect: '名門厩舎への転厩で一変する可能性。人気がなければ面白い存在。', baba: {ryo: 3, omo: 2} },
+            { id: 6, gate: 6, name: 'コスモアディラート', rank: 2, totalScore: 45, scores: {着差:4, レースレベル:4, 血統:3, 函館適性:4, 輸送:4, 休み明け:3, 脚質展開:5, 枠順:5, 騎手:3, 調教:3, 馬体:4, 厩舎:3}, good: 'コース適性、脚質、枠順と三拍子揃った。展開利を活かして押し切る場面が目に浮かぶ。', bad: '鞍上が乗り替わりである点。馬の持ち味を最大限に引き出せるか。', expect: '自分のペースで逃げることができれば、そのままゴールまで粘り込む可能性が最も高い一頭。', baba: {ryo: 5, omo: 5} },
+            { id: 7, gate: 7, name: 'サトノアポロン', rank: 15, totalScore: 28, scores: {着差:2, レースレベル:2, 血統:2, 函館適性:1, 輸送:3, 休み明け:2, 脚質展開:2, 枠順:3, 騎手:3, 調教:2, 馬体:3, 厩舎:3}, good: '見当たらない。', bad: '距離、コース、馬場、全てがマイナスに働きそう。', expect: '何か大きなアクシデントでもない限り、上位争いは困難。', baba: {ryo: 1, omo: 1} },
+            { id: 8, gate: 8, name: 'シゲルファンノユメ', rank: 7, totalScore: 38, scores: {着差:3, レースレベル:3, 血統:3, 函館適性:4, 輸送:4, 休み明け:3, 脚質展開:3, 枠順:3, 騎手:3, 調教:3, 馬体:3, 厩舎:3}, good: '函館コースへの適性はメンバー屈指。', bad: '追い込み脚質のため、展開に左右されすぎる。短い直線で届かない可能性が高い。', expect: '前半からペースが激流になり、先行勢が総崩れになるようなら、大外一気の突き抜けも。', baba: {ryo: 3, omo: 3} },
+            { id: 9, gate: 9, name: 'スピリットガイド', rank: 5, totalScore: 39, scores: {着差:3, レースレベル:3, 血統:4, 函館適性:3, 輸送:4, 休み明け:3, 脚質展開:3, 枠順:3, 騎手:3, 調教:3, 馬体:3, 厩舎:4}, good: '血統的な魅力と、厩舎の信頼度の高さ。', bad: '勝ち切れないレースが続いており、決め手不足の感がある。', expect: '血統適性が開花すれば、一気に突き抜ける可能性を秘めている。', baba: {ryo: 3, omo: 4} },
+            { id: 10, gate: 10, name: 'セイウンパシュート', rank: 14, totalScore: 30, scores: {着差:2, レースレベル:2, 血統:2, 函館適性:2, 輸送:4, 休み明け:3, 脚質展開:2, 枠順:3, 騎手:3, 調教:2, 馬体:2, 厩舎:3}, good: '2着7回という実績は、相手なりに走れることを示している。', bad: '距離、コース、休み明けと不安材料が多すぎる。', expect: '厳しい。', baba: {ryo: 1, omo: 2} },
+            { id: 11, gate: 11, name: 'タガノカイ', rank: 8, totalScore: 38, scores: {着差:3, レースレベル:3, 血統:3, 函館適性:3, 輸送:4, 休み明け:3, 脚質展開:3, 枠順:4, 騎手:3, 調教:3, 馬体:3, 厩舎:3}, good: '血統的にパワーがあり、タフな馬場は得意なはず。', bad: '初めての1200m戦。追走に苦労する可能性が高い。', expect: 'もし追走できれば、持ち前のスタミナで最後までバテずに伸びてくる可能性も。', baba: {ryo: 2, omo: 3} },
+            { id: 12, gate: 12, name: 'テイエムフェロー', rank: 11, totalScore: 36, scores: {着差:2, レースレベル:3, 血統:4, 函館適性:3, 輸送:3, 休み明け:2, 脚質展開:4, 枠順:4, 騎手:3, 調教:2, 馬体:3, 厩舎:3}, good: '父モーリスの血統と、函館向きの先行力。', bad: '中央復帰初戦で、相手関係が一気に強化される。', expect: '地方での経験を糧に、成長した姿を見せられれば。', baba: {ryo: 3, omo: 4} },
+            { id: 13, gate: 13, name: 'トーセンサンダー', rank: 1, totalScore: 50, scores: {着差:5, レースレベル:5, 血統:3, 函館適性:5, 輸送:4, 休み明け:4, 脚質展開:4, 枠順:3, 騎手:4, 調教:4, 馬体:4, 厩舎:4}, good: '函館芝1200mへの圧倒的な適性。現級での実績も最上位。', bad: '血統的にはややパワー寄り。超高速馬場になった場合にどうか。', expect: 'コースを知り尽くしており、自分の競馬に徹すれば自ずと結果はついてくる。最有力候補。', baba: {ryo: 5, omo: 5} },
+            { id: 14, gate: 14, name: 'ハルワタート', rank: 16, totalScore: 25, scores: {着差:2, レースレベル:2, 血統:3, 函館適性:2, 輸送:3, 休み明け:1, 脚質展開:2, 枠順:2, 騎手:3, 調教:1, 馬体:1, 厩舎:3}, good: '厩舎力に期待するしかない。', bad: '長期休養明け、芝適性への疑問など、不安材料が多すぎる。', expect: '無事に走り終えてほしい。', baba: {ryo: 1, omo: 1} },
+            { id: 15, gate: 15, name: 'ビップスカーレット', rank: 17, totalScore: 22, scores: {着差:1, レースレベル:1, 血統:3, 函館適性:1, 輸送:3, 休み明け:2, 脚質展開:2, 枠順:2, 騎手:2, 調教:1, 馬体:2, 厩舎:2}, good: '見当たらない。', bad: '全て。', expect: '厳しい。', baba: {ryo: 1, omo: 1} },
+            { id: 16, gate: 16, name: 'ブールバール', rank: 13, totalScore: 31, scores: {着差:2, レースレベル:2, 血統:4, 函館適性:3, 輸送:4, 休み明け:2, 脚質展開:3, 枠順:2, 騎手:3, 調教:2, 馬体:3, 厩舎:3}, good: '血統的なポテンシャル。', bad: '近走の成績が悪すぎる。', expect: '血統の才能が何かのきっかけで開花すれば。', baba: {ryo: 2, omo: 2} },
+            { id: 17, gate: 17, name: 'メイショウシンウチ', rank: 6, totalScore: 39, scores: {着差:3, レースレベル:3, 血統:4, 函館適性:4, 輸送:4, 休み明け:3, 脚質展開:3, 枠順:2, 騎手:4, 調教:3, 馬体:3, 厩舎:3}, good: '血統的なコース適性の高さと、鞍上の手腕。', bad: '大外枠と、3勝クラスではややパンチ不足な点。', expect: '時計の掛かる馬場になり、前がやり合うようなら、スタミナを活かして上位に食い込んでくる。', baba: {ryo: 3, omo: 4} }
+        ];
+
+        const topPicks = [
+            { rank: 1, name: 'トーセンサンダー', gate: 13, text: '昨年の同レース3着、同条件のHTB杯勝ちという実績は絶対的なアドバンテージ。函館芝1200mを完全に知り尽くしており、能力も現級最上位。大崩れは考えにくく、勝ち負けの筆頭候補として揺るぎない。' },
+            { rank: 2, name: 'コスモアディラート', gate: 6, text: 'コース実績、先行力、そして過去10年で最も好成績の6枠と、全ての好走データが味方している。ハナを奪って自分のペースに持ち込めば、後続を封じ込める可能性は極めて高い。' },
+            { rank: 3, name: 'カフジエニア', gate: 4, text: '父ロードカナロアという血統背景はこの舞台でこれ以上ない強み。3勝クラスで勝ち馬と僅差の競馬を続けており、能力の高さは証明済み。自在性のある脚質で展開に対応可能。' },
+            { rank: 4, name: 'エコロデイジー', gate: 2, text: '勝ち切れないレースが続くが、函館コースでの好走実績は軽視できない。鞍上にコースを知り尽くした武豊騎手を迎えるのは大きなプラス。インをロスなく立ち回れば馬券圏内へ。' },
+            { rank: 5, name: 'メイショウシンウチ', gate: 17, text: '大外枠はマイナスだが、父ハービンジャー×母父ダンスインザダークという血統は、時計の掛かる洋芝でこそ真価を発揮する。パワーが問われる展開になれば一発を警戒すべき存在。' }
+        ];
+
+        let overallScoreChart = null;
+        let radarChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const horseListContainer = document.getElementById('horse-list-container');
+            const detailPanel = document.getElementById('detail-panel');
+            const sortSelect = document.getElementById('sort-select');
+            const topPicksContainer = document.getElementById('top-picks-container');
+
+            const renderHorseList = (data) => {
+                horseListContainer.innerHTML = data.map(horse => `
+                    <div class="horse-card p-3 bg-white rounded-lg shadow-sm cursor-pointer border border-slate-200 hover:shadow-md transition-shadow" data-id="${horse.id}">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="text-lg font-bold text-slate-800 w-12 text-center mr-2 bg-slate-100 rounded py-1">${horse.gate}</span>
+                                <span class="font-bold text-slate-800">${horse.name}</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-lg text-sky-600">${horse.totalScore} <span class="text-sm text-slate-500">pt</span></div>
+                                <div class="text-xs text-slate-500">評価: ${horse.rank}位</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            const updateDetailView = (horseId) => {
+                const horse = horseData.find(h => h.id === horseId);
+                if (!horse) return;
+                
+                detailPanel.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start mb-4">
+                        <div>
+                            <p class="text-sm text-slate-500">評価 ${horse.rank}位</p>
+                            <h3 class="text-2xl font-bold text-slate-800">${horse.gate}. ${horse.name}</h3>
+                        </div>
+                        <div class="text-left md:text-right mt-2 md:mt-0">
+                             <p class="text-3xl font-bold text-sky-600">${horse.totalScore}<span class="text-xl text-slate-500"> / 60点</span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                        <div>
+                             <h4 class="font-bold text-slate-700 mb-2">評価スコアカード</h4>
+                             <div class="overflow-x-auto text-sm">
+                                <table class="w-full">
+                                    <tbody>
+                                        ${Object.entries(horse.scores).map(([key, value]) => `
+                                            <tr class="border-b border-slate-200">
+                                                <td class="py-1.5 px-2 bg-slate-50 w-1/2">${key}</td>
+                                                <td class="py-1.5 px-2 font-semibold">${'★'.repeat(value)}${'☆'.repeat(5-value)} (${value}/5)</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                             </div>
+                        </div>
+                         <div>
+                            <h4 class="font-bold text-slate-700 mb-2">能力分析 (レーダーチャート)</h4>
+                            <div class="w-full h-64 lg:h-full"><canvas id="radar-chart"></canvas></div>
+                         </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-slate-700 mb-2">総合コメント</h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="p-3 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+                                <strong class="text-green-800">良い点:</strong> ${horse.good}
+                            </div>
+                            <div class="p-3 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
+                                <strong class="text-red-800">不安材料:</strong> ${horse.bad}
+                            </div>
+                            <div class="p-3 bg-sky-50 border-l-4 border-sky-400 rounded-r-lg">
+                                <strong class="text-sky-800">期待できる点:</strong> ${horse.expect}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4 class="font-bold text-slate-700 mb-2">馬場状態別評価</h4>
+                        <div class="flex space-x-4">
+                            <div class="text-center p-2 bg-slate-100 rounded-lg flex-1">
+                                <p class="text-sm">良馬場</p>
+                                <p class="font-bold text-lg">${'★'.repeat(horse.baba.ryo)}${'☆'.repeat(5-horse.baba.ryo)}</p>
+                            </div>
+                             <div class="text-center p-2 bg-slate-100 rounded-lg flex-1">
+                                <p class="text-sm">稍重~</p>
+                                <p class="font-bold text-lg">${'★'.repeat(horse.baba.omo)}${'☆'.repeat(5-horse.baba.omo)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                updateRadarChart(horse);
+            };
+
+            const updateRadarChart = (horse) => {
+                const radarCtx = document.getElementById('radar-chart').getContext('2d');
+                const chartData = {
+                    labels: ['レースレベル', '血統', '函館適性', '騎手', '脚質展開', '調教'],
+                    datasets: [{
+                        label: horse.name,
+                        data: [
+                            horse.scores['レースレベル'],
+                            horse.scores['血統'],
+                            horse.scores['函館適性'],
+                            horse.scores['騎手'],
+                            horse.scores['脚質展開'],
+                            horse.scores['調教'],
+                        ],
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderColor: 'rgba(6, 182, 212, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(6, 182, 212, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(6, 182, 212, 1)'
+                    }]
+                };
+
+                if (radarChart) {
+                    radarChart.destroy();
+                }
+
+                radarChart = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: chartData,
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 5,
+                                stepSize: 1,
+                                angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                pointLabels: { font: { size: 12 } }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            };
+
+            const setActiveCard = (horseId) => {
+                document.querySelectorAll('.horse-card').forEach(card => {
+                    card.classList.remove('active-horse-card');
+                    if (parseInt(card.dataset.id) === horseId) {
+                        card.classList.add('active-horse-card');
+                    }
+                });
+            };
+
+            const handleSort = (e) => {
+                const sortBy = e.target.value;
+                let sortedData = [...horseData];
+                
+                switch(sortBy) {
+                    case 'gate':
+                        sortedData.sort((a, b) => a.gate - b.gate);
+                        break;
+                    case 'jockey':
+                        sortedData.sort((a, b) => b.scores['騎手'] - a.scores['騎手'] || a.rank - b.rank);
+                        break;
+                    case 'pedigree':
+                        sortedData.sort((a, b) => b.scores['血統'] - a.scores['血統'] || a.rank - b.rank);
+                        break;
+                    case 'courseFit':
+                         sortedData.sort((a, b) => b.scores['函館適性'] - a.scores['函館適性'] || a.rank - b.rank);
+                        break;
+                    case 'rank':
+                    default:
+                        sortedData.sort((a, b) => a.rank - b.rank);
+                        break;
+                }
+                renderHorseList(sortedData);
+            };
+
+            const renderOverallScoreChart = () => {
+                const overallCtx = document.getElementById('overall-score-chart').getContext('2d');
+                const sortedByScore = [...horseData].sort((a,b) => b.totalScore - a.totalScore);
+                
+                const chartData = {
+                    labels: sortedByScore.map(h => `${h.gate}. ${h.name}`),
+                    datasets: [{
+                        label: '総合評価点',
+                        data: sortedByScore.map(h => h.totalScore),
+                        backgroundColor: sortedByScore.map(h => h.rank <= 5 ? 'rgba(59, 130, 246, 0.7)' : 'rgba(107, 114, 128, 0.5)'),
+                        borderColor: sortedByScore.map(h => h.rank <= 5 ? 'rgba(59, 130, 246, 1)' : 'rgba(107, 114, 128, 1)'),
+                        borderWidth: 1
+                    }]
+                };
+
+                overallScoreChart = new Chart(overallCtx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        indexAxis: 'y',
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ` 総合点: ${context.raw} pt`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                             y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const renderTopPicks = () => {
+                topPicksContainer.innerHTML = topPicks.map(pick => `
+                    <div class="border-t border-slate-200 pt-4">
+                         <h4 class="font-bold text-lg text-slate-800">${pick.rank}位: 【${pick.gate}】 ${pick.name}</h4>
+                         <p class="text-slate-600 mt-1">${pick.text}</p>
+                    </div>
+                `).join('');
+            };
+
+            sortSelect.addEventListener('change', handleSort);
+            horseListContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('.horse-card');
+                if (card) {
+                    const horseId = parseInt(card.dataset.id);
+                    updateDetailView(horseId);
+                    setActiveCard(horseId);
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+
+            const initialSort = [...horseData].sort((a, b) => a.rank - b.rank);
+            renderHorseList(initialSort);
+            renderOverallScoreChart();
+            renderTopPicks();
+
+            if (horseData.length > 0) {
+                const topHorseId = initialSort[0].id;
+                updateDetailView(topHorseId);
+                setActiveCard(topHorseId);
+            }
+        });
+    </script>
+</body>
+</html>
