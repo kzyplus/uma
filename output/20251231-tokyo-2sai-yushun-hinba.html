@@ -35,13 +35,224 @@
         @media (max-width: 640px) {
             .responsive-text { font-size: 0.875rem; }
             #rankingChartContainer { height: 280px !important; }
+
+            /* テーブルをカード形式に変換（モバイル） */
+            .mobile-card-table thead { display: none; }
+            .mobile-card-table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #fdf2f8 0%, #fff 100%);
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                border: 1px solid #f9a8d4;
+            }
+            .mobile-card-table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #fce7f3;
+            }
+            .mobile-card-table tbody td:last-child { border-bottom: none; }
+            .mobile-card-table tbody td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #831843;
+                font-size: 0.75rem;
+                min-width: 60px;
+            }
+            .mobile-card-table tbody td.card-header {
+                display: block;
+                text-align: center;
+                padding-bottom: 0.75rem;
+                margin-bottom: 0.5rem;
+                border-bottom: 2px solid #f472b6;
+            }
+            .mobile-card-table tbody td.card-header::before { display: none; }
+        }
+
+        /* 横スクロール時のヒント */
+        .scroll-hint {
+            display: none;
+        }
+        @media (max-width: 640px) {
+            .scroll-hint {
+                display: block;
+                text-align: center;
+                color: #9ca3af;
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* ナビゲーション */
+        html { scroll-behavior: smooth; }
+        .nav-index {
+            position: fixed;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .nav-index a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            color: #831843;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .nav-index a:hover {
+            background: #831843;
+            color: white;
+            transform: scale(1.1);
+        }
+        .nav-index a.active {
+            background: #831843;
+            color: white;
+        }
+        .nav-tooltip {
+            position: absolute;
+            right: 50px;
+            background: #1f2937;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .nav-index a:hover .nav-tooltip {
+            opacity: 1;
+        }
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 1rem;
+            width: 48px;
+            height: 48px;
+            background: #831843;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+        #backToTop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #backToTop:hover {
+            background: #be185d;
+            transform: translateY(-3px);
+        }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            /* モバイル用の横スクロールナビ */
+            .mobile-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(255,255,255,0.98);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                z-index: 50;
+                padding: 0.5rem;
+                display: flex;
+                overflow-x: auto;
+                gap: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+            }
+            .mobile-nav a {
+                flex-shrink: 0;
+                padding: 0.5rem 0.75rem;
+                background: #fdf2f8;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                color: #831843;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .mobile-nav a.active {
+                background: #831843;
+                color: white;
+            }
+            body { padding-bottom: 60px; }
+            #backToTop { bottom: 5rem; }
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
+    <!-- PC用サイドナビゲーション -->
+    <nav class="nav-index">
+        <a href="#header" data-section="header">
+            <i class="fas fa-home"></i>
+            <span class="nav-tooltip">トップ</span>
+        </a>
+        <a href="#trend" data-section="trend">
+            <i class="fas fa-chart-line"></i>
+            <span class="nav-tooltip">過去傾向</span>
+        </a>
+        <a href="#conclusion" data-section="conclusion">
+            <i class="fas fa-trophy"></i>
+            <span class="nav-tooltip">最終結論</span>
+        </a>
+        <a href="#ranking" data-section="ranking">
+            <i class="fas fa-list-ol"></i>
+            <span class="nav-tooltip">ランキング</span>
+        </a>
+        <a href="#horses" data-section="horses">
+            <i class="fas fa-horse"></i>
+            <span class="nav-tooltip">個別評価</span>
+        </a>
+        <a href="#longshot" data-section="longshot">
+            <i class="fas fa-bolt"></i>
+            <span class="nav-tooltip">穴馬</span>
+        </a>
+        <a href="#betting" data-section="betting">
+            <i class="fas fa-ticket-alt"></i>
+            <span class="nav-tooltip">買い目</span>
+        </a>
+    </nav>
+
+    <!-- モバイル用ボトムナビゲーション -->
+    <nav class="mobile-nav">
+        <a href="#header">トップ</a>
+        <a href="#trend">過去傾向</a>
+        <a href="#conclusion">結論</a>
+        <a href="#ranking">ランキング</a>
+        <a href="#horses">個別評価</a>
+        <a href="#longshot">穴馬</a>
+        <a href="#betting">買い目</a>
+    </nav>
+
+    <!-- トップに戻るボタン -->
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <div class="max-w-7xl mx-auto">
         <!-- ヘッダー -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
                 第49回 東京2歳優駿牝馬 2025
             </h1>
@@ -73,7 +284,7 @@
         </div>
 
         <!-- 過去傾向・2歳戦要素 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="trend" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-chart-line mr-2 text-pink-700"></i>
                 過去傾向と2歳戦特有の考慮点
@@ -121,7 +332,7 @@
         </div>
 
         <!-- 最終結論 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-trophy mr-2 text-amber-500"></i>
                 最終結論
@@ -130,13 +341,15 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- 本命 -->
                 <div class="border-2 border-yellow-400 rounded-lg p-4 bg-gradient-to-br from-yellow-50 to-amber-50">
-                    <div class="badge-honmei text-white text-center py-1 px-3 rounded-full inline-block mb-3">
-                        <i class="fas fa-star"></i> 本命
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-honmei text-white text-center py-1 px-3 rounded-full inline-block">
+                            <i class="fas fa-star"></i> 本命
+                        </div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">53pt</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-800 mb-2">
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">
                         ◎ 4番 ナーサリーテイル
                     </div>
-                    <div class="text-lg font-bold text-yellow-600 mb-2">53点</div>
                     <div class="text-sm text-gray-700 space-y-1">
                         <div><i class="fas fa-check-circle text-green-600"></i> 大井2勝のコース巧者</div>
                         <div><i class="fas fa-check-circle text-green-600"></i> 初体験リスクなし</div>
@@ -146,13 +359,15 @@
 
                 <!-- 対抗 -->
                 <div class="border-2 border-indigo-400 rounded-lg p-4 bg-gradient-to-br from-indigo-50 to-blue-50">
-                    <div class="badge-taikou text-white text-center py-1 px-3 rounded-full inline-block mb-3">
-                        <i class="fas fa-medal"></i> 対抗
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-taikou text-white text-center py-1 px-3 rounded-full inline-block">
+                            <i class="fas fa-medal"></i> 対抗
+                        </div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">48pt</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-800 mb-2">
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">
                         ○ 7番 アンジュルナ
                     </div>
-                    <div class="text-lg font-bold text-indigo-600 mb-2">48点</div>
                     <div class="text-sm text-gray-700 space-y-1">
                         <div><i class="fas fa-check-circle text-green-600"></i> ローレル賞4馬身差圧勝</div>
                         <div><i class="fas fa-check-circle text-green-600"></i> 浦和所属（3着内率40%）</div>
@@ -162,13 +377,15 @@
 
                 <!-- 単穴 -->
                 <div class="border-2 border-green-400 rounded-lg p-4 bg-gradient-to-br from-green-50 to-emerald-50">
-                    <div class="badge-tanana text-white text-center py-1 px-3 rounded-full inline-block mb-3">
-                        <i class="fas fa-gem"></i> 単穴
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-tanana text-white text-center py-1 px-3 rounded-full inline-block">
+                            <i class="fas fa-gem"></i> 単穴
+                        </div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">46pt</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-800 mb-2">
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">
                         ▲ 6番 ライドハイ
                     </div>
-                    <div class="text-lg font-bold text-green-600 mb-2">46点</div>
                     <div class="text-sm text-gray-700 space-y-1">
                         <div><i class="fas fa-check-circle text-green-600"></i> 同条件（大井1600m）勝ち</div>
                         <div><i class="fas fa-check-circle text-green-600"></i> 初体験リスクなし</div>
@@ -178,13 +395,15 @@
 
                 <!-- 連下 -->
                 <div class="border-2 border-purple-400 rounded-lg p-4 bg-gradient-to-br from-purple-50 to-fuchsia-50">
-                    <div class="badge-renka text-white text-center py-1 px-3 rounded-full inline-block mb-3">
-                        <i class="fas fa-horse"></i> 連下
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-renka text-white text-center py-1 px-3 rounded-full inline-block">
+                            <i class="fas fa-horse"></i> 連下
+                        </div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">45pt</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-800 mb-2">
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">
                         △ 11番 リュウノフライト
                     </div>
-                    <div class="text-lg font-bold text-purple-600 mb-2">45点</div>
                     <div class="text-sm text-gray-700 space-y-1">
                         <div><i class="fas fa-check-circle text-green-600"></i> 4戦4勝・JpnIII制覇</div>
                         <div><i class="fas fa-check-circle text-green-600"></i> 矢野騎手2連勝中</div>
@@ -220,39 +439,127 @@
         </div>
 
         <!-- 総合評価ランキング -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-chart-bar mr-2 text-pink-700"></i>
                 総合評価ランキング
             </h2>
 
-            <div id="rankingChartContainer" class="mb-8" style="height: 350px; position: relative;">
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 350px; position: relative;">
                 <canvas id="rankingChart"></canvas>
             </div>
 
-            <!-- テーブル -->
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-pink-800 text-white">
-                        <tr>
-                            <th class="p-3 text-left">順位</th>
-                            <th class="p-3 text-left">印</th>
-                            <th class="p-3 text-left">馬番</th>
-                            <th class="p-3 text-left">馬名</th>
-                            <th class="p-3 text-center">騎手</th>
-                            <th class="p-3 text-center">所属</th>
-                            <th class="p-3 text-center">初体験</th>
-                            <th class="p-3 text-center">最終点</th>
+                    <thead>
+                        <tr class="bg-pink-100">
+                            <th class="px-3 py-3 text-left">順位</th>
+                            <th class="px-3 py-3 text-left">馬番</th>
+                            <th class="px-3 py-3 text-left">馬名</th>
+                            <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th>
+                            <th class="px-3 py-3 text-center">総合点</th>
+                            <th class="px-3 py-3 text-center hidden md:table-cell">初体験</th>
+                            <th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
                         </tr>
                     </thead>
-                    <tbody id="rankingTable" class="divide-y divide-gray-200">
+                    <tbody>
+                        <tr class="border-b border-gray-200 bg-yellow-50">
+                            <td class="px-3 py-3 font-bold">1</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">4</span></td>
+                            <td class="px-3 py-3 font-bold">◎ ナーサリーテイル</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">御神本訓史</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">53</span></td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-green-600">なし</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">大井2勝、御神本×川島</td>
+                        </tr>
+                        <tr class="border-b border-gray-200 bg-indigo-50">
+                            <td class="px-3 py-3 font-bold">2</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">7</span></td>
+                            <td class="px-3 py-3 font-bold">○ アンジュルナ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">野畑凌</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-indigo-500 text-white px-2 py-1 rounded text-xs font-bold">48</span></td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-orange-600">初大井</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">ローレル賞4馬身差、浦和所属</td>
+                        </tr>
+                        <tr class="border-b border-gray-200 bg-green-50">
+                            <td class="px-3 py-3 font-bold">3</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">6</span></td>
+                            <td class="px-3 py-3 font-bold">▲ ライドハイ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">藤田凌</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">46</span></td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-green-600">なし</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">逃げ馬、大井1600m勝ち</td>
+                        </tr>
+                        <tr class="border-b border-gray-200 bg-purple-50">
+                            <td class="px-3 py-3 font-bold">4</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">11</span></td>
+                            <td class="px-3 py-3 font-bold">△ リュウノフライト</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">矢野貴之</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-purple-500 text-white px-2 py-1 rounded text-xs font-bold">45</span></td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-red-600">初大井・初右</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">4戦4勝、JpnIII勝ち</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">5</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">1</span></td>
+                            <td class="px-3 py-3">× カンターレ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">岡村健司</td>
+                            <td class="px-3 py-3 text-center text-gray-600">38</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-orange-600">初大井</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">1枠不利データ</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">6</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">9</span></td>
+                            <td class="px-3 py-3">★ トウキョーアンナ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">本橋孝太</td>
+                            <td class="px-3 py-3 text-center text-gray-600">36</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-orange-600">初大井</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">穴馬候補、6枠好走ゾーン</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">7</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">8</span></td>
+                            <td class="px-3 py-3">セイクリスティーナ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">落合玄太</td>
+                            <td class="px-3 py-3 text-center text-gray-600">35</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-red-600">初大井・初右</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">寒菊賞1着、岩手から</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">8</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">10</span></td>
+                            <td class="px-3 py-3">グッドディーズ</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">本田正重</td>
+                            <td class="px-3 py-3 text-center text-gray-600">34</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-orange-600">初大井</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">オルフェ産駒</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">9</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">14</span></td>
+                            <td class="px-3 py-3">スターオブフェザー</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">桑村真明</td>
+                            <td class="px-3 py-3 text-center text-gray-600">33</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-orange-600">初大井</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">浦和所属</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">10</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">3</span></td>
+                            <td class="px-3 py-3">ファーマドール</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">吉井章</td>
+                            <td class="px-3 py-3 text-center text-gray-600">32</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell"><span class="text-green-600">なし</span></td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">大井所属</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- 個別馬評価 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-horse mr-2 text-pink-700"></i>
                 個別馬評価（12項目レーダーチャート）
@@ -275,21 +582,21 @@
         </div>
 
         <!-- 穴馬スクリーニング -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="longshot" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-bolt mr-2 text-rose-600"></i>
                 穴馬スクリーニング
             </h2>
 
-            <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
                 <!-- ライドハイ -->
-                <div class="border-2 border-rose-400 rounded-lg p-4 bg-gradient-to-br from-rose-50 to-pink-50">
+                <div class="border-2 border-rose-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-rose-50 to-pink-50">
                     <div class="flex justify-between items-start mb-2">
                         <div>
                             <span class="bg-rose-500 text-white px-2 py-1 rounded-full text-xs font-bold">有力穴馬</span>
-                            <div class="text-xl font-bold text-gray-800 mt-2">6番 ライドハイ</div>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">6番 ライドハイ</div>
                         </div>
-                        <div class="text-2xl">
+                        <div class="text-lg md:text-2xl">
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-yellow-400"></i>
@@ -297,25 +604,25 @@
                             <i class="fas fa-star text-gray-300"></i>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-700 space-y-1">
-                        <div><i class="fas fa-check text-green-500"></i> <strong>同条件（大井1600m）勝利経験</strong></div>
-                        <div><i class="fas fa-check text-green-500"></i> 初体験リスクなし（大井所属）</div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> <strong>同条件（大井1600m）勝利</strong></div>
+                        <div><i class="fas fa-check text-green-500"></i> 初体験リスクなし</div>
                         <div><i class="fas fa-check text-green-500"></i> 逃げ馬で展開利</div>
-                        <div><i class="fas fa-check text-green-500"></i> 5枠6番の好枠</div>
+                        <div class="hidden md:block"><i class="fas fa-check text-green-500"></i> 5枠6番の好枠</div>
                     </div>
-                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600">
-                        <strong class="text-rose-600">激走シナリオ：</strong>単騎逃げが濃厚。先行有利の大井内回りで押し切る可能性。
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-rose-600">激走：</strong>単騎逃げ濃厚。先行有利の大井内回りで押し切り。
                     </div>
                 </div>
 
                 <!-- セイクリスティーナ -->
-                <div class="border-2 border-amber-400 rounded-lg p-4 bg-gradient-to-br from-amber-50 to-yellow-50">
+                <div class="border-2 border-amber-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-amber-50 to-yellow-50">
                     <div class="flex justify-between items-start mb-2">
                         <div>
                             <span class="bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold">穴馬候補</span>
-                            <div class="text-xl font-bold text-gray-800 mt-2">8番 セイクリスティーナ</div>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">8番 セイクリスティーナ</div>
                         </div>
-                        <div class="text-2xl">
+                        <div class="text-lg md:text-2xl">
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-yellow-400"></i>
@@ -323,25 +630,25 @@
                             <i class="fas fa-star text-gray-300"></i>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-700 space-y-1">
-                        <div><i class="fas fa-check text-green-500"></i> <strong>前走寒菊賞1着</strong>（岩手重賞）</div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> <strong>前走寒菊賞1着</strong></div>
                         <div><i class="fas fa-check text-green-500"></i> オルフェーヴル産駒</div>
                         <div><i class="fas fa-check text-green-500"></i> 6枠8番（好走ゾーン）</div>
                         <div><i class="fas fa-times text-red-500"></i> 岩手からの長距離輸送</div>
                     </div>
-                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600">
-                        <strong class="text-amber-600">激走シナリオ：</strong>岩手重賞勝ち馬の実力は本物。輸送克服なら一発あり。
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-amber-600">激走：</strong>岩手重賞勝ち馬の実力は本物。輸送克服なら一発。
                     </div>
                 </div>
 
                 <!-- トウキョーアンナ -->
-                <div class="border-2 border-slate-400 rounded-lg p-4 bg-gradient-to-br from-slate-50 to-gray-50">
+                <div class="border-2 border-slate-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-slate-50 to-gray-50">
                     <div class="flex justify-between items-start mb-2">
                         <div>
                             <span class="bg-slate-500 text-white px-2 py-1 rounded-full text-xs font-bold">大穴候補</span>
-                            <div class="text-xl font-bold text-gray-800 mt-2">9番 トウキョーアンナ</div>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">9番 トウキョーアンナ</div>
                         </div>
-                        <div class="text-2xl">
+                        <div class="text-lg md:text-2xl">
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-yellow-400"></i>
                             <i class="fas fa-star text-gray-300"></i>
@@ -349,13 +656,13 @@
                             <i class="fas fa-star text-gray-300"></i>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-700 space-y-1">
-                        <div><i class="fas fa-check text-green-500"></i> サウスヴィグラス産駒（早熟血統）</div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> サウスヴィグラス産駒</div>
                         <div><i class="fas fa-check text-green-500"></i> 6枠（好走ゾーン）</div>
                         <div><i class="fas fa-times text-red-500"></i> ローレル賞9着と大敗</div>
                     </div>
-                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600">
-                        <strong class="text-slate-600">激走シナリオ：</strong>6枠は「1着か着外」の極端傾向。大敗からの巻き返しに期待。
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-slate-600">激走：</strong>6枠は「1着か着外」の極端傾向。巻き返し期待。
                     </div>
                 </div>
             </div>
@@ -363,57 +670,63 @@
             <!-- 穴馬買い目 -->
             <div class="bg-rose-50 border border-rose-200 rounded-lg p-4">
                 <h3 class="font-bold text-rose-800 mb-3"><i class="fas fa-coins mr-1"></i> 穴馬狙い買い目</h3>
-                <div class="grid md:grid-cols-4 gap-3 text-sm">
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-bold text-gray-700">単勝</div>
-                        <div class="text-rose-600 font-bold text-lg">6番</div>
-                        <div class="text-xs text-gray-500">逃げ切りなら高配当</div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-sm">
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">単勝</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">6番</div>
+                        <div class="text-xs text-gray-500 hidden md:block">逃げ切りなら高配当</div>
                     </div>
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-bold text-gray-700">複勝</div>
-                        <div class="text-rose-600 font-bold text-lg">6番、8番</div>
-                        <div class="text-xs text-gray-500">堅実に3着以内</div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">複勝</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">6, 8</div>
+                        <div class="text-xs text-gray-500 hidden md:block">堅実に3着以内</div>
                     </div>
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-bold text-gray-700">ワイド</div>
-                        <div class="text-rose-600 font-bold text-lg">4-6、6-7</div>
-                        <div class="text-xs text-gray-500">本命と穴馬</div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">ワイド</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">4-6, 6-7</div>
+                        <div class="text-xs text-gray-500 hidden md:block">本命と穴馬</div>
                     </div>
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-bold text-gray-700">3連単（穴頭）</div>
-                        <div class="text-rose-600 font-bold">6→4,7→全</div>
-                        <div class="text-xs text-gray-500">ライドハイ頭固定</div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">3連単穴頭</div>
+                        <div class="text-rose-600 font-bold text-sm md:text-base">6→4,7→全</div>
+                        <div class="text-xs text-gray-500 hidden md:block">ライドハイ頭固定</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 買い目参考 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-ticket-alt mr-2 text-pink-700"></i>
                 買い目参考
             </h2>
 
-            <div class="grid md:grid-cols-3 gap-4">
-                <div class="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
-                    <div class="font-bold text-gray-800 mb-2">馬連</div>
-                    <div class="text-xl font-bold text-yellow-600">4-7（本線）</div>
-                    <div class="text-sm text-gray-600 mt-1">4-6、6-7</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                <div class="p-3 md:p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">馬連</div>
+                    <div class="text-lg md:text-xl font-bold text-yellow-600">4-7（本線）</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">4-6、6-7</div>
                 </div>
-                <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                    <div class="font-bold text-gray-800 mb-2">ワイド</div>
-                    <div class="text-xl font-bold text-green-600">4-6-7 BOX</div>
-                    <div class="text-sm text-gray-600 mt-1">4-11（リュウノ押さえ）</div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">ワイド</div>
+                    <div class="text-lg md:text-xl font-bold text-green-600">4-6-7 BOX</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">4-11押さえ</div>
                 </div>
-                <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                    <div class="font-bold text-gray-800 mb-2">3連複</div>
-                    <div class="text-xl font-bold text-blue-600">4-6-7（本線）</div>
-                    <div class="text-sm text-gray-600 mt-1">4-7-11、4-6-7-9-11 BOX</div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">3連複</div>
+                    <div class="text-lg md:text-xl font-bold text-blue-600">4-6-7（本線）</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">4-7-11</div>
                 </div>
-                <div class="p-4 bg-gradient-to-r from-purple-50 to-fuchsia-50 rounded-lg border border-purple-200 md:col-span-3">
-                    <div class="font-bold text-gray-800 mb-2">3連単</div>
-                    <div class="text-lg font-bold text-purple-600">4→7→6,9,11 / 7→4→6,9,11 / 6→4,7→4,7,9,11</div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-purple-50 to-fuchsia-50 rounded-lg border border-purple-200 sm:col-span-3">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">3連単</div>
+                    <div class="text-sm md:text-lg font-bold text-purple-600 leading-relaxed">
+                        <span class="block sm:inline">4→7→6,9,11</span>
+                        <span class="hidden sm:inline"> / </span>
+                        <span class="block sm:inline">7→4→6,9,11</span>
+                        <span class="hidden sm:inline"> / </span>
+                        <span class="block sm:inline">6→4,7→全</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -618,9 +931,47 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             initRankingChart();
-            renderRankingTable();
             renderHorseCards();
+            initNavigation();
         });
+
+        // ナビゲーション初期化
+        function initNavigation() {
+            const sections = ['header', 'trend', 'conclusion', 'ranking', 'horses', 'longshot', 'betting'];
+            const backToTop = document.getElementById('backToTop');
+            const navLinks = document.querySelectorAll('.nav-index a, .mobile-nav a');
+
+            // スクロール監視
+            window.addEventListener('scroll', () => {
+                // トップに戻るボタンの表示/非表示
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+
+                // 現在のセクションをハイライト
+                let currentSection = 'header';
+                for (const id of sections) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top <= 150) {
+                            currentSection = id;
+                        }
+                    }
+                }
+
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === '#' + currentSection) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            });
+        }
 
         function initRankingChart() {
             const ctx = document.getElementById('rankingChart').getContext('2d');
@@ -702,15 +1053,21 @@
 
                 let firstExpClass = horse.firstExp === 'なし' ? 'text-green-600' : (horse.firstExp.includes('初右') ? 'text-red-600' : 'text-orange-600');
 
+                // スマホ用カード形式対応（data-label属性でラベル表示）
                 row.innerHTML = `
-                    <td class="p-3 font-bold ${bgClass}">${horse.rank}</td>
-                    <td class="p-3 ${markClass} ${bgClass}">${horse.mark}</td>
-                    <td class="p-3 font-bold text-pink-800 ${bgClass}">${horse.number}番</td>
-                    <td class="p-3 font-bold ${bgClass}">${horse.name}</td>
-                    <td class="p-3 text-center text-gray-600 ${bgClass}">${horse.jockey.split('（')[0]}</td>
-                    <td class="p-3 text-center ${bgClass}">${horse.belonging}</td>
-                    <td class="p-3 text-center ${firstExpClass} ${bgClass}">${horse.firstExp}</td>
-                    <td class="p-3 text-center font-bold text-lg text-pink-800 ${bgClass}">${horse.score}</td>
+                    <td class="p-3 card-header ${bgClass}" data-label="">
+                        <span class="text-2xl font-bold text-pink-800">${horse.rank}位</span>
+                        <span class="${markClass} text-2xl ml-2">${horse.mark}</span>
+                        <span class="font-bold text-xl ml-2">${horse.number}番 ${horse.name}</span>
+                        <span class="text-sm text-gray-400 ml-2">${horse.score}pt</span>
+                    </td>
+                    <td class="p-3 ${markClass} ${bgClass} hidden md:table-cell" data-label="印">${horse.mark}</td>
+                    <td class="p-3 font-bold text-pink-800 ${bgClass} hidden md:table-cell" data-label="馬番">${horse.number}番</td>
+                    <td class="p-3 font-bold ${bgClass} hidden md:table-cell" data-label="馬名">${horse.name}</td>
+                    <td class="p-3 text-center text-gray-600 ${bgClass}" data-label="騎手">${horse.jockey.split('（')[0]}</td>
+                    <td class="p-3 text-center ${bgClass}" data-label="所属">${horse.belonging}</td>
+                    <td class="p-3 text-center ${firstExpClass} ${bgClass}" data-label="初体験">${horse.firstExp}</td>
+                    <td class="p-3 text-center text-sm text-gray-500 ${bgClass} hidden md:table-cell" data-label="評価点">${horse.score}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -770,9 +1127,9 @@
                             <div class="text-sm text-gray-600">${horse.jockey} / ${horse.trainer}</div>
                         </div>
                     </div>
-                    <div class="flex flex-col items-end gap-2">
+                    <div class="flex items-center gap-3">
                         ${badgeHTML}
-                        <div class="text-3xl font-bold text-pink-800">${horse.score}<span class="text-lg text-gray-500">点</span></div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
                     </div>
                 </div>
 
