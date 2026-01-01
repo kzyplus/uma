@@ -4,27 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>有馬記念2025 総合評価シート</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
             min-height: 100vh;
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
         }
         .horse-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .horse-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+        html { scroll-behavior: smooth; }
+        .nav-index {
+            position: fixed; top: 50%; right: 1rem; transform: translateY(-50%);
+            z-index: 50; display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .nav-index a {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; background: #fff; border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #6366f1;
+            font-size: 0.75rem; font-weight: bold; transition: all 0.2s;
+            text-decoration: none; border: 1px solid #e9ecef;
+        }
+        .nav-index a:hover, .nav-index a.active {
+            background: #6366f1; color: white; transform: scale(1.1); border-color: #6366f1;
+        }
+        .nav-tooltip {
+            position: absolute; right: 50px; background: #1f2937; color: white;
+            padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem;
+            white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        .nav-index a:hover .nav-tooltip { opacity: 1; }
+        #backToTop {
+            position: fixed; bottom: 2rem; right: 1rem; width: 48px; height: 48px;
+            background: #6366f1; color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); cursor: pointer;
+            opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 50; border: none;
+        }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        #backToTop:hover { background: #4f46e5; transform: translateY(-3px); }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav {
+                position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+                border-top: 1px solid #e9ecef; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+                z-index: 50; padding: 0.5rem; display: flex; overflow-x: auto; gap: 0.5rem;
+            }
+            .mobile-nav a {
+                flex-shrink: 0; padding: 0.5rem 0.75rem; background: #f8f9fa;
+                border: 1px solid #e9ecef; border-radius: 20px; font-size: 0.75rem;
+                color: #495057; text-decoration: none; font-weight: 500;
+            }
+            .mobile-nav a.active { background: #6366f1; color: white; border-color: #6366f1; }
+            body { padding-bottom: 60px; }
+            #backToTop { bottom: 5rem; }
         }
         .badge-honmei {
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
@@ -48,9 +99,28 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
+    <nav class="nav-index">
+        <a href="../index.html" style="background: #6366f1; color: white; border-color: #6366f1;"><i class="fas fa-th-list"></i><span class="nav-tooltip">一覧へ戻る</span></a>
+        <a href="#header"><i class="fas fa-home"></i><span class="nav-tooltip">トップ</span></a>
+        <a href="#course"><i class="fas fa-map-marked-alt"></i><span class="nav-tooltip">コース</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">ランキング</span></a>
+        <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
+        <a href="#betting"><i class="fas fa-ticket-alt"></i><span class="nav-tooltip">買い目</span></a>
+    </nav>
+    <nav class="mobile-nav">
+        <a href="../index.html" style="background: #6366f1; color: white; border-color: #6366f1;">← 一覧</a>
+        <a href="#header">トップ</a>
+        <a href="#course">コース</a>
+        <a href="#conclusion">結論</a>
+        <a href="#ranking">ランキング</a>
+        <a href="#horses">個別評価</a>
+        <a href="#betting">買い目</a>
+    </nav>
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"><i class="fas fa-chevron-up"></i></button>
     <div class="max-w-7xl mx-auto">
         <!-- ヘッダー -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
                 第70回 有馬記念 2025
             </h1>
@@ -82,9 +152,9 @@
         </div>
 
         <!-- 中山芝2500mの特徴 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="course" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-map-marked-alt mr-2 text-green-700"></i>
+                <i class="fas fa-map-marked-alt mr-2 text-indigo-500"></i>
                 中山芝2500mの特徴
             </h2>
             <div class="grid md:grid-cols-2 gap-4">
@@ -109,7 +179,7 @@
         </div>
 
         <!-- 最終結論 -->
-        <div class="glass-card p-6 md:p-8 mb-6">
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                 <i class="fas fa-trophy mr-2 text-amber-500"></i>
                 最終結論
@@ -210,7 +280,7 @@
         <!-- 総合評価ランキング（グラフ） -->
         <div class="glass-card p-6 md:p-8 mb-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-chart-bar mr-2 text-green-700"></i>
+                <i class="fas fa-chart-bar mr-2 text-indigo-500"></i>
                 総合評価ランキング
             </h2>
 
@@ -244,7 +314,7 @@
         <!-- 個別馬評価 -->
         <div class="glass-card p-6 md:p-8 mb-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-horse mr-2 text-green-700"></i>
+                <i class="fas fa-horse mr-2 text-indigo-500"></i>
                 個別馬評価（12項目レーダーチャート）
             </h2>
 
@@ -267,7 +337,7 @@
         <!-- 展開予測 -->
         <div class="glass-card p-6 md:p-8 mb-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-running mr-2 text-green-700"></i>
+                <i class="fas fa-running mr-2 text-indigo-500"></i>
                 展開予測
             </h2>
 
@@ -306,7 +376,7 @@
                             <span class="text-gray-700">ダノンデサイル、ミュージアムマイル</span>
                         </div>
                         <div class="p-3 bg-green-100 rounded-lg border-l-4 border-green-500">
-                            <span class="font-bold text-green-700">差し：</span>
+                            <span class="font-bold text-indigo-500">差し：</span>
                             <span class="text-gray-700">レガレイラ、ジャスティンパレス</span>
                         </div>
                     </div>
@@ -317,7 +387,7 @@
         <!-- 買い目参考 -->
         <div class="glass-card p-6 md:p-8 mb-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-ticket-alt mr-2 text-green-700"></i>
+                <i class="fas fa-ticket-alt mr-2 text-indigo-500"></i>
                 買い目参考
             </h2>
 
@@ -353,7 +423,7 @@
         <!-- 適用ルール -->
         <div class="glass-card p-6 md:p-8 mb-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                <i class="fas fa-cogs mr-2 text-green-700"></i>
+                <i class="fas fa-cogs mr-2 text-indigo-500"></i>
                 適用ルール一覧
             </h2>
 
