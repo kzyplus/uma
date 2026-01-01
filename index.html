@@ -4,140 +4,979 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI競馬予想アーカイブ</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+        
+        /* ヘッダー */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+        
+        .header h1 i {
+            color: #6366f1;
+            margin-right: 8px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        /* コンテナ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        /* 年セクション */
+        .year-section {
+            margin-bottom: 48px;
+        }
+        
+        .year-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .year-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .year-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212529;
+        }
+        
+        .year-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #6366f1;
+            color: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
+        .year-badge.archive {
+            background: #94a3b8;
+        }
+        
+        .toggle-year {
+            font-size: 24px;
+            color: #6c757d;
+            transition: transform 0.3s ease;
+        }
+        
+        .year-header.collapsed .toggle-year {
+            transform: rotate(-90deg);
+        }
+        
+        .year-content {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+        
+        .year-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+        
+        /* 月タブ - 2段表示 */
+        .month-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .month-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        
+        .month-tab {
+            padding: 12px 16px;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .month-tab:hover {
+            background: #f8f9fa;
+            border-color: #cbd5e1;
+        }
+        
+        .month-tab.active {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+        }
+        
+        .month-tab .month-name {
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .month-tab .count {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .month-tab.active .count {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* レースコンテンツ */
+        .month-content {
+            display: none;
+        }
+        
+        .month-content.active {
+            display: block;
+        }
+        
+        .race-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        
+        /* レースカード */
         .race-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.2s ease;
         }
+        
         .race-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
         }
-        .grade-g1 { border-left: 4px solid #dc2626; }
-        .grade-g2 { border-left: 4px solid #ea580c; }
-        .grade-g3 { border-left: 4px solid #16a34a; }
-        .grade-op { border-left: 4px solid #6b7280; }
-        .badge-g1 { background: #dc2626; }
-        .badge-g2 { background: #ea580c; }
-        .badge-g3 { background: #16a34a; }
-        .badge-op { background: #6b7280; }
-        .badge-draft { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        
+        .race-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .race-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* カード上部：競馬場情報 */
+        .race-venue {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+        }
+        
+        .race-venue.local {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .venue-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .venue-type {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+        
+        .venue-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .venue-icon {
+            font-size: 18px;
+        }
+        
+        .race-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .race-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-g1 { background: #dc2626; color: #fff; }
+        .badge-g2 { background: #ea580c; color: #fff; }
+        .badge-g3 { background: #16a34a; color: #fff; }
+        .badge-si { background: #f97316; color: #fff; }
+        .badge-draft { background: #fbbf24; color: #78350f; }
+        
+        .race-date {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .race-date i {
+            margin-right: 4px;
+        }
+        
+        .race-card-body {
+            padding: 16px;
+        }
+        
+        .race-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .race-info {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 16px;
+        }
+        
+        .race-info i {
+            margin-right: 6px;
+            color: #94a3b8;
+        }
+        
+        .predictions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .prediction-item {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prediction-mark {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .mark-honmei { color: #eab308; }
+        .mark-taikou { color: #3b82f6; }
+        
+        .horse-name {
+            font-weight: 500;
+        }
+        
+        .unavailable {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .no-races {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        
+        .no-races i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .no-races p {
+            font-size: 14px;
+        }
+        
+        /* フッター */
+        .footer {
+            background: #fff;
+            border-top: 1px solid #e9ecef;
+            padding: 32px 0;
+            margin-top: 64px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .footer p {
+            margin: 8px 0;
+        }
+        
+        .footer i {
+            margin-right: 4px;
+        }
+        
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .header .subtitle {
+                font-size: 13px;
+            }
+            
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .year-title h2 {
+                font-size: 24px;
+            }
+            
+            .month-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .month-tab {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+            
+            .race-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .venue-name {
+                font-size: 14px;
+            }
+            
+            .venue-type {
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-5xl mx-auto">
-        <!-- ヘッダー -->
-        <div class="glass-card p-6 md:p-8 mb-8 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-700 mb-2">
-                <i class="fas fa-horse-head mr-2 text-gray-500"></i>
-                AI競馬予想アーカイブ
-            </h1>
-            <p class="text-gray-500 text-sm">過去のレース分析を閲覧できます</p>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-horse-head"></i>AI競馬予想アーカイブ</h1>
+            <p class="subtitle">過去のレース分析を閲覧できます</p>
         </div>
+    </header>
 
+    <div class="container">
         <!-- 2026年 -->
-        <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <i class="fas fa-calendar-alt mr-2 text-gray-500"></i>
-                2026年
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-4">
-                <!-- 中山金杯 -->
-                <a href="output/20260104-nakayama-kinpai.html" class="race-card glass-card p-5 grade-g3 block">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <span class="badge-g3 text-white text-xs px-2 py-1 rounded font-bold">G3</span>
-                            <span class="badge-draft text-white text-xs px-2 py-1 rounded font-bold ml-1">暫定版</span>
+        <div class="year-section">
+            <div class="year-header" onclick="toggleYear(this)">
+                <div class="year-title">
+                    <h2>2026年</h2>
+                    <span class="year-badge">最新</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-year"></i>
+            </div>
+            
+            <div class="year-content">
+                <div class="month-tabs">
+                    <div class="month-row">
+                        <div class="month-tab active" onclick="switchMonth(this, '2026', 'jan')">
+                            <span class="month-name">1月</span>
+                            <span class="count">2</span>
                         </div>
-                        <span class="text-gray-400 text-sm">1/4(日)</span>
-                    </div>
-                    <div class="text-xl font-bold text-gray-800 mb-1">中山金杯</div>
-                    <div class="text-sm text-gray-600 mb-3">中山 芝2000m</div>
-                    <div class="text-sm text-gray-500">
-                        <div class="mb-1"><span class="font-bold text-yellow-600">◎</span> グランディア</div>
-                        <div><span class="font-bold text-blue-600">○</span> マイネルモーント</div>
-                    </div>
-                </a>
-
-                <!-- 京都金杯 -->
-                <a href="output/20260104-kyoto-kinpai.html" class="race-card glass-card p-5 grade-g3 block">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <span class="badge-g3 text-white text-xs px-2 py-1 rounded font-bold">G3</span>
-                            <span class="badge-draft text-white text-xs px-2 py-1 rounded font-bold ml-1">暫定版</span>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'feb')">
+                            <span class="month-name">2月</span>
+                            <span class="count">0</span>
                         </div>
-                        <span class="text-gray-400 text-sm">1/4(日)</span>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'mar')">
+                            <span class="month-name">3月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'apr')">
+                            <span class="month-name">4月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'may')">
+                            <span class="month-name">5月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'jun')">
+                            <span class="month-name">6月</span>
+                            <span class="count">0</span>
+                        </div>
                     </div>
-                    <div class="text-xl font-bold text-gray-800 mb-1">京都金杯</div>
-                    <div class="text-sm text-gray-600 mb-3">京都 芝1600m</div>
-                    <div class="text-sm text-gray-500">
-                        <div class="mb-1"><span class="font-bold text-yellow-600">◎</span> ランスオブカオス</div>
-                        <div><span class="font-bold text-blue-600">○</span> キープカルム</div>
+                    <div class="month-row">
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'jul')">
+                            <span class="month-name">7月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'aug')">
+                            <span class="month-name">8月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'sep')">
+                            <span class="month-name">9月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'oct')">
+                            <span class="month-name">10月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'nov')">
+                            <span class="month-name">11月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'dec')">
+                            <span class="month-name">12月</span>
+                            <span class="count">0</span>
+                        </div>
                     </div>
-                </a>
+                </div>
+
+                <!-- 1月 -->
+                <div class="month-content active" data-year="2026" data-month="jan">
+                    <div class="race-grid">
+                        <a href="output/20260104-nakayama-kinpai.html" class="race-card">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                    <span class="badge badge-draft">暫定版</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月4日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">中山金杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">グランディア</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マイネルモーント</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260104-kyoto-kinpai.html" class="race-card">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                    <span class="badge badge-draft">暫定版</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月4日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">京都金杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m(外) / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ランスオブカオス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">キープカルム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2月〜12月（空の月） -->
+                <div class="month-content" data-year="2026" data-month="feb">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="mar">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="apr">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="may">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="jun">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="jul">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="aug">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="sep">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="oct">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="nov">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="dec">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- 2025年 -->
-        <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <i class="fas fa-calendar-alt mr-2 text-gray-500"></i>
-                2025年
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-4">
-                <!-- 有馬記念 -->
-                <a href="#" class="race-card glass-card p-5 grade-g1 block opacity-60 cursor-not-allowed">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="badge-g1 text-white text-xs px-2 py-1 rounded font-bold">G1</span>
-                        <span class="text-gray-400 text-sm">12/28(日)</span>
+        <div class="year-section">
+            <div class="year-header" onclick="toggleYear(this)">
+                <div class="year-title">
+                    <h2>2025年</h2>
+                    <span class="year-badge archive">アーカイブ</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-year"></i>
+            </div>
+            
+            <div class="year-content">
+                <div class="month-tabs">
+                    <div class="month-row">
+                        <div class="month-tab active" onclick="switchMonth(this, '2025', 'jan')">
+                            <span class="month-name">1月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'feb')">
+                            <span class="month-name">2月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'mar')">
+                            <span class="month-name">3月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'apr')">
+                            <span class="month-name">4月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'may')">
+                            <span class="month-name">5月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'jun')">
+                            <span class="month-name">6月</span>
+                            <span class="count">0</span>
+                        </div>
                     </div>
-                    <div class="text-xl font-bold text-gray-800 mb-1">有馬記念</div>
-                    <div class="text-sm text-gray-600 mb-3">中山 芝2500m</div>
-                    <div class="text-xs text-gray-400">※Markdown版のみ</div>
-                </a>
-
-                <!-- ホープフルS -->
-                <a href="#" class="race-card glass-card p-5 grade-g1 block opacity-60 cursor-not-allowed">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="badge-g1 text-white text-xs px-2 py-1 rounded font-bold">G1</span>
-                        <span class="text-gray-400 text-sm">12/27(土)</span>
+                    <div class="month-row">
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'jul')">
+                            <span class="month-name">7月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'aug')">
+                            <span class="month-name">8月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'sep')">
+                            <span class="month-name">9月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'oct')">
+                            <span class="month-name">10月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'nov')">
+                            <span class="month-name">11月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'dec')">
+                            <span class="month-name">12月</span>
+                            <span class="count">4</span>
+                        </div>
                     </div>
-                    <div class="text-xl font-bold text-gray-800 mb-1">ホープフルS</div>
-                    <div class="text-sm text-gray-600 mb-3">中山 芝2000m</div>
-                    <div class="text-xs text-gray-400">※Markdown版のみ</div>
-                </a>
+                </div>
 
-                <!-- 東京大賞典 -->
-                <a href="#" class="race-card glass-card p-5 grade-g1 block opacity-60 cursor-not-allowed">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="badge-g1 text-white text-xs px-2 py-1 rounded font-bold">G1</span>
-                        <span class="text-gray-400 text-sm">12/29(日)</span>
+                <!-- 1月〜11月（空の月） -->
+                <div class="month-content active" data-year="2025" data-month="jan">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
                     </div>
-                    <div class="text-xl font-bold text-gray-800 mb-1">東京大賞典</div>
-                    <div class="text-sm text-gray-600 mb-3">大井 ダート2000m</div>
-                    <div class="text-xs text-gray-400">※Markdown版のみ</div>
-                </a>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="feb">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="mar">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="apr">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="may">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="jun">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="jul">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="aug">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="sep">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="oct">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="nov">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <!-- 12月 -->
+                <div class="month-content" data-year="2025" data-month="dec">
+                    <div class="race-grid">
+                        <a href="output/20251228-arima-kinen.html" class="race-card">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月28日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">有馬記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2500m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ドウデュース</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ジャスティンパレス</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251227-hopeful-s.html" class="race-card">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月27日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">ホープフルS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ジャスティンロック</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">トータルクラリティ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251229-tokyo-taisho.html" class="race-card">
+                            <div class="race-venue local">
+                                <div class="venue-info">
+                                    <span class="venue-type">地方競馬</span>
+                                    <span class="venue-name">大井競馬場</span>
+                                </div>
+                                <i class="fas fa-flag venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月29日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">東京大賞典</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート2000m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">サンライズホープ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">オメガパフューム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251231-tokyo-2sai-yushun-hinba.html" class="race-card">
+                            <div class="race-venue local">
+                                <div class="venue-info">
+                                    <span class="venue-type">地方競馬</span>
+                                    <span class="venue-name">大井競馬場</span>
+                                </div>
+                                <i class="fas fa-flag venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-si">SI</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月31日（水）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">第49回 東京2歳優駿牝馬</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ナーサリーテイル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アンジュルナ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- フッター -->
-        <div class="text-center text-gray-400 text-sm py-4">
-            <p>※予想は参考情報です。馬券購入は自己責任でお願いします。</p>
-        </div>
     </div>
+
+    <footer class="footer">
+        <p><i class="fas fa-exclamation-triangle"></i>予想は参考情報です。馬券購入は自己責任でお願いします。</p>
+        <p>© 2026 AI競馬予想アーカイブ</p>
+    </footer>
+
+    <script>
+        function toggleYear(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        function switchMonth(tab, year, month) {
+            // 同じ年内のタブを切り替え
+            const yearSection = tab.closest('.year-section');
+            const tabs = yearSection.querySelectorAll('.month-tab');
+            const contents = yearSection.querySelectorAll('.month-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            contents.forEach(c => {
+                if (c.dataset.year === year && c.dataset.month === month) {
+                    c.classList.add('active');
+                } else {
+                    c.classList.remove('active');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
