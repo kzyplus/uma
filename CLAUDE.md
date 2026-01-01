@@ -61,11 +61,54 @@
   - 個別馬評価（12項目レーダーチャート）
   - 穴馬スクリーニング（星5段階評価）
   - 買い目提案
-- テーマカラー：
-  - JRA: blue系（#1e40af）
-  - 地方競馬: pink系（#831843）
+  - **レース結果・振り返りセクション**（レース終了後に追加）
 - 点数表示は控えめに（小さなバッジ形式 `○○pt`）
 - 印（◎○▲△）と馬名を目立たせる
+
+### デザイン仕様 ★統一ルール★
+全てのHTMLページで以下のデザインを適用すること：
+
+#### 基本スタイル
+```css
+/* フォント */
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+/* Google Fonts: https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap */
+
+/* 背景色 */
+body { background: #f8f9fa; }
+
+/* カード */
+.glass-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+/* アクセントカラー */
+primary: #6366f1 (indigo)
+```
+
+#### ナビゲーション
+- **PC（768px以上）**: 右サイドに固定の丸型ナビゲーション
+  - 一覧へ戻るリンク（indigo背景）
+  - 各セクションへのリンク（白背景、hover時indigo）
+- **モバイル**: 画面下部に固定のボトムナビ（横スクロール可）
+- ナビのアイコン色: `#6366f1`（indigo）
+
+#### レース結果セクション（終了後に追加）
+```html
+<div id="result" class="glass-card p-6">
+    <h2>レース結果・振り返り</h2>
+    <!-- 確定着順テーブル -->
+    <!-- 予想との比較（AI予想 vs 実際の結果）-->
+    <!-- 的中判定（的中/一部的中/不的中）-->
+    <!-- 振り返り・反省点 -->
+</div>
+```
+- 的中時: 緑系（bg-green-50, border-green-200）
+- 不的中時: 赤系（bg-red-50, border-red-200）
+- 一部的中: 黄系（bg-amber-50, border-amber-200）
 
 ## 【追い切り評価】★重要★
 - **1つのサイトだけを参考にしない**
