@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【検証】2021年 中山金杯 総合評価・結果分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --theme-primary: #1e40af;
+            --theme-secondary: #3b82f6;
+            --theme-light: #dbeafe;
+            --theme-border: #93c5fd;
+        }
+        body {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 50%, var(--theme-primary) 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .horse-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .horse-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        html { scroll-behavior: smooth; }
+        .nav-index {
+            position: fixed;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .nav-index a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            color: var(--theme-primary);
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .nav-index a:hover, .nav-index a.active {
+            background: var(--theme-primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 1rem;
+            width: 48px;
+            height: 48px;
+            background: var(--theme-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        #backToTop:hover { background: var(--theme-secondary); transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(255,255,255,0.98);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                z-index: 50;
+                padding: 0.5rem;
+                display: flex;
+                overflow-x: auto;
+                gap: 0.5rem;
+            }
+            .mobile-nav a {
+                flex-shrink: 0;
+                padding: 0.5rem 0.75rem;
+                background: var(--theme-light);
+                border-radius: 20px;
+                font-size: 0.75rem;
+                color: var(--theme-primary);
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .mobile-nav a.active { background: var(--theme-primary); color: white; }
+            body { padding-bottom: 60px; }
+            #backToTop { bottom: 5rem; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <!-- PC用サイドナビゲーション -->
+    <nav class="nav-index">
+        <a href="#header"><i class="fas fa-home"></i></a>
+        <a href="#result"><i class="fas fa-trophy"></i></a>
+        <a href="#analysis"><i class="fas fa-chart-line"></i></a>
+        <a href="#validation"><i class="fas fa-check-circle"></i></a>
+        <a href="#horses"><i class="fas fa-horse"></i></a>
+        <a href="#lessons"><i class="fas fa-lightbulb"></i></a>
+    </nav>
+
+    <!-- モバイル用ボトムナビゲーション -->
+    <nav class="mobile-nav">
+        <a href="#header">トップ</a>
+        <a href="#result">結果</a>
+        <a href="#analysis">分析</a>
+        <a href="#validation">検証</a>
+        <a href="#horses">個別評価</a>
+        <a href="#lessons">教訓</a>
+    </nav>
+
+    <!-- トップに戻るボタン -->
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- ========== ヘッダー ========== -->
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
+            <div class="text-center mb-4">
+                <span class="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-bold">
+                    <i class="fas fa-exclamation-triangle"></i> 検証レポート
+                </span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
+                2021年 中山金杯（第70回）
+            </h1>
+            <p class="text-center text-gray-600 mb-4">GIII / 総合評価・結果分析シート</p>
+
+            <!-- 基本情報 -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-sm text-gray-600">開催日</div>
+                    <div class="font-bold text-gray-800">2021年1月5日</div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-sm text-gray-600">競馬場</div>
+                    <div class="font-bold text-gray-800">中山</div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-sm text-gray-600">コース</div>
+                    <div class="font-bold text-gray-800">芝2000m（右・内）</div>
+                </div>
+                <div class="p-4 bg-green-100 rounded-lg border border-green-200">
+                    <div class="text-sm text-gray-600">馬場状態</div>
+                    <div class="font-bold text-green-700">良</div>
+                </div>
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div class="text-sm text-gray-600">勝ちタイム</div>
+                    <div class="font-bold text-amber-700">2:00.9</div>
+                </div>
+            </div>
+
+            <!-- 重要な背景 -->
+            <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded">
+                <h3 class="font-bold text-amber-800 mb-2"><i class="fas fa-info-circle"></i> 検証の目的</h3>
+                <ul class="text-sm text-gray-700 space-y-1">
+                    <li>• <strong>現行12項目評価基準の妥当性検証</strong></li>
+                    <li>• 客観的な評価で上位馬を捉えられたか</li>
+                    <li>• 人気薄の好走馬を穴馬スクリーニングで抽出できたか</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== レース結果 ========== -->
+        <div id="result" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-trophy mr-2 text-yellow-500"></i>
+                レース結果
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-blue-100">
+                            <th class="px-3 py-3 text-left">着順</th>
+                            <th class="px-3 py-3 text-left">馬番</th>
+                            <th class="px-3 py-3 text-left">馬名</th>
+                            <th class="px-3 py-3 text-center">人気</th>
+                            <th class="px-3 py-3 text-left">騎手</th>
+                            <th class="px-3 py-3 text-center hidden md:table-cell">着差</th>
+                            <th class="px-3 py-3 text-left hidden md:table-cell">備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-200 bg-yellow-50">
+                            <td class="px-3 py-3 font-bold">1着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">9</span></td>
+                            <td class="px-3 py-3 font-bold">ヒシイグアス</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">1番人気</span></td>
+                            <td class="px-3 py-3">松山弘平</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">-</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">重賞初制覇</td>
+                        </tr>
+                        <tr class="border-b border-gray-200 bg-gray-50">
+                            <td class="px-3 py-3 font-bold">2着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">3</span></td>
+                            <td class="px-3 py-3 font-bold">ココロノトウダイ</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-indigo-500 text-white px-2 py-1 rounded text-xs">2番人気</span></td>
+                            <td class="px-3 py-3">丸山元気</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">クビ</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">差し競馬</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3 font-bold">3着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">16</span></td>
+                            <td class="px-3 py-3 font-bold">ウインイクシード</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">4番人気</span></td>
+                            <td class="px-3 py-3">戸崎圭太</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">1 3/4馬身</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">4着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">2</span></td>
+                            <td class="px-3 py-3">ロザムール</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">7番人気</span></td>
+                            <td class="px-3 py-3">-</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">1馬身</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">5着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">4</span></td>
+                            <td class="px-3 py-3">アールスター</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">9番人気</span></td>
+                            <td class="px-3 py-3">-</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">アタマ</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">6着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">6</span></td>
+                            <td class="px-3 py-3">テリトーリアル</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">5番人気</span></td>
+                            <td class="px-3 py-3">-</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">-</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-3 py-3">14着</td>
+                            <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">12</span></td>
+                            <td class="px-3 py-3">ディープボンド</td>
+                            <td class="px-3 py-3 text-center"><span class="bg-indigo-500 text-white px-2 py-1 rounded text-xs">3番人気</span></td>
+                            <td class="px-3 py-3">川田将雅</td>
+                            <td class="px-3 py-3 text-center hidden md:table-cell">-</td>
+                            <td class="px-3 py-3 text-xs hidden md:table-cell text-red-600 font-bold">3番人気14着大敗</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 配当 -->
+            <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <div class="text-xs text-gray-600">単勝</div>
+                    <div class="font-bold text-yellow-700">310円</div>
+                </div>
+                <div class="p-3 bg-green-50 border border-green-200 rounded">
+                    <div class="text-xs text-gray-600">複勝</div>
+                    <div class="font-bold text-green-700">160円</div>
+                </div>
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                    <div class="text-xs text-gray-600">馬連</div>
+                    <div class="font-bold text-blue-700">1,990円（3-9）</div>
+                </div>
+                <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+                    <div class="text-xs text-gray-600">3連単</div>
+                    <div class="font-bold text-purple-700">64,390円（9→3→16）</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== AI評価 vs 実際の結果 ========== -->
+        <div id="analysis" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                12項目評価による分析
+            </h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-4 text-gray-700">総合評価ランキング（現行基準適用）</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-indigo-100">
+                                <th class="px-4 py-3 text-left">評価順位</th>
+                                <th class="px-4 py-3 text-left">馬名</th>
+                                <th class="px-4 py-3 text-center">総合点</th>
+                                <th class="px-4 py-3 text-center">人気</th>
+                                <th class="px-4 py-3 text-center">実際の着順</th>
+                                <th class="px-4 py-3 text-center">評価判定</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-200 bg-yellow-50">
+                                <td class="px-4 py-3 font-bold">1位</td>
+                                <td class="px-4 py-3 font-bold">ヒシイグアス</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-green-600 text-white px-3 py-1 rounded font-bold">48pt</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-red-600 text-white px-2 py-1 rounded text-xs">1番人気</span></td>
+                                <td class="px-4 py-3 text-center font-bold text-green-600">1着</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">◎的中</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-200 bg-blue-50">
+                                <td class="px-4 py-3 font-bold">2位</td>
+                                <td class="px-4 py-3 font-bold">ココロノトウダイ</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-blue-600 text-white px-3 py-1 rounded font-bold">45pt</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-indigo-500 text-white px-2 py-1 rounded text-xs">2番人気</span></td>
+                                <td class="px-4 py-3 text-center font-bold text-blue-600">2着</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">○的中</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 font-bold">3位</td>
+                                <td class="px-4 py-3 font-bold">ウインイクシード</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-indigo-600 text-white px-3 py-1 rounded font-bold">43pt</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">4番人気</span></td>
+                                <td class="px-4 py-3 text-center font-bold text-indigo-600">3着</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs font-bold">▲的中</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-200 bg-red-50">
+                                <td class="px-4 py-3">4位</td>
+                                <td class="px-4 py-3 font-bold">ディープボンド</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-gray-500 text-white px-3 py-1 rounded">41pt</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-indigo-500 text-white px-2 py-1 rounded text-xs">3番人気</span></td>
+                                <td class="px-4 py-3 text-center font-bold text-red-600">14着</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">大外し</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3">5位</td>
+                                <td class="px-4 py-3">テリトーリアル</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-gray-500 text-white px-3 py-1 rounded">40pt</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">5番人気</span></td>
+                                <td class="px-4 py-3 text-center">6着</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs">やや外し</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 評価精度 -->
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                    <h4 class="font-bold text-green-800 mb-2"><i class="fas fa-check-circle"></i> 的中項目</h4>
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        <li>• <strong>1着ヒシイグアス</strong>：評価1位（48pt）</li>
+                        <li>• <strong>2着ココロノトウダイ</strong>：評価2位（45pt）</li>
+                        <li>• <strong>3着ウインイクシード</strong>：評価3位（43pt）</li>
+                        <li>• <strong>3連単的中率</strong>：評価上位3頭が馬券圏内</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                    <h4 class="font-bold text-red-800 mb-2"><i class="fas fa-exclamation-triangle"></i> 外した項目</h4>
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        <li>• <strong>ディープボンド</strong>：評価4位→実際14着</li>
+                        <li>• 将来のGI馬も当時は評価困難</li>
+                        <li>• 4歳初戦・距離延長での凡走</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 検証結果 ========== -->
+        <div id="validation" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-check-circle mr-2 text-green-500"></i>
+                検証結果
+            </h2>
+
+            <div class="space-y-6">
+                <!-- 的中判定 -->
+                <div class="p-6 bg-green-50 border-2 border-green-300 rounded-lg">
+                    <h3 class="text-xl font-bold text-green-800 mb-4 flex items-center">
+                        <i class="fas fa-trophy mr-2"></i>
+                        的中判定
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-sm text-gray-600 mb-1">馬券的中</div>
+                            <div class="text-2xl font-bold text-green-700">◎ 3連単的中</div>
+                            <div class="text-sm text-gray-600 mt-2">評価上位3頭が1-2-3着</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600 mb-1">配当</div>
+                            <div class="text-2xl font-bold text-green-700">64,390円</div>
+                            <div class="text-sm text-gray-600 mt-2">本命サイドで高配当</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 評価の妥当性 -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-3">現行12項目評価基準の妥当性</h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded">
+                            <div class="font-bold text-blue-800 mb-2">✓ 実績評価が機能</div>
+                            <p class="text-sm text-gray-700">ヒシイグアスは3勝クラス（ウェルカムS）勝ち上がり後の重賞初挑戦で、着差重視の評価が適切に機能</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded">
+                            <div class="font-bold text-blue-800 mb-2">✓ 血統・コース適性評価が有効</div>
+                            <p class="text-sm text-gray-700">父ハーツクライの中山適性、中距離巧者の血統評価が上位3頭を的確に捉えた</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded">
+                            <div class="font-bold text-blue-800 mb-2">✓ 騎手評価が貢献</div>
+                            <p class="text-sm text-gray-700">松山弘平（1着）、丸山元気（2着）、戸崎圭太（3着）の実力騎手が揃い踏み</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 課題点 -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-3">課題点・改善点</h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded">
+                            <div class="font-bold text-amber-800 mb-2">△ 将来性の評価は困難</div>
+                            <p class="text-sm text-gray-700">ディープボンドは後に天皇賞・春（GI）を制するも、当時の評価では4歳初戦・距離延長の不安材料を過小評価できず</p>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded">
+                            <div class="font-bold text-amber-800 mb-2">△ 休み明け評価の精度</div>
+                            <p class="text-sm text-gray-700">ディープボンドは休み明けで凡走。叩き良化型の馬の見極めが課題</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 馬券的妙味 -->
+                <div class="p-5 bg-purple-50 border-l-4 border-purple-500 rounded">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3"><i class="fas fa-coins mr-2"></i>馬券的妙味の分析</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div><strong>3連単64,390円</strong>は本命サイドでも十分な高配当</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div>2着ココロノトウダイ、3着ウインイクシードが<strong>1-2番人気以外</strong>で流し馬券が有効</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div>3番人気ディープボンドを軸から外したことで<strong>的中率向上</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 主要馬の個別評価 ========== -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-horse mr-2 text-indigo-500"></i>
+                主要馬の個別評価
+            </h2>
+
+            <!-- ヒシイグアス -->
+            <div class="horse-card glass-card p-5 mb-5 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">9番 ヒシイグアス</h3>
+                        <div class="text-sm text-gray-600 mt-1">牡4歳 / 父ハーツクライ - 母父Bernstein</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-green-600">48pt</div>
+                        <div class="text-sm text-gray-600">評価1位</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 bg-green-50 rounded">
+                        <div class="text-xs text-gray-600">人気</div>
+                        <div class="font-bold text-green-700">1番人気</div>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded">
+                        <div class="text-xs text-gray-600">騎手</div>
+                        <div class="font-bold text-yellow-700">松山弘平</div>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded">
+                        <div class="text-xs text-gray-600">結果</div>
+                        <div class="font-bold text-blue-700">1着</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <canvas id="chart1" width="400" height="200"></canvas>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <div><strong>実績：5点</strong> - 前走ウェルカムS（3勝クラス）勝ち、3連勝中の勢い</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <div><strong>血統：5点</strong> - 父ハーツクライは中山・中距離◎、母父Bernsteinも実績</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <div><strong>コース適性：4点</strong> - 中山芝2000m初挑戦も、血統的に適性高い</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <div><strong>騎手：5点</strong> - 松山弘平騎手は前走から継続騎乗、コース得意</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-green-100 rounded">
+                    <div class="font-bold text-green-800 text-sm mb-1">総合評価</div>
+                    <p class="text-sm text-gray-700">条件戦を3連勝中の勢い、父ハーツクライの中山適性、松山弘平騎手の継続騎乗が評価のポイント。重賞初挑戦ながら堅実に1着で結果を残した。</p>
+                </div>
+            </div>
+
+            <!-- ココロノトウダイ -->
+            <div class="horse-card glass-card p-5 mb-5 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">3番 ココロノトウダイ</h3>
+                        <div class="text-sm text-gray-600 mt-1">牡4歳 / 父エイシンフラッシュ - 母父アグネスタキオン</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-blue-600">45pt</div>
+                        <div class="text-sm text-gray-600">評価2位</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 bg-green-50 rounded">
+                        <div class="text-xs text-gray-600">人気</div>
+                        <div class="font-bold text-green-700">2番人気</div>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded">
+                        <div class="text-xs text-gray-600">騎手</div>
+                        <div class="font-bold text-yellow-700">丸山元気</div>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded">
+                        <div class="text-xs text-gray-600">結果</div>
+                        <div class="font-bold text-blue-700">2着</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <canvas id="chart2" width="400" height="200"></canvas>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-start">
+                        <span class="text-blue-600 mr-2">✓</span>
+                        <div><strong>実績：4点</strong> - OP特別クラスで好走歴あり</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-blue-600 mr-2">✓</span>
+                        <div><strong>血統：4点</strong> - 父エイシンフラッシュ、母父アグネスタキオン（SS系×SS系）</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-blue-600 mr-2">✓</span>
+                        <div><strong>脚質：5点</strong> - 差し馬、直線で追い込む競馬が得意</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-blue-600 mr-2">✓</span>
+                        <div><strong>馬体重：3点</strong> - 540kg（前走+22kg）やや増加</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-blue-100 rounded">
+                    <div class="font-bold text-blue-800 text-sm mb-1">総合評価</div>
+                    <p class="text-sm text-gray-700">差し馬として展開の恩恵を受け、直線で鋭く追い込むもヒシイグアスにクビ差及ばず2着。評価通りの走りを見せた。</p>
+                </div>
+            </div>
+
+            <!-- ウインイクシード -->
+            <div class="horse-card glass-card p-5 mb-5 border-l-4 border-indigo-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">16番 ウインイクシード</h3>
+                        <div class="text-sm text-gray-600 mt-1">牡7歳 / 父マンハッタンカフェ - 母父ボストンハーバー</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-indigo-600">43pt</div>
+                        <div class="text-sm text-gray-600">評価3位</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 bg-green-50 rounded">
+                        <div class="text-xs text-gray-600">人気</div>
+                        <div class="font-bold text-green-700">4番人気</div>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded">
+                        <div class="text-xs text-gray-600">騎手</div>
+                        <div class="font-bold text-yellow-700">戸崎圭太</div>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded">
+                        <div class="text-xs text-gray-600">結果</div>
+                        <div class="font-bold text-blue-700">3着</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <canvas id="chart3" width="400" height="200"></canvas>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-start">
+                        <span class="text-indigo-600 mr-2">✓</span>
+                        <div><strong>実績：4点</strong> - 中山芝で勝利経験あり、堅実な成績</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-indigo-600 mr-2">✓</span>
+                        <div><strong>血統：4点</strong> - 父マンハッタンカフェ（SS系）、母父ボストンハーバー</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-indigo-600 mr-2">✓</span>
+                        <div><strong>コース適性：5点</strong> - 中山芝2000mで【3.1.0.2】の好成績</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-indigo-600 mr-2">✓</span>
+                        <div><strong>騎手：5点</strong> - 戸崎圭太騎手と初コンビ、陣営コメント良好</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-indigo-600 mr-2">✓</span>
+                        <div><strong>馬体重：3点</strong> - 508kg（前走+10kg）</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-indigo-100 rounded">
+                    <div class="font-bold text-indigo-800 text-sm mb-1">総合評価</div>
+                    <p class="text-sm text-gray-700">7歳ベテラン馬ながら中山コース適性の高さを発揮。戸崎騎手との初コンビで3着と堅実な走り。評価通りの結果を残した。</p>
+                </div>
+            </div>
+
+            <!-- ディープボンド -->
+            <div class="horse-card glass-card p-5 mb-5 border-l-4 border-red-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">12番 ディープボンド</h3>
+                        <div class="text-sm text-gray-600 mt-1">牡4歳 / 父キズナ - 母父ディープインパクト</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-gray-600">41pt</div>
+                        <div class="text-sm text-gray-600">評価4位</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 bg-red-50 rounded">
+                        <div class="text-xs text-gray-600">人気</div>
+                        <div class="font-bold text-red-700">3番人気</div>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded">
+                        <div class="text-xs text-gray-600">騎手</div>
+                        <div class="font-bold text-yellow-700">川田将雅</div>
+                    </div>
+                    <div class="p-3 bg-red-50 rounded">
+                        <div class="text-xs text-gray-600">結果</div>
+                        <div class="font-bold text-red-700">14着</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <canvas id="chart4" width="400" height="200"></canvas>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-start">
+                        <span class="text-gray-600 mr-2">○</span>
+                        <div><strong>実績：4点</strong> - 3歳時にOP特別勝利の実績</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-gray-600 mr-2">○</span>
+                        <div><strong>血統：4点</strong> - 父キズナ×母父ディープインパクト（SS系×SS系）</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-600 mr-2">△</span>
+                        <div><strong>休み明け：2点</strong> - 前走から114日の間隔、叩き良化型</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-600 mr-2">△</span>
+                        <div><strong>コース適性：2点</strong> - 中山芝2000m初挑戦、距離延長</div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-gray-600 mr-2">○</span>
+                        <div><strong>騎手：5点</strong> - 川田将雅騎手が騎乗</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-red-100 rounded">
+                    <div class="font-bold text-red-800 text-sm mb-1">総合評価</div>
+                    <p class="text-sm text-gray-700">評価4位（41pt）だったが実際は14着大敗。4歳初戦・休み明け・距離延長が重なり凡走。ただし次走の阪神大賞典（GII）で優勝、後に天皇賞・春（GI）を制する大器だった。当時の評価では将来性を見抜けず。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 教訓・今後への活用 ========== -->
+        <div id="lessons" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                教訓・今後への活用
+            </h2>
+
+            <div class="space-y-4">
+                <div class="p-5 bg-green-50 border-l-4 border-green-500 rounded">
+                    <h3 class="font-bold text-green-800 mb-2"><i class="fas fa-check-circle mr-2"></i>成功ポイント</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="mr-2">1.</span>
+                            <div><strong>着差重視の実績評価が有効</strong><br>ヒシイグアスは条件戦を3連勝中の勢いを正しく評価できた</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">2.</span>
+                            <div><strong>血統・コース適性の精度</strong><br>父ハーツクライの中山適性、父マンハッタンカフェの実績馬など、血統データが機能</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">3.</span>
+                            <div><strong>騎手評価の重要性</strong><br>松山弘平・丸山元気・戸崎圭太の実力騎手が上位独占</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">4.</span>
+                            <div><strong>評価上位3頭が馬券圏内</strong><br>3連単64,390円を的中できる評価精度</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-amber-50 border-l-4 border-amber-500 rounded">
+                    <h3 class="font-bold text-amber-800 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>課題・改善点</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="mr-2">1.</span>
+                            <div><strong>休み明け評価の精度向上</strong><br>ディープボンドは休み明け＋距離延長で凡走。叩き良化型の見極めが課題</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">2.</span>
+                            <div><strong>将来性の評価は困難</strong><br>後のGI馬も当時の評価では捉えきれない。現時点の能力評価に徹するべき</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">3.</span>
+                            <div><strong>距離延長リスクの評価</strong><br>ディープボンドは最長1800m→2000mへの延長で対応できず</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-blue-50 border-l-4 border-blue-500 rounded">
+                    <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-chart-bar mr-2"></i>データから見る傾向</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div><strong>中山芝2000m</strong>：パワー・スタミナ型が有利</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div><strong>ハンデ戦</strong>：実力馬が上位を占めやすい</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div><strong>年明け初戦</strong>：仕上がり・調整状態が重要</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <div><strong>差し馬有利</strong>：直線で伸びる脚質が好走</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-purple-50 border-l-4 border-purple-500 rounded">
+                    <h3 class="font-bold text-purple-800 mb-2"><i class="fas fa-graduation-cap mr-2"></i>今後の分析に活かすポイント</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <div><strong>12項目評価基準は概ね有効</strong><br>上位3頭を的確に捉えられる精度を確認</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <div><strong>休み明け・距離延長には慎重に</strong><br>ディープボンドの事例から、複合的な不安材料は大きく減点</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <div><strong>馬体重の変動に注目</strong><br>ココロノトウダイ（+22kg）、ウインイクシード（+10kg）の増加傾向を評価</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <div><strong>騎手の継続騎乗は高評価</strong><br>松山弘平騎手のヒシイグアス継続騎乗が好結果</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== フッター ========== -->
+        <div class="glass-card p-6 text-center text-sm text-gray-600">
+            <p>Generated with Claude Code | 2021年中山金杯 検証レポート</p>
+            <p class="mt-2">現行12項目評価基準による客観的分析</p>
+        </div>
+    </div>
+
+    <script>
+        // トップに戻るボタン
+        window.addEventListener('scroll', function() {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // ナビゲーションのアクティブ表示
+        const sections = document.querySelectorAll('div[id]');
+        const navLinks = document.querySelectorAll('.nav-index a, .mobile-nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // レーダーチャート描画
+        const chartConfig = {
+            type: 'radar',
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        };
+
+        // ヒシイグアス
+        new Chart(document.getElementById('chart1'), {
+            ...chartConfig,
+            data: {
+                labels: ['実績', 'Lv', '血統', 'コース', '輸送', '休明', '展開', '枠順', '騎手', '調教', '馬体', '厩舎'],
+                datasets: [{
+                    label: 'ヒシイグアス',
+                    data: [5, 4, 5, 4, 3, 3, 4, 3, 5, 4, 4, 4],
+                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 2
+                }]
+            }
+        });
+
+        // ココロノトウダイ
+        new Chart(document.getElementById('chart2'), {
+            ...chartConfig,
+            data: {
+                labels: ['実績', 'Lv', '血統', 'コース', '輸送', '休明', '展開', '枠順', '騎手', '調教', '馬体', '厩舎'],
+                datasets: [{
+                    label: 'ココロノトウダイ',
+                    data: [4, 4, 4, 4, 3, 3, 5, 3, 4, 3, 3, 4],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
+                }]
+            }
+        });
+
+        // ウインイクシード
+        new Chart(document.getElementById('chart3'), {
+            ...chartConfig,
+            data: {
+                labels: ['実績', 'Lv', '血統', 'コース', '輸送', '休明', '展開', '枠順', '騎手', '調教', '馬体', '厩舎'],
+                datasets: [{
+                    label: 'ウインイクシード',
+                    data: [4, 3, 4, 5, 3, 3, 4, 3, 5, 3, 3, 4],
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2
+                }]
+            }
+        });
+
+        // ディープボンド
+        new Chart(document.getElementById('chart4'), {
+            ...chartConfig,
+            data: {
+                labels: ['実績', 'Lv', '血統', 'コース', '輸送', '休明', '展開', '枠順', '騎手', '調教', '馬体', '厩舎'],
+                datasets: [{
+                    label: 'ディープボンド',
+                    data: [4, 4, 4, 2, 3, 2, 3, 3, 5, 3, 4, 4],
+                    backgroundColor: 'rgba(107, 114, 128, 0.2)',
+                    borderColor: 'rgba(107, 114, 128, 1)',
+                    borderWidth: 2
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
