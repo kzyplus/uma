@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>東京新聞杯 総合評価シート</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8f9fa; }
+        .glass-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); border: 1px solid #e9ecef; }
+        .horse-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .horse-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); }
+        .badge-honmei { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .badge-taikou { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        .badge-tanana { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .badge-renka { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
+        .badge-ana { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+        .badge-kiken { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        html { scroll-behavior: smooth; }
+        .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
+        .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
+        .nav-index a:first-child { background: #6366f1; color: white; }
+        .nav-tooltip { position: absolute; right: 50px; background: #1f2937; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .nav-index a:hover .nav-tooltip { opacity: 1; }
+        #backToTop { position: fixed; bottom: 2rem; right: 1rem; width: 48px; height: 48px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 50; }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 50; padding: 0.5rem; display: flex; overflow-x: auto; gap: 0.5rem; }
+            .mobile-nav a { flex-shrink: 0; padding: 0.5rem 0.75rem; background: #eef2ff; border-radius: 20px; font-size: 0.75rem; color: #6366f1; text-decoration: none; font-weight: 500; }
+            .mobile-nav a.active { background: #6366f1; color: white; }
+            body { padding-bottom: 60px; }
+            #backToTop { bottom: 5rem; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <nav class="nav-index">
+        <a href="../index.html"><i class="fas fa-home"></i><span class="nav-tooltip">一覧へ戻る</span></a>
+        <a href="#header"><i class="fas fa-flag"></i><span class="nav-tooltip">トップ</span></a>
+        <a href="#trend"><i class="fas fa-chart-line"></i><span class="nav-tooltip">過去傾向</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">最終結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">ランキング</span></a>
+        <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
+        <a href="#anauma"><i class="fas fa-bolt"></i><span class="nav-tooltip">穴馬</span></a>
+        <a href="#betting"><i class="fas fa-ticket-alt"></i><span class="nav-tooltip">買い目</span></a>
+    </nav>
+    <nav class="mobile-nav">
+        <a href="../index.html">一覧</a>
+        <a href="#header">トップ</a>
+        <a href="#trend">過去傾向</a>
+        <a href="#conclusion">結論</a>
+        <a href="#ranking">ランキング</a>
+        <a href="#horses">個別評価</a>
+        <a href="#anauma">穴馬</a>
+        <a href="#betting">買い目</a>
+    </nav>
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- ヘッダー -->
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">東京新聞杯</h1>
+            <p class="text-center text-gray-600 mb-4">G3 / 総合評価シート</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div class="text-sm text-gray-600">開催日</div>
+                    <div class="font-bold text-gray-800">2026年2月8日（日）</div>
+                </div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div class="text-sm text-gray-600">競馬場</div>
+                    <div class="font-bold text-gray-800">東京11R</div>
+                </div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div class="text-sm text-gray-600">コース</div>
+                    <div class="font-bold text-gray-800">芝1600m 左</div>
+                </div>
+                <div class="p-4 bg-green-100 rounded-lg border border-green-200">
+                    <div class="text-sm text-gray-600">想定馬場</div>
+                    <div class="font-bold text-green-700">良</div>
+                </div>
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div class="text-sm text-gray-600">1着賞金</div>
+                    <div class="font-bold text-amber-700">4300万円</div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800">
+                <i class="fas fa-info-circle mr-1"></i>
+                別定重量・16頭立て。安田記念への前哨戦。昨年の勝ち馬ウォーターリヒトが連覇を狙う。マイルCS好走組とG3巧者が激突。
+            </div>
+        </div>
+
+        <!-- 過去傾向 -->
+        <div id="trend" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-indigo-600"></i>過去傾向
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-gray-700">東京新聞杯の傾向（過去10年）</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <span class="font-bold text-blue-700">枠順傾向：</span>
+                            <span class="text-gray-700">6枠より内の馬が勝ち馬の大半。大外枠は不利</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <span class="font-bold text-blue-700">前走G1組：</span>
+                            <span class="text-gray-700">マイルCS・安田記念組の好走率が高い（格下げ臨戦）</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <span class="font-bold text-blue-700">距離短縮組：</span>
+                            <span class="text-gray-700">2000m以上からの距離短縮馬の勝率33.3%と高い</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <span class="font-bold text-blue-700">リピーター：</span>
+                            <span class="text-gray-700">過去の本レース好走馬が再度好走する傾向あり</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-gray-700">東京芝1600m特性</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                            <span class="font-bold text-amber-700">コース形態：</span>
+                            <span class="text-gray-700">ワンターン・直線525.9m（JRA最長）。緩い下り坂からスタート</span>
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                            <span class="font-bold text-amber-700">有利脚質：</span>
+                            <span class="text-gray-700">差し・追込が届きやすいが、先行して末脚を使えるタイプが理想</span>
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                            <span class="font-bold text-amber-700">有利血統：</span>
+                            <span class="text-gray-700">ディープ系・ロードカナロア産駒・ドゥラメンテ産駒が好相性</span>
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                            <span class="font-bold text-amber-700">ペース予想：</span>
+                            <span class="text-gray-700">エンペラーズソード・エルトンバローズの先行馬がペースを作る。ミドル～ややスローが想定</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最終結論 -->
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <!-- 本命 -->
+                <div class="border-2 border-yellow-400 rounded-lg p-4 bg-gradient-to-br from-yellow-50 to-amber-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-honmei text-white text-center py-1 px-3 rounded-full inline-block"><i class="fas fa-star"></i> 本命</div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">57pt</span>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">◎ 1番 シャンパンカラー</div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check-circle text-green-600"></i> 東京マイルG1（NHKマイルC）勝ちの舞台巧者</div>
+                        <div><i class="fas fa-check-circle text-green-600"></i> 追い切りA評価首位・好仕上がり</div>
+                        <div><i class="fas fa-check-circle text-green-600"></i> 1枠1番の好枠で距離ロスなし</div>
+                    </div>
+                </div>
+                <!-- 対抗 -->
+                <div class="border-2 border-indigo-400 rounded-lg p-4 bg-gradient-to-br from-indigo-50 to-blue-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-taikou text-white text-center py-1 px-3 rounded-full inline-block"><i class="fas fa-medal"></i> 対抗</div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">55pt</span>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">○ 12番 ウォーターリヒト</div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check-circle text-green-600"></i> 昨年の本レース勝ち馬・連覇狙い</div>
+                        <div><i class="fas fa-check-circle text-green-600"></i> マイルCS 3着のG1級実力</div>
+                    </div>
+                </div>
+                <!-- 単穴 -->
+                <div class="border-2 border-green-400 rounded-lg p-4 bg-gradient-to-br from-green-50 to-emerald-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-tanana text-white text-center py-1 px-3 rounded-full inline-block"><i class="fas fa-gem"></i> 単穴</div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">45pt</span>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">▲ 7番 トロヴァトーレ</div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check-circle text-green-600"></i> ルメール騎乗×東京マイル【2-1-0-0】</div>
+                        <div><i class="fas fa-check-circle text-green-600"></i> 「本質的には東京向き」の調教師コメント</div>
+                    </div>
+                </div>
+                <!-- 連下 -->
+                <div class="border-2 border-purple-400 rounded-lg p-4 bg-gradient-to-br from-purple-50 to-fuchsia-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="badge-renka text-white text-center py-1 px-3 rounded-full inline-block"><i class="fas fa-horse"></i> 連下</div>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">45pt</span>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold text-gray-800 mb-3">△ 5番 エルトンバローズ</div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check-circle text-green-600"></i> マイルCS3年連続好走のマイル巧者</div>
+                        <div><i class="fas fa-check-circle text-green-600"></i> 先行力あり展開を選ばない</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 危険な人気馬 -->
+            <div class="border-2 border-gray-400 rounded-lg p-4 bg-gradient-to-br from-gray-50 to-slate-100">
+                <div class="badge-kiken text-white text-center py-1 px-3 rounded-full inline-block mb-3"><i class="fas fa-exclamation-triangle"></i> 危険な人気馬</div>
+                <div class="text-xl font-bold text-gray-800 mb-2">× 16番 ブエナオンダ</div>
+                <div class="text-sm text-gray-700">京都金杯勝ちで4番人気想定だが、8枠16番の大外枠は東京マイルで致命的。東京実績に乏しく、京都と東京のコース形態は別物。プロ予想家も「押さえまで」と評価。</div>
+            </div>
+        </div>
+
+        <!-- 総合評価ランキング -->
+        <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-chart-bar mr-2 text-indigo-600"></i>総合評価ランキング
+            </h2>
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 350px; position: relative;">
+                <canvas id="rankingChart"></canvas>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-indigo-100">
+                            <th class="px-3 py-3 text-left">順位</th>
+                            <th class="px-3 py-3 text-left">馬番</th>
+                            <th class="px-3 py-3 text-left">馬名</th>
+                            <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th>
+                            <th class="px-3 py-3 text-center">総合点</th>
+                            <th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 個別馬評価 -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-horse mr-2 text-indigo-600"></i>個別馬評価（12項目レーダーチャート）
+            </h2>
+            <div id="horseCards" class="space-y-4"></div>
+        </div>
+
+        <!-- 穴馬スクリーニング -->
+        <div id="anauma" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-bolt mr-2 text-rose-600"></i>穴馬スクリーニング
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+                <!-- 有力穴馬: メイショウチタン -->
+                <div class="border-2 border-rose-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-rose-50 to-pink-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="bg-rose-500 text-white px-2 py-1 rounded-full text-xs font-bold">有力穴馬</span>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">13番 メイショウチタン</div>
+                        </div>
+                        <div class="text-lg md:text-2xl">
+                            <i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 2025年東京新聞杯3着のリピーター</div>
+                        <div><i class="fas fa-check text-green-500"></i> 東京マイル重賞好走実績あり（+7pt）</div>
+                        <div><i class="fas fa-times text-red-500"></i> 集中力に課題（調教師コメント）</div>
+                    </div>
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-rose-600">激走条件：</strong>スローペースで先行し、直線で粘り込む展開
+                    </div>
+                </div>
+                <!-- 穴馬候補: サクラトゥジュール -->
+                <div class="border-2 border-amber-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-amber-50 to-yellow-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold">穴馬候補</span>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">9番 サクラトゥジュール</div>
+                        </div>
+                        <div class="text-lg md:text-2xl">
+                            <i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 2024年東京新聞杯の勝ち馬</div>
+                        <div><i class="fas fa-check text-green-500"></i> 堀宣行厩舎の管理で仕上げに信頼</div>
+                        <div><i class="fas fa-times text-red-500"></i> 9歳＋半年以上の休み明け</div>
+                        <div><i class="fas fa-times text-red-500"></i> 休み明け2戦は二桁着順の傾向</div>
+                    </div>
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-amber-600">激走条件：</strong>スローの瞬発力勝負で東京マイルの舞台巧者ぶりを発揮
+                    </div>
+                </div>
+                <!-- 大穴候補: シリウスコルト -->
+                <div class="border-2 border-slate-400 rounded-lg p-3 md:p-4 bg-gradient-to-br from-slate-50 to-gray-100">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="bg-slate-500 text-white px-2 py-1 rounded-full text-xs font-bold">大穴候補</span>
+                            <div class="text-lg md:text-xl font-bold text-gray-800 mt-2">3番 シリウスコルト</div>
+                        </div>
+                        <div class="text-lg md:text-2xl">
+                            <i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="text-xs md:text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 馬具変更で一変の可能性</div>
+                        <div><i class="fas fa-check text-green-500"></i> 2枠3番の好枠を確保</div>
+                        <div><i class="fas fa-times text-red-500"></i> 東京マイル実績が未知数</div>
+                    </div>
+                    <div class="mt-2 md:mt-3 p-2 bg-white rounded text-xs text-gray-600">
+                        <strong class="text-slate-600">激走条件：</strong>馬具変更がハマり、内枠から好位追走して粘り込む
+                    </div>
+                </div>
+            </div>
+            <!-- 穴馬買い目 -->
+            <div class="bg-rose-50 border border-rose-200 rounded-lg p-4">
+                <h3 class="font-bold text-rose-800 mb-3"><i class="fas fa-coins mr-1"></i> 穴馬狙い買い目</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-sm">
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">複勝</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">13</div>
+                    </div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">ワイド</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">1-13, 12-13</div>
+                    </div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">3連複穴狙い</div>
+                        <div class="text-rose-600 font-bold text-base md:text-lg">1-12-13</div>
+                    </div>
+                    <div class="bg-white p-2 md:p-3 rounded shadow-sm">
+                        <div class="font-bold text-gray-700 text-xs md:text-sm">3連単穴頭</div>
+                        <div class="text-rose-600 font-bold text-sm md:text-base">13→1→12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 買い目参考 -->
+        <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-ticket-alt mr-2 text-indigo-600"></i>買い目参考
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                <div class="p-3 md:p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">馬連</div>
+                    <div class="text-lg md:text-xl font-bold text-yellow-600">1-12</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">押さえ：1-7, 12-7, 1-5</div>
+                </div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">ワイド</div>
+                    <div class="text-lg md:text-xl font-bold text-green-600">1-12, 1-7, 12-7</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">穴押さえ：1-13, 12-13</div>
+                </div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">3連複</div>
+                    <div class="text-lg md:text-xl font-bold text-blue-600">1-7-12</div>
+                    <div class="text-xs md:text-sm text-gray-600 mt-1">押さえ：1-5-12, 1-12-13, 1-7-13</div>
+                </div>
+                <div class="p-3 md:p-4 bg-gradient-to-r from-purple-50 to-fuchsia-50 rounded-lg border border-purple-200 sm:col-span-3">
+                    <div class="font-bold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">3連単</div>
+                    <div class="text-sm md:text-lg font-bold text-purple-600 leading-relaxed">
+                        1→12→7 / 12→1→7 / 1→12→5 / 1→7→12 / 12→7→1 / 1→12→13
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <div class="text-center text-gray-600 text-sm py-4">
+            <p>作成日：2026年2月7日</p>
+            <p class="mt-2">分析指示書.md 適用</p>
+            <p class="mt-2 text-xs">※この予想は参考情報です。馬券購入は自己責任でお願いします。</p>
+        </div>
+    </div>
+
+    <script>
+        const horses = [
+            {
+                number: 1, name: "シャンパンカラー", score: 57, jockey: "岩田康誠", trainer: "田中剛（美浦）",
+                blood: "父ドゥラメンテ×母父Motivator", belonging: "美浦", firstExp: "なし",
+                badge: "honmei", mark: "◎",
+                comment: "東京マイルG1勝ちの舞台巧者。追い切りA首位で好仕上がり",
+                details: {
+                    pros: ["東京マイルG1（NHKマイルC）勝ちの舞台巧者", "追い切りA評価首位、6F79.1-11.4秒の好時計", "放牧挟んで心身リフレッシュ、1枠1番の好枠"],
+                    cons: ["近走不振（マイルCS14着、安田記念6着）", "出遅れ癖がある（ゲート難）", "59kgのトップハンデ"],
+                    expect: ["東京マイルでのコース実績は断然、追い切りの良さが走りに直結するか"],
+                    scores: [3, 4, 4, 5, 5, 4, 3, 4, 3, 5, 3, 3]
+                }
+            },
+            {
+                number: 2, name: "ラヴァンダ", score: 36, jockey: "岩田望来", trainer: "※推測",
+                blood: "父シルバーステート×母父不明", belonging: "不明", firstExp: "初重賞",
+                badge: null, mark: "",
+                comment: "シルバーステート産駒で東京適性ありも重賞実績乏しい",
+                details: {
+                    pros: ["シルバーステート（ディープ系）産駒で東京マイル適性あり", "1枠2番の好枠", "56kgの軽量"],
+                    cons: ["重賞実績に乏しい", "情報が少なく未知数"],
+                    expect: ["内枠を活かして好位追走できれば"],
+                    scores: [2, 2, 4, 3, 3, 3, 3, 4, 3, 3, 3, 3]
+                }
+            },
+            {
+                number: 3, name: "シリウスコルト", score: 39, jockey: "三浦皇成", trainer: "田中勝春（美浦）",
+                blood: "父マクフィ×母父不明", belonging: "美浦", firstExp: "初東京マイル",
+                badge: "ana", mark: "★",
+                comment: "馬具変更で一変期待。2枠3番の好枠確保",
+                details: {
+                    pros: ["新潟大賞典（G3）勝ちの重賞馬", "馬具変更でレース中の力みが解消の可能性", "2枠3番の好枠で距離ロスなし"],
+                    cons: ["東京マイルの実績が未知数", "近走は不利続きで力を出し切れていない", "マクフィ産駒の東京適性が不透明"],
+                    expect: ["馬具変更がハマれば一変の可能性。陣営コメントも手応えあり"],
+                    scores: [3, 3, 3, 3, 5, 3, 3, 4, 3, 3, 3, 3]
+                }
+            },
+            {
+                number: 4, name: "マジックサンズ", score: 43, jockey: "武豊", trainer: "北村厩舎",
+                blood: "父不明×母父不明", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "",
+                comment: "追い切りA評価＋武豊騎乗で上位争い可能",
+                details: {
+                    pros: ["追い切りA評価、CWで推進力のある走り", "武豊騎手の東京マイル経験値", "前走ノーカウント、着実に良化中"],
+                    cons: ["近走成績が振るわない", "関西馬の東京輸送"],
+                    expect: ["武豊のテクニックで好位追走、直線で粘り込む"],
+                    scores: [3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 3, 3]
+                }
+            },
+            {
+                number: 5, name: "エルトンバローズ", score: 45, jockey: "津村明秀", trainer: "杉山晴（美浦）",
+                blood: "父ディープブリランテ×母父ブライアンズタイム", belonging: "美浦", firstExp: "なし",
+                badge: "renka", mark: "△",
+                comment: "マイルCS3年連続好走のマイル巧者。先行力が武器",
+                details: {
+                    pros: ["マイルCS3年連続好走（4着・2着・5着）", "毎日王冠・ラジオNIKKEI賞の重賞2勝", "先行力があり展開を選ばない", "「ここにきてまた良くなっている」と調教師"],
+                    cons: ["津村明秀騎手は重賞での勝ち切る力にやや不安", "58kgの斤量", "ディープブリランテ産駒は瞬発力勝負でやや劣る"],
+                    expect: ["先行して直線で粘り込む安定した走りに期待"],
+                    scores: [4, 5, 3, 4, 5, 3, 4, 3, 3, 4, 3, 4]
+                }
+            },
+            {
+                number: 6, name: "オフトレイル", score: 44, jockey: "菅原明良", trainer: "鹿戸雄一（美浦）",
+                blood: "父Farhh×母父不明", belonging: "美浦", firstExp: "なし",
+                badge: null, mark: "",
+                comment: "G2勝ち＋マイルCS4着の実力馬。59kgがネック",
+                details: {
+                    pros: ["スワンS（G2）勝ちの実力馬", "マイルCS 4着（0.4秒差）のG1級能力", "菅原明良騎手との好相性"],
+                    cons: ["59kgのトップハンデは大きな負担", "1400mのスワンS勝ちでマイルは微妙に長い可能性"],
+                    expect: ["G1級の能力があれば59kgでも押し切れるが、斤量の壁は大きい"],
+                    scores: [4, 5, 3, 3, 5, 3, 4, 3, 4, 3, 3, 4]
+                }
+            },
+            {
+                number: 7, name: "トロヴァトーレ", score: 45, jockey: "C.ルメール", trainer: "鹿戸雄一（美浦）",
+                blood: "父不明×母父不明", belonging: "美浦", firstExp: "なし",
+                badge: "tanana", mark: "▲",
+                comment: "ルメール騎乗で一変必至。東京マイル×ルメール好相性",
+                details: {
+                    pros: ["C.ルメール騎乗（東京マイル勝率30%超）", "芝1600m×ルメール【2-1-0-0】の好相性", "調教師「本質的には東京向き」", "京都金杯4着から上積みあり"],
+                    cons: ["前走京都金杯4着で勝ち切れなかった", "重賞勝ちの実績がまだない"],
+                    expect: ["ルメール効果で位置取り改善、直線の長い東京で末脚を活かす"],
+                    scores: [3, 3, 3, 4, 5, 3, 4, 3, 5, 4, 3, 4]
+                }
+            },
+            {
+                number: 8, name: "ヤマニンサルバム", score: 33, jockey: "小崎綾也", trainer: "中村厩舎",
+                blood: "父イスラボニータ×母父不明", belonging: "不明", firstExp: "なし",
+                badge: null, mark: "",
+                comment: "長期ブランク明けで脚慣らし程度。東京実績はあるが",
+                details: {
+                    pros: ["東京での実績あり", "イスラボニータ産駒でマイル適性"],
+                    cons: ["長期ブランク明けで調整不足", "脚慣らし程度の調教内容", "関西の若手騎手で東京は不慣れ"],
+                    expect: ["叩き台の一戦。次走以降に期待"],
+                    scores: [3, 3, 3, 4, 3, 1, 3, 3, 2, 2, 3, 3]
+                }
+            },
+            {
+                number: 9, name: "サクラトゥジュール", score: 50, jockey: "R.キング", trainer: "堀宣行（美浦）",
+                blood: "父ネオユニヴァース×母父Symbolic Kris", belonging: "美浦", firstExp: "なし",
+                badge: "ana", mark: "★",
+                comment: "2024年本レース勝ち馬。東京マイル巧者も9歳＋休み明けが不安",
+                details: {
+                    pros: ["2024年東京新聞杯の勝ち馬（同一コース重賞勝利+10pt）", "堀宣行厩舎の管理で仕上げに信頼", "9歳でも元気で馬体増は好材料"],
+                    cons: ["9歳の高齢馬", "半年以上の長期休み明け", "休み明け2戦はいずれも二桁着順の傾向"],
+                    expect: ["東京マイルの舞台巧者ぶりは証明済み。展開がハマれば"],
+                    scores: [4, 3, 3, 5, 5, 1, 3, 3, 3, 4, 3, 5]
+                }
+            },
+            {
+                number: 10, name: "エンペラーズソード", score: 40, jockey: "原優介", trainer: "高木厩舎",
+                blood: "父不明×母父不明", belonging: "不明", firstExp: "初重賞",
+                badge: null, mark: "",
+                comment: "東京マイル2勝・3勝クラス連勝中。格上挑戦",
+                details: {
+                    pros: ["東京マイルで2勝・3勝クラス連勝中", "マイペースで先行できる安定感", "休み明けも苦にしないタイプ"],
+                    cons: ["初重賞で相手強化", "原優介騎手は重賞経験少ない", "条件戦レベルから一気のG3は壁がある"],
+                    expect: ["東京マイルでの先行力は本物。相手強化に対応できるか"],
+                    scores: [3, 2, 3, 5, 5, 4, 4, 3, 2, 3, 3, 3]
+                }
+            },
+            {
+                number: 11, name: "レッドモンレーヴ", score: 38, jockey: "佐々木大輔", trainer: "蛯名正義（美浦）",
+                blood: "父ロードカナロア×母父ディープインパクト", belonging: "美浦", firstExp: "なし",
+                badge: null, mark: "",
+                comment: "血統は一級品もマイル重賞では力不足。ブリンカー装着",
+                details: {
+                    pros: ["ロードカナロア×ディープインパクトの良血", "ブリンカー装着で集中力向上の期待", "前走オーロC2着で一定の力は見せた"],
+                    cons: ["東京芝1600m重賞【0-0-0-3】で掲示板内なし", "7歳で成長余地が限定的", "佐々木大輔騎手は重賞経験少ない"],
+                    expect: ["ブリンカー効果で一変があれば面白いが、基本は軽視"],
+                    scores: [3, 3, 4, 3, 5, 3, 3, 3, 2, 3, 3, 3]
+                }
+            },
+            {
+                number: 12, name: "ウォーターリヒト", score: 55, jockey: "高杉吏麒", trainer: "石橋厩舎",
+                blood: "父不明×母父不明", belonging: "不明", firstExp: "なし",
+                badge: "taikou", mark: "○",
+                comment: "昨年の本レース勝ち馬。マイルCS3着のG1級実力",
+                details: {
+                    pros: ["昨年の東京新聞杯勝ち馬（同一コース重賞勝利+10pt）", "マイルCS 3着のG1級実力", "東京マイルでの末脚の切れ味は最上位"],
+                    cons: ["若手騎手への乗り替わりで手が合うか", "外厩利用で昨年とは調整パターンが異なる", "人気を背負う分、マークされる可能性"],
+                    expect: ["実力は断然。騎手の乗り替わりをどう考えるかが焦点"],
+                    scores: [5, 5, 4, 5, 4, 3, 4, 3, 2, 4, 3, 3]
+                }
+            },
+            {
+                number: 13, name: "メイショウチタン", score: 46, jockey: "吉田豊", trainer: "本田厩舎",
+                blood: "父不明×母父不明", belonging: "不明", firstExp: "なし",
+                badge: "ana", mark: "★",
+                comment: "2025年東京新聞杯3着のリピーター。東京マイル実績で穴狙い",
+                details: {
+                    pros: ["2025年東京新聞杯3着のリピーター実績（+7pt）", "吉田豊騎手は東京得意のベテラン", "57kgの手頃な斤量"],
+                    cons: ["集中力に課題（調教師コメント）", "重賞勝ちの実績がない", "大きく人気を落としそうで穴馬的存在"],
+                    expect: ["東京マイルの舞台適性は確か。人気薄で妙味大"],
+                    scores: [3, 3, 3, 4, 5, 3, 3, 3, 3, 3, 3, 3]
+                }
+            },
+            {
+                number: 14, name: "ミッキーゴージャス", score: 35, jockey: "横山典弘", trainer: "安田翔伍（栗東）",
+                blood: "父ミッキーロケット×母父ディープインパクト", belonging: "栗東", firstExp: "初東京",
+                badge: null, mark: "",
+                comment: "左回りで変わる可能性あるも追い切りC評価が不安",
+                details: {
+                    pros: ["芝1600m【1-0-1-0】で大崩れなし", "横山典弘の東京での騎乗技術", "55kgの軽量は有利"],
+                    cons: ["追い切りC評価（後肢の踏み込みが浅い）", "前走阪神カップ9着と大敗", "栗東→東京の長距離輸送", "初東京で未知数"],
+                    expect: ["左回りの方が走りが良いとの分析もあるが、仕上がり面で疑問"],
+                    scores: [3, 3, 4, 3, 2, 3, 3, 3, 4, 2, 3, 4]
+                }
+            },
+            {
+                number: 15, name: "ウンブライル", score: 36, jockey: "戸崎圭太", trainer: "太田厩舎",
+                blood: "父不明×母父不明", belonging: "不明", firstExp: "なし",
+                badge: null, mark: "",
+                comment: "冬競馬【0-0-0-5】の壊滅的成績。戸崎騎乗も厳しい",
+                details: {
+                    pros: ["戸崎圭太騎手は東京得意", "55kgの軽量は有利", "稽古は元気に進めている"],
+                    cons: ["冬競馬【0-0-0-5】の壊滅的な成績", "牡馬相手で力関係が厳しい", "季節的に合わないタイプ"],
+                    expect: ["冬の成績を考えると軽視が妥当"],
+                    scores: [3, 3, 3, 3, 5, 3, 3, 2, 4, 3, 3, 3]
+                }
+            },
+            {
+                number: 16, name: "ブエナオンダ", score: 37, jockey: "横山武史", trainer: "北村厩舎",
+                blood: "父不明×母父不明", belonging: "不明", firstExp: "初東京",
+                badge: "kiken", mark: "×",
+                comment: "京都金杯勝ちも大外枠＋初東京で危険な人気馬",
+                details: {
+                    pros: ["京都金杯（G3）勝ちの実績", "横山武史騎手の実力は確か", "前走好走からの勢い"],
+                    cons: ["8枠16番の大外枠は東京マイルで致命的", "東京の実績がなく初コース", "京都と東京はコース形態が別物", "プロ予想家も「押さえまで」と低評価"],
+                    expect: ["大外枠からの距離ロスは避けられず、能力があっても厳しい条件"],
+                    scores: [4, 3, 3, 2, 3, 4, 3, 2, 4, 3, 3, 3]
+                }
+            }
+        ];
+
+        const evaluationItems = ["実績", "Lv", "血統", "コース", "輸送", "休明", "展開", "枠順", "騎手", "調教", "馬体", "厩舎"];
+
+        const rankingData = horses
+            .map(h => ({ rank: 0, number: h.number, name: h.name, score: h.score, mark: h.mark, jockey: h.jockey, belonging: h.belonging, firstExp: h.firstExp, comment: h.comment }))
+            .sort((a, b) => b.score - a.score)
+            .map((h, i) => ({ ...h, rank: i + 1 }));
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initRankingChart();
+            renderRankingTable();
+            renderHorseCards();
+            initNavigation();
+        });
+
+        function initNavigation() {
+            const sections = ['header', 'trend', 'conclusion', 'ranking', 'horses', 'anauma', 'betting'];
+            const backToTop = document.getElementById('backToTop');
+            const navLinks = document.querySelectorAll('.nav-index a:not(:first-child), .mobile-nav a:not(:first-child)');
+            window.addEventListener('scroll', () => {
+                backToTop.classList.toggle('visible', window.scrollY > 300);
+                let currentSection = 'header';
+                for (const id of sections) {
+                    const el = document.getElementById(id);
+                    if (el && el.getBoundingClientRect().top <= 150) currentSection = id;
+                }
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection);
+                });
+            });
+        }
+
+        function initRankingChart() {
+            const ctx = document.getElementById('rankingChart').getContext('2d');
+            const topHorses = rankingData.slice(0, 10);
+            const colors = topHorses.map((_, i) => {
+                if (i === 0) return 'rgba(234, 179, 8, 0.85)';
+                if (i === 1) return 'rgba(99, 102, 241, 0.85)';
+                if (i === 2) return 'rgba(34, 197, 94, 0.85)';
+                if (i === 3) return 'rgba(168, 85, 247, 0.85)';
+                return 'rgba(99, 102, 241, 0.6)';
+            });
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topHorses.map(h => `${h.number}番 ${h.name}`),
+                    datasets: [{ label: '総合評価点', data: topHorses.map(h => h.score), backgroundColor: colors, borderRadius: 8 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 60 }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function renderRankingTable() {
+            const tbody = document.getElementById('rankingBody');
+            const bgMap = { 1: 'bg-yellow-50', 2: 'bg-indigo-50', 3: 'bg-green-50', 4: 'bg-purple-50' };
+            const badgeMap = { 1: 'bg-yellow-500', 2: 'bg-indigo-500', 3: 'bg-green-500', 4: 'bg-purple-500' };
+            rankingData.forEach(h => {
+                const bg = bgMap[h.rank] || '';
+                const badgeCls = badgeMap[h.rank] || '';
+                const scoreHtml = badgeCls
+                    ? `<span class="${badgeCls} text-white px-2 py-1 rounded text-xs font-bold">${h.score}</span>`
+                    : `<span class="text-gray-600 font-bold">${h.score}</span>`;
+                const markName = h.mark ? `${h.mark} ${h.name}` : h.name;
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-200 ${bg}">
+                        <td class="px-3 py-3 font-bold">${h.rank}</td>
+                        <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">${h.number}</span></td>
+                        <td class="px-3 py-3 font-bold">${markName}</td>
+                        <td class="px-3 py-3 text-center hidden md:table-cell">${h.jockey}</td>
+                        <td class="px-3 py-3 text-center">${scoreHtml}</td>
+                        <td class="px-3 py-3 text-xs text-gray-600 hidden md:table-cell">${h.comment}</td>
+                    </tr>`;
+            });
+        }
+
+        function renderHorseCards() {
+            const container = document.getElementById('horseCards');
+            container.innerHTML = '';
+            horses.sort((a, b) => b.score - a.score).forEach(horse => {
+                container.appendChild(createHorseCard(horse));
+            });
+        }
+
+        function createHorseCard(horse) {
+            const card = document.createElement('div');
+            card.className = 'horse-card glass-card p-6';
+            const badgeMap = {
+                honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+                taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+                tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+                renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+                ana: '<span class="badge-ana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-bolt"></i> 穴</span>',
+                kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-exclamation-triangle"></i> 危険</span>'
+            };
+            const prosHTML = horse.details.pros.map(p => `<li class="flex items-start"><i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i><span>${p}</span></li>`).join('');
+            const consHTML = horse.details.cons.map(c => `<li class="flex items-start"><i class="fas fa-times-circle text-red-500 mr-2 mt-1"></i><span>${c}</span></li>`).join('');
+            const expectHTML = horse.details.expect.map(e => `<li class="flex items-start"><i class="fas fa-star text-yellow-500 mr-2 mt-1"></i><span>${e}</span></li>`).join('');
+            const firstExpClass = horse.firstExp === 'なし' ? 'bg-green-100 text-green-700' : (horse.firstExp.includes('初右') ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700');
+            card.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <div class="flex items-center gap-3 mb-2 md:mb-0">
+                        <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
+                            <div class="text-sm text-gray-600">${horse.jockey} / ${horse.trainer}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${badgeMap[horse.badge] || ''}
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
+                    </div>
+                </div>
+                <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                    <div class="text-sm text-gray-700">
+                        <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>
+                        <div class="flex gap-4 flex-wrap">
+                            <div><span class="font-bold">所属：</span>${horse.belonging}</div>
+                            <div><span class="font-bold">初体験：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4" style="height: 280px; position: relative;">
+                    <div class="font-bold text-gray-700 mb-2">12項目評価</div>
+                    <canvas id="radarChart${horse.number}" style="height: 250px;"></canvas>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                    ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                    ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 期待点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+                </div>
+            `;
+            setTimeout(() => createRadarChart(horse), 100);
+            return card;
+        }
+
+        function createRadarChart(horse) {
+            const ctx = document.getElementById(`radarChart${horse.number}`);
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: evaluationItems,
+                    datasets: [{ data: horse.details.scores, backgroundColor: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(99, 102, 241, 1)' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
