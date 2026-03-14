@@ -364,145 +364,297 @@
     </div>
 
     <script>
-    const horses = [
-        { num: 2, name: "エコロデュエル", jockey: "草野太郎", age: "牡7", weight: "62kg", pop: 1, odds: 1.7, score: 47, mark: "◎",
-          scores: [5,5,3,3,4,3,5,4,5,4,3,4],
-          bestWeight: "488-496", lastWeight: 492, weightNote: "障害馬のため体重変動大きめ。前走492kgは問題なし",
-          comment: "J・G1春秋制覇の絶対王者（2025年JRA最優秀障害馬）。ただし阪神SJでは2024年5着→2025年4着と取りこぼし傾向あり。62kg最重量＋休み明け。1番人気複勝率100%の傾向が最大の味方。" },
-        { num: 10, name: "ネビーイーム", jockey: "小牧加矢太", age: "牡8", weight: "60kg", pop: 2, odds: 3.1, score: 47, mark: "○",
-          scores: [5,4,3,5,3,3,4,2,4,3,3,3],
-          bestWeight: "480-490", lastWeight: 486, weightNote: "不明。大きな増減なければ問題なし",
-          comment: "前年3着のリピーター(+5pt)。阪神JS(G3)1着（重賞初制覇）でコース適性◎。中山大障害2着の実力。8歳だが過去傾向では8歳馬の勝率が最高。ブリンカー装着。" },
-        { num: 9, name: "ディナースタ", jockey: "高田潤", age: "牡7", weight: "60kg", pop: 3, odds: 5.6, score: 43, mark: "▲",
-          scores: [4,3,4,4,4,3,3,3,3,4,3,3],
-          bestWeight: "480-490", lastWeight: 484, weightNote: "不明。平地時代からの参考",
-          comment: "障害戦で高い連対率。前走中山新春JS2着。京都JS(G3)2着。阪神障害で2着2回のコース実績。半兄ジャックドール(GI馬)。父ドゥラメンテ。" },
-        { num: 3, name: "ヘザルフェン", jockey: "森一馬", age: "牡5", weight: "60kg", pop: 4, odds: 11.8, score: 40, mark: "△",
-          scores: [3,3,3,3,3,3,3,4,4,3,4,3],
-          bestWeight: "470-480", lastWeight: 474, weightNote: "不明",
-          comment: "前走中山新春JS4着(僅差ハナ差)。5歳の若さで成長力あり。森一馬騎手は前年当レース2着騎手。伸びしろ期待。" },
-        { num: 4, name: "レッドファーロ", jockey: "西谷誠", age: "牡7", weight: "60kg", pop: 5, odds: 37.7, score: 35, mark: "△",
-          scores: [3,2,3,3,3,3,3,3,3,3,3,3],
-          bestWeight: "480-490", lastWeight: 484, weightNote: "不明",
-          comment: "父ハーツクライ。ブリンカー装着。5番人気だが評価5位タイと人気相応。" },
-        { num: 5, name: "ポリトナリティー", jockey: "五十嵐雄祐", age: "牝5", weight: "58kg", pop: 10, odds: 120.3, score: 35, mark: "",
-          scores: [2,2,3,2,3,3,2,3,4,2,3,3],
-          bestWeight: "440-450", lastWeight: 444, weightNote: "不明。牝馬で小柄",
-          comment: "10番人気だが五十嵐騎手は前年当レース優勝騎手。58kg最軽量(4kg差)。実力差は否めないが一発の可能性。大穴候補。" },
-        { num: 6, name: "メイショウアツイタ", jockey: "難波剛健", age: "牡8", weight: "60kg", pop: 7, odds: 49.3, score: 33, mark: "",
-          scores: [3,2,3,3,3,3,3,3,3,2,2,3],
-          bestWeight: "490-500", lastWeight: 496, weightNote: "不明",
-          comment: "前年当レース6着。8歳で上積みは厳しい。障害経験は豊富だが重賞レベルでは力不足。" },
-        { num: 7, name: "ゴールドブリーズ", jockey: "石神深一", age: "牡8", weight: "60kg", pop: 8, odds: 55.3, score: 32, mark: "",
-          scores: [3,2,3,2,3,3,2,3,4,2,2,3],
-          bestWeight: "480-490", lastWeight: 484, weightNote: "不明",
-          comment: "障害4勝だが重賞レベルでは力不足。石神深一騎手は障害のトップジョッキーで騎手力は評価。8歳の衰えリスク。" },
-        { num: 8, name: "マイネルメサイア", jockey: "上野翔", age: "牡7", weight: "60kg", pop: 6, odds: 45.5, score: 31, mark: "",
-          scores: [2,2,3,2,3,3,3,3,2,2,3,3],
-          bestWeight: "480-490", lastWeight: 486, weightNote: "不明",
-          comment: "父ゴールドシップ。33戦3勝と勝ちきれないタイプ。6番人気は過剰気味。評価9位と人気を下回る。" },
-        { num: 1, name: "ゲインサポート", jockey: "中村将之", age: "セン5", weight: "60kg", pop: 9, odds: 76.1, score: 30, mark: "",
-          scores: [2,2,3,2,3,3,2,3,2,2,3,3],
-          bestWeight: "470-480", lastWeight: 474, weightNote: "不明",
-          comment: "前年当レースで落馬中止。ブリンカー装着。5歳の若さはあるが障害経験が浅く、重賞は厳しい。" }
-    ];
-
-    const labels = ["実績","Lv","血統","コース","輸送","休明","展開","枠順","騎手","調教","馬体","厩舎"];
-
-    // ランキングチャート
-    const sorted = [...horses].sort((a,b) => b.score - a.score);
-    const ctx = document.getElementById('rankingChart');
-    if (ctx) {
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: sorted.map(h => h.num + ' ' + h.name),
-                datasets: [{
-                    data: sorted.map(h => h.score),
-                    backgroundColor: sorted.map((h,i) => i===0?'#eab308':i===1?'#6366f1':i===2?'#22c55e':i===3?'#a855f7':'#94a3b8'),
-                    borderRadius: 6
-                }]
+        const horses = [
+            {
+                number: 2, name: "エコロデュエル", score: 47, jockey: "草野太郎(62kg)", trainer: "栗東",
+                blood: "父キタサンブラック×母父ルーラーシップ", belonging: "栗東", firstExp: "なし",
+                badge: "honmei", mark: "◎", popularity: 1, odds: "1.7",
+                bestWeight: "488-496", lastWeight: 492, weightNote: "障害馬のため体重変動大きめ。前走492kgは問題なし",
+                details: {
+                    pros: ["J・G1春秋制覇の絶対王者（2025年JRA最優秀障害馬）", "草野太郎との鉄板コンビ（障害騎手リーディング）", "1番人気複勝率100%の傾向が最大の味方", "中山大障害1着の圧倒的実績"],
+                    cons: ["阪神SJでは2024年5着→2025年4着と取りこぼし傾向", "62kg最重量＋休み明け（3ヶ月半）", "斤量差4kg（2位と2kg、最軽量と4kg差）"],
+                    expect: ["過去傾向の1番人気鉄板データを信頼"],
+                    scores: [5, 5, 3, 3, 4, 3, 5, 4, 5, 4, 3, 4]
+                }
             },
-            options: {
-                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { beginAtZero: true, max: 60 } }
+            {
+                number: 10, name: "ネビーイーム", score: 47, jockey: "小牧加矢太(60kg)", trainer: "栗東",
+                blood: "父キズナ×母父ハーツクライ", belonging: "栗東", firstExp: "なし",
+                badge: "taikou", mark: "○", popularity: 2, odds: "3.1",
+                bestWeight: "480-490", lastWeight: 486, weightNote: "不明。大きな増減なければ問題なし",
+                details: {
+                    pros: ["前年3着のリピーター（+5pt加点）", "阪神JS(G3)1着（重賞初制覇）でコース適性◎", "中山大障害2着の実力", "8歳だが過去傾向では8歳馬の勝率が最高"],
+                    cons: ["大外10番枠", "8歳の年齢リスク", "ブリンカー装着（効果は未知数）"],
+                    expect: ["阪神障害コースでの実績＋リピーター傾向で逆転も"],
+                    scores: [5, 4, 3, 5, 3, 3, 4, 2, 4, 3, 3, 3]
+                }
+            },
+            {
+                number: 9, name: "ディナースタ", score: 43, jockey: "高田潤(60kg)", trainer: "栗東",
+                blood: "父ドゥラメンテ×母父ハービンジャー", belonging: "栗東", firstExp: "なし",
+                badge: "tanana", mark: "▲", popularity: 3, odds: "5.6",
+                bestWeight: "480-490", lastWeight: 484, weightNote: "不明。平地時代からの参考",
+                details: {
+                    pros: ["障害戦で高い連対率（7戦連続馬券内）", "前走中山新春JS2着", "阪神障害で2着2回のコース実績", "半兄ジャックドール(GI馬)。父ドゥラメンテ（スタミナ型）"],
+                    cons: ["G2レベルでの実績がまだない", "高田潤騎手は障害トップではない"],
+                    expect: ["安定感で3着以内確保を期待"],
+                    scores: [4, 3, 4, 4, 4, 3, 3, 3, 3, 4, 3, 3]
+                }
+            },
+            {
+                number: 3, name: "ヘザルフェン", score: 40, jockey: "森一馬(60kg)", trainer: "栗東",
+                blood: "父オルフェーヴル×母父キングカメハメハ", belonging: "栗東", firstExp: "なし",
+                badge: "renka", mark: "△", popularity: 4, odds: "11.8",
+                bestWeight: "470-480", lastWeight: 474, weightNote: "不明",
+                details: {
+                    pros: ["前走中山新春JS4着（僅差ハナ差）", "5歳の若さで成長力あり", "森一馬騎手は前年当レース2着騎手", "父オルフェーヴル（スタミナ血統）"],
+                    cons: ["重賞での好走実績がまだない", "阪神障害コース初挑戦"],
+                    expect: ["伸びしろのある5歳馬。成長曲線に期待"],
+                    scores: [3, 3, 3, 3, 3, 3, 3, 4, 4, 3, 4, 3]
+                }
+            },
+            {
+                number: 4, name: "レッドファーロ", score: 35, jockey: "西谷誠(60kg)", trainer: "栗東",
+                blood: "父ハーツクライ×母父メジロマックイーン", belonging: "栗東", firstExp: "なし",
+                badge: "renka", mark: "△", popularity: 5, odds: "37.7",
+                bestWeight: "480-490", lastWeight: 484, weightNote: "不明",
+                details: {
+                    pros: ["父ハーツクライ（長距離適性）", "ブリンカー装着で集中力UP"],
+                    cons: ["重賞レベルでは力不足", "5番人気だが評価5位タイと人気相応"],
+                    expect: ["ブリンカー効果での変わり身に期待"],
+                    scores: [3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                }
+            },
+            {
+                number: 5, name: "ポリトナリティー", score: 35, jockey: "五十嵐雄祐(58kg)", trainer: "栗東",
+                blood: "父エピファネイア×母父ディープインパクト", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "", popularity: 10, odds: "120.3",
+                bestWeight: "440-450", lastWeight: 444, weightNote: "不明。牝馬で小柄",
+                details: {
+                    pros: ["五十嵐雄祐騎手＝前年当レース優勝騎手", "58kg最軽量（エコロデュエルと4kg差）"],
+                    cons: ["実績不足。重賞レベルとの力差が大きい", "過去傾向は6番人気以下ほぼ馬券外", "OP成績は12着→13着→9着→12着と大敗続き"],
+                    expect: ["騎手の経験値＋軽量の恩恵で一発の可能性"],
+                    scores: [2, 2, 3, 2, 3, 3, 2, 3, 4, 2, 3, 3]
+                }
+            },
+            {
+                number: 6, name: "メイショウアツイタ", score: 33, jockey: "難波剛健(60kg)", trainer: "栗東",
+                blood: "父メイショウサムソン×母父チーフベアハート", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "", popularity: 7, odds: "49.3",
+                bestWeight: "490-500", lastWeight: 496, weightNote: "不明",
+                details: {
+                    pros: ["前年当レース6着。障害経験は豊富"],
+                    cons: ["8歳で上積みは厳しい", "重賞レベルでは力不足"],
+                    expect: ["厳しい"],
+                    scores: [3, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3]
+                }
+            },
+            {
+                number: 7, name: "ゴールドブリーズ", score: 32, jockey: "石神深一(60kg)", trainer: "栗東",
+                blood: "父ゴールドシップ×母父ディープインパクト", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "", popularity: 8, odds: "55.3",
+                bestWeight: "480-490", lastWeight: 484, weightNote: "不明",
+                details: {
+                    pros: ["石神深一騎手は障害のトップジョッキーで騎手力は評価", "障害4勝の経験値"],
+                    cons: ["重賞レベルでは力不足", "8歳の衰えリスク"],
+                    expect: ["騎手の腕頼み"],
+                    scores: [3, 2, 3, 2, 3, 3, 2, 3, 4, 2, 2, 3]
+                }
+            },
+            {
+                number: 8, name: "マイネルメサイア", score: 31, jockey: "上野翔(60kg)", trainer: "栗東",
+                blood: "父ゴールドシップ×母父マイネルラヴ", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "", popularity: 6, odds: "45.5",
+                bestWeight: "480-490", lastWeight: 486, weightNote: "不明",
+                details: {
+                    pros: ["父ゴールドシップ（長距離スタミナ血統）"],
+                    cons: ["33戦3勝と勝ちきれないタイプ", "6番人気は過剰気味。評価9位と人気を下回る"],
+                    expect: ["現状では厳しい"],
+                    scores: [2, 2, 3, 2, 3, 3, 3, 3, 2, 2, 3, 3]
+                }
+            },
+            {
+                number: 1, name: "ゲインサポート", score: 30, jockey: "中村将之(60kg)", trainer: "栗東",
+                blood: "父キタサンブラック×母父ディープインパクト", belonging: "栗東", firstExp: "なし",
+                badge: null, mark: "", popularity: 9, odds: "76.1",
+                bestWeight: "470-480", lastWeight: 474, weightNote: "不明",
+                details: {
+                    pros: ["5歳の若さ", "ブリンカー装着"],
+                    cons: ["前年当レースで落馬中止", "障害経験が浅く、重賞は厳しい"],
+                    expect: ["厳しい"],
+                    scores: [2, 2, 3, 2, 3, 3, 2, 3, 2, 2, 3, 3]
+                }
             }
+        ];
+
+        const evaluationItems = ["実績", "Lv", "血統", "コース", "輸送", "休明", "展開", "枠順", "騎手", "調教", "馬体", "厩舎"];
+
+        // ランキングデータ（同スコア同順位ルール適用）
+        const sortedHorses = [...horses].sort((a, b) => b.score - a.score);
+        const rankingData = [];
+        let currentRank = 1;
+        sortedHorses.forEach((h, i) => {
+            if (i > 0 && h.score < sortedHorses[i - 1].score) {
+                currentRank = i + 1;
+            }
+            rankingData.push({ ...h, rank: currentRank });
         });
-    }
 
-    // ランキングテーブル
-    const tbody = document.getElementById('rankingTable');
-    let rank = 0, prevScore = -1, skipCount = 0;
-    sorted.forEach((h, i) => {
-        if (h.score !== prevScore) { rank = i + 1; prevScore = h.score; }
-        const markClass = h.mark === '◎' ? 'badge-honmei' : h.mark === '○' ? 'badge-taikou' : h.mark === '▲' ? 'badge-tanana' : h.mark === '△' ? 'badge-renka' : '';
-        const markBadge = h.mark ? `<span class="${markClass} text-white px-2 py-0.5 rounded-full text-xs">${h.mark}</span>` : '';
-        const bg = rank <= 3 ? 'bg-indigo-50' : '';
-        tbody.innerHTML += `<tr class="${bg} border-b"><td class="px-3 py-3 font-bold">${rank}</td><td class="px-3 py-3">${markBadge} ${h.num}</td><td class="px-3 py-3 font-bold">${h.name}</td><td class="px-3 py-3 text-center hidden md:table-cell">${h.jockey}</td><td class="px-3 py-3 text-center hidden md:table-cell">${h.pop}番人気</td><td class="px-3 py-3 text-center font-bold text-lg">${h.score}</td><td class="px-3 py-3 text-xs hidden md:table-cell">${h.comment.substring(0,40)}...</td></tr>`;
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            initRankingChart();
+            renderRankingTable();
+            renderHorseCards();
+            initNavigation();
+        });
 
-    // 個別馬カード
-    const container = document.getElementById('horseCards');
-    sorted.forEach((h, idx) => {
-        const cardId = 'chart_' + h.num;
-        const markLabel = h.mark === '◎' ? '本命' : h.mark === '○' ? '対抗' : h.mark === '▲' ? '単穴' : h.mark === '△' ? '連下' : '';
-        const markClass = h.mark === '◎' ? 'badge-honmei' : h.mark === '○' ? 'badge-taikou' : h.mark === '▲' ? 'badge-tanana' : h.mark === '△' ? 'badge-renka' : 'bg-gray-400';
-        const badgeHtml = markLabel ? `<span class="${markClass} text-white px-3 py-1 rounded-full text-sm font-bold">${h.mark} ${markLabel}</span>` : `<span class="bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-bold">無印</span>`;
-        container.innerHTML += `
-        <div class="horse-card glass-card p-4 md:p-6">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="md:w-1/3">
-                    <div class="flex items-center gap-3 mb-3">
-                        ${badgeHtml}
-                        <span class="text-2xl font-bold text-gray-800">${h.num}番 ${h.name}</span>
-                    </div>
-                    <div class="text-sm text-gray-600 space-y-1 mb-3">
-                        <div>${h.age} / ${h.weight} / ${h.jockey} / ${h.pop}番人気${h.odds ? '('+h.odds+'倍)' : ''}</div>
-                        <div class="text-xs text-gray-500">体重: ${h.bestWeight}kg推定 / 前走${h.lastWeight}kg</div>
-                        <div class="text-xs text-gray-500">${h.weightNote}</div>
-                    </div>
-                    <div class="text-sm text-gray-700">${h.comment}</div>
-                    <div class="mt-3 flex flex-wrap gap-1">
-                        ${h.scores.map((s,i) => `<span class="text-xs px-2 py-1 rounded ${s>=4?'bg-green-100 text-green-700':s<=2?'bg-red-100 text-red-700':'bg-gray-100 text-gray-600'}">${labels[i]}:${s}</span>`).join('')}
-                    </div>
-                </div>
-                <div class="md:w-2/3 flex items-center justify-center" style="min-height:220px;">
-                    <canvas id="${cardId}" style="max-width:350px; max-height:350px;"></canvas>
-                </div>
-            </div>
-        </div>`;
-    });
+        function initNavigation() {
+            const sections = ['header', 'trend', 'conclusion', 'ranking', 'horses', 'longshot', 'betting', 'result'];
+            const backToTop = document.getElementById('backToTop');
+            const navLinks = document.querySelectorAll('.nav-index a:not(:first-child), .mobile-nav a:not(:first-child)');
+            window.addEventListener('scroll', () => {
+                backToTop.classList.toggle('visible', window.scrollY > 300);
+                let currentSection = 'header';
+                for (const id of sections) {
+                    const el = document.getElementById(id);
+                    if (el && el.getBoundingClientRect().top <= 150) currentSection = id;
+                }
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection);
+                });
+            });
+        }
 
-    // レーダーチャート描画
-    sorted.forEach(h => {
-        const c = document.getElementById('chart_' + h.num);
-        if (c) {
-            new Chart(c, {
-                type: 'radar',
+        function initRankingChart() {
+            const ctx = document.getElementById('rankingChart').getContext('2d');
+            const topHorses = rankingData.slice(0, 10);
+            const colors = topHorses.map((h) => {
+                if (h.badge === 'honmei') return 'rgba(234, 179, 8, 0.85)';
+                if (h.badge === 'taikou') return 'rgba(99, 102, 241, 0.85)';
+                if (h.badge === 'tanana') return 'rgba(34, 197, 94, 0.85)';
+                if (h.badge === 'renka') return 'rgba(168, 85, 247, 0.85)';
+                if (h.badge === 'kiken') return 'rgba(107, 114, 128, 0.6)';
+                return 'rgba(99, 102, 241, 0.4)';
+            });
+            new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        data: h.scores,
-                        backgroundColor: 'rgba(99,102,241,0.2)',
-                        borderColor: '#6366f1',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#6366f1'
-                    }]
+                    labels: topHorses.map(h => `${h.number}番 ${h.name}`),
+                    datasets: [{ label: '総合評価点', data: topHorses.map(h => h.score), backgroundColor: colors, borderRadius: 8 }]
                 },
                 options: {
-                    scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 } } },
-                    plugins: { legend: { display: false } }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 60 }, x: { grid: { display: false } } }
                 }
             });
         }
-    });
 
-    // スクロールボタン
-    window.addEventListener('scroll', () => {
-        const btn = document.getElementById('backToTop');
-        btn.classList.toggle('visible', window.scrollY > 300);
-    });
+        function renderRankingTable() {
+            const tbody = document.getElementById('rankingTable');
+            rankingData.forEach(h => {
+                let bgClass = '';
+                let badgeClass = '';
+                if (h.badge === 'honmei') { bgClass = 'bg-yellow-50'; badgeClass = 'bg-yellow-500'; }
+                else if (h.badge === 'taikou') { bgClass = 'bg-indigo-50'; badgeClass = 'bg-indigo-500'; }
+                else if (h.badge === 'tanana') { bgClass = 'bg-green-50'; badgeClass = 'bg-green-500'; }
+                else if (h.badge === 'renka') { bgClass = 'bg-purple-50'; badgeClass = 'bg-purple-500'; }
+                else if (h.badge === 'kiken') { bgClass = 'bg-gray-50'; badgeClass = 'bg-gray-500'; }
+
+                const markDisplay = h.mark || '';
+                const comment = h.details.pros[0] || '';
+                const popBadge = h.popularity <= 3 ? `<span class="text-xs bg-red-100 text-red-600 px-1 rounded">${h.popularity}人気</span>` : `<span class="text-xs text-gray-500">${h.popularity}人気</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-200 ${bgClass}">
+                        <td class="px-3 py-3 font-bold">${h.rank}</td>
+                        <td class="px-3 py-3"><span class="bg-gray-800 text-white px-2 py-1 rounded">${h.number}</span></td>
+                        <td class="px-3 py-3 font-bold">${markDisplay} ${h.name}</td>
+                        <td class="px-3 py-3 text-center hidden md:table-cell">${h.jockey}</td>
+                        <td class="px-3 py-3 text-center hidden md:table-cell">${popBadge}</td>
+                        <td class="px-3 py-3 text-center">${badgeClass ? `<span class="${badgeClass} text-white px-2 py-1 rounded text-xs font-bold">${h.score}</span>` : `<span class="text-gray-600">${h.score}</span>`}</td>
+                        <td class="px-3 py-3 text-xs text-gray-600 hidden md:table-cell">${comment}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderHorseCards() {
+            const container = document.getElementById('horseCards');
+            container.innerHTML = '';
+            sortedHorses.forEach(horse => {
+                container.appendChild(createHorseCard(horse));
+            });
+        }
+
+        function createHorseCard(horse) {
+            const card = document.createElement('div');
+            card.className = 'horse-card glass-card p-6';
+            const badgeMap = {
+                honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+                taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+                tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+                renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+                kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-exclamation-triangle"></i> 危険</span>'
+            };
+            const prosHTML = horse.details.pros.map(p => `<li class="flex items-start"><i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i><span>${p}</span></li>`).join('');
+            const consHTML = horse.details.cons.map(c => `<li class="flex items-start"><i class="fas fa-times-circle text-red-500 mr-2 mt-1"></i><span>${c}</span></li>`).join('');
+            const expectHTML = horse.details.expect.map(e => `<li class="flex items-start"><i class="fas fa-star text-yellow-500 mr-2 mt-1"></i><span>${e}</span></li>`).join('');
+            const firstExpClass = horse.firstExp === 'なし' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+
+            card.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <div class="flex items-center gap-3 mb-2 md:mb-0">
+                        <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
+                            <div class="text-sm text-gray-600">${horse.jockey} / ${horse.trainer}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${badgeMap[horse.badge] || ''}
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.popularity}人気 ${horse.odds}倍</span>
+                    </div>
+                </div>
+                <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                    <div class="text-sm text-gray-700">
+                        <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>
+                        <div class="flex gap-4 flex-wrap">
+                            <div><span class="font-bold">所属：</span>${horse.belonging}</div>
+                            <div><span class="font-bold">初体験：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4" style="height: 280px; position: relative;">
+                    <div class="font-bold text-gray-700 mb-2">12項目評価</div>
+                    <canvas id="radarChart${horse.number}" style="height: 250px;"></canvas>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                    ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                    ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 期待点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+                </div>
+            `;
+            setTimeout(() => createRadarChart(horse), 100);
+            return card;
+        }
+
+        function createRadarChart(horse) {
+            const ctx = document.getElementById(`radarChart${horse.number}`);
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: evaluationItems,
+                    datasets: [{ data: horse.details.scores, backgroundColor: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(99, 102, 241, 1)' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
     </script>
 </body>
 </html>
