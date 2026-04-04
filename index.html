@@ -1,0 +1,2819 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI競馬予想アーカイブ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+        }
+        
+        /* ヘッダー */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+        
+        .header h1 i {
+            color: #6366f1;
+            margin-right: 8px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        /* コンテナ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        /* 年セクション */
+        .year-section {
+            margin-bottom: 48px;
+        }
+        
+        .year-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .year-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .year-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212529;
+        }
+        
+        .year-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #6366f1;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .year-badge.archive {
+            background: #94a3b8;
+        }
+        
+        .toggle-year {
+            font-size: 24px;
+            color: #6c757d;
+            transition: transform 0.3s ease;
+        }
+        
+        .year-header.collapsed .toggle-year {
+            transform: rotate(-90deg);
+        }
+        
+        .year-content {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+        
+        .year-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+        
+        /* 月タブ - 2段表示 */
+        .month-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .month-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        
+        .month-tab {
+            padding: 12px 16px;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .month-tab:hover {
+            background: #f8f9fa;
+            border-color: #cbd5e1;
+        }
+        
+        .month-tab.active {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+        }
+        
+        .month-tab .month-name {
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .month-tab .count {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .month-tab.active .count {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* レースコンテンツ */
+        .month-content {
+            display: none;
+        }
+        
+        .month-content.active {
+            display: block;
+        }
+        
+        .race-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .date-header {
+            grid-column: 1 / -1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 8px 0;
+            margin-top: 8px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-header:first-child {
+            margin-top: 0;
+        }
+
+        .date-header i {
+            color: #6366f1;
+        }
+        
+        /* レースカード */
+        .race-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .race-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+        
+        .race-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .race-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* カード上部：競馬場情報 */
+        .race-venue {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+        }
+        
+        .race-venue.local {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .venue-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .venue-type {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+        
+        .venue-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .venue-icon {
+            font-size: 18px;
+        }
+        
+        .race-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .race-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-g1 { background: #dc2626; color: #fff; }
+        .badge-g2 { background: #ea580c; color: #fff; }
+        .badge-g3 { background: #16a34a; color: #fff; }
+        .badge-si { background: #f97316; color: #fff; }
+        .badge-draft { background: #fbbf24; color: #78350f; }
+        
+        .race-date {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .race-date i {
+            margin-right: 4px;
+        }
+        
+        .race-card-body {
+            padding: 16px;
+        }
+        
+        .race-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .race-info {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 16px;
+        }
+        
+        .race-info i {
+            margin-right: 6px;
+            color: #94a3b8;
+        }
+        
+        .predictions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .prediction-item {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prediction-mark {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .mark-honmei { color: #eab308; }
+        .mark-taikou { color: #3b82f6; }
+        
+        .horse-name {
+            font-weight: 500;
+        }
+        
+        .unavailable {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .no-races {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        
+        .no-races i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .no-races p {
+            font-size: 14px;
+        }
+        
+        /* フッター */
+        .footer {
+            background: #fff;
+            border-top: 1px solid #e9ecef;
+            padding: 32px 0;
+            margin-top: 64px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .footer p {
+            margin: 8px 0;
+        }
+        
+        .footer i {
+            margin-right: 4px;
+        }
+        
+        /* 結果バッジ */
+        .race-card.result-hit { border-left: 4px solid #16a34a; }
+        .race-card.result-partial { border-left: 4px solid #eab308; }
+        .race-card.result-miss { border-left: 4px solid #ef4444; }
+
+        .race-card.result-hit::after,
+        .race-card.result-partial::after,
+        .race-card.result-miss::after {
+            display: block;
+            padding: 6px 16px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .race-card.result-hit::after {
+            content: '\2713  的中';
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .race-card.result-hit[data-roi]::after {
+            content: '\2713  的中｜ROI ' attr(data-roi);
+        }
+
+        .race-card.result-partial::after {
+            content: '\25B3  一部的中';
+            background: #fef9c3;
+            color: #ca8a04;
+        }
+        .race-card.result-partial[data-roi]::after {
+            content: '\25B3  一部的中｜ROI ' attr(data-roi);
+        }
+
+        .race-card.result-miss::after {
+            content: '\2717  不的中';
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .race-card.result-miss[data-roi]::after {
+            content: '\2717  不的中｜ROI ' attr(data-roi);
+        }
+
+        /* 信頼度ティアバッジ */
+        .race-card.tier-1::before,
+        .race-card.tier-2::before,
+        .race-card.tier-3::before {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+            letter-spacing: 0.3px;
+        }
+        .race-card.tier-1::before { content: '高信頼'; background: #dcfce7; color: #16a34a; }
+        .race-card.tier-2::before { content: '中信頼'; background: #e0e7ff; color: #6366f1; }
+        .race-card.tier-3::before { content: '低信頼'; background: #f3f4f6; color: #9ca3af; }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .header .subtitle {
+                font-size: 13px;
+            }
+            
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .year-title h2 {
+                font-size: 24px;
+            }
+            
+            .month-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .month-tab {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+            
+            .race-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .venue-name {
+                font-size: 14px;
+            }
+            
+            .venue-type {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-horse-head"></i>AI競馬予想アーカイブ</h1>
+            <p class="subtitle">過去のレース分析を閲覧できます</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 2026年 -->
+        <div class="year-section">
+            <div class="year-header" onclick="toggleYear(this)">
+                <div class="year-title">
+                    <h2>2026年</h2>
+                    <span class="year-badge">最新</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-year"></i>
+            </div>
+            
+            <div class="year-content">
+                <div class="month-tabs">
+                    <div class="month-row">
+                        <div class="month-tab active" onclick="switchMonth(this, '2026', 'jan')">
+                            <span class="month-name">1月</span>
+                            <span class="count">15</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'feb')">
+                            <span class="month-name">2月</span>
+                            <span class="count">18</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'mar')">
+                            <span class="month-name">3月</span>
+                            <span class="count">17</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'apr')">
+                            <span class="month-name">4月</span>
+                            <span class="count">2</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'may')">
+                            <span class="month-name">5月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'jun')">
+                            <span class="month-name">6月</span>
+                            <span class="count">0</span>
+                        </div>
+                    </div>
+                    <div class="month-row">
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'jul')">
+                            <span class="month-name">7月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'aug')">
+                            <span class="month-name">8月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'sep')">
+                            <span class="month-name">9月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'oct')">
+                            <span class="month-name">10月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'nov')">
+                            <span class="month-name">11月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2026', 'dec')">
+                            <span class="month-name">12月</span>
+                            <span class="count">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1月 -->
+                <div class="month-content active" data-year="2026" data-month="jan">
+                    <div class="race-grid">
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月4日（日）</div>
+                        <a href="output/20260104-nakayama-kinpai.html" class="race-card result-partial tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月4日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">中山金杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">グランディア</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マイネルモーント</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260104-kyoto-kinpai.html" class="race-card result-partial tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月4日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">京都金杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m(外) / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ランスオブカオス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">キープカルム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月5日（月）</div>
+                        <a href="output/20260105-nakayama-sunrise-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">3勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月5日（月）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">サンライズステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">マックアルイーン</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">スコーピオン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260105-kyoto-manyo-stakes.html" class="race-card result-miss tier-1">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">3勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月5日（月）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">万葉ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝3000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">メイショウブレゲ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アクアヴァーナル</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月11日（土）</div>
+                        <a href="output/20260111-nakayama-fairy-stakes.html" class="race-card result-miss tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月11日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">フェアリーステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ギリーズボール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">サンアントワーヌ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月12日（月）</div>
+                        <a href="output/20260112-kyoto-shinzan-kinen.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月12日（月）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">日刊スポーツ賞シンザン記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">アルトラムス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">モノポリオ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月18日（土）</div>
+                        <a href="output/20260118-kyoto-nikkei-sho.html" class="race-card result-miss tier-1">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月18日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">日経新春杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2400m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ゲルチュタール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ライラック</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260118-nakayama-keisei-hai.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月18日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">京成杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ソラネルマン</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アッカン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月24日（土）</div>
+                        <a href="output/20260124-kokura-4yoover-1class.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">1勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月24日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">サラ系4歳以上1勝クラス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">スズカミエール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ポテチ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月25日（日）</div>
+                        <a href="output/20260124-kokura-himba-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月25日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">小倉牝馬ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ココナッツブラウン</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">クリスマスパレード</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260125-kyoto-procyon-stakes.html" class="race-card result-hit tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月25日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">プロキオンステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1800m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ブライアンセンス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ロードクロンヌ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260125-nakayama-ajcc.html" class="race-card result-partial tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月25日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">アメリカジョッキーC</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">マイネルエンペラー</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ドゥラドーレス</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>1月31日（土）</div>
+                        <a href="output/20260131-kokura-ganryujima-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">3勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月31日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">巌流島ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ロードトレイル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">スコーピオン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260131-tokyo-shirafuji-stakes.html" class="race-card result-hit tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">L</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年1月31日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">白富士ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ダノンシーマ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">キングズパレス</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2月 -->
+                <div class="month-content" data-year="2026" data-month="feb">
+                    <div class="race-grid">
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>2月1日（日）</div>
+                        <a href="output/20260201-kyoto-silkroad-stakes.html" class="race-card result-partial tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月1日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">シルクロードステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">エーティーマクフィ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ヤマニンアルリフラ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260201-tokyo-negishi-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月1日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">根岸ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1400m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">インユアパレス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">エンペラーワケア</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>2月8日（日）</div>
+                        <a href="output/20260208-tokyo-tokyo-shimbun-hai.html" class="race-card result-partial tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">東京新聞杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ウォーターリヒト</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">シャンパンカラー</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260208-tokyo-hatsune-stakes.html" class="race-card result-partial tier-1">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">3勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">初音ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ルージュソリテール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">リンクスティップ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260208-kokura-nikkei-sho.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">OP</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">小倉日経賞</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">シルトホルン</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">キングノジョー</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260208-kyoto-kisaragi-sho.html" class="race-card result-partial tier-1">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">きさらぎ賞</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m（外）/ 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">エムズビギン</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ゾロアストロ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260208-kyoto-yamato-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">OP</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">大和ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">マニバドラ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ナムラフランク</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>2月15日（日）</div>
+                        <a href="output/20260215-tokyo-valentine-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">OP</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">バレンタインステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1400m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ノーブルロジャー</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アンシール</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260215-kyoto-kyoto-kinen.html" class="race-card result-partial tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">京都記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">エリキング</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ヨーホーレイク</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260215-tokyo-kyodo-tsushin-hai.html" class="race-card result-partial tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">共同通信杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">リアライズシリウス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ラヴェニュー</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260215-kyoto-kitayama-stakes.html" class="race-card result-partial tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">京都競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">3勝クラス</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">北山ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1800m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">グランドプラージュ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ペンナヴェローチェ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260215-kokura-kitakyushu-tankyori-stakes.html" class="race-card result-partial tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-draft">OP</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">北九州短距離ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">カルロヴェローチェ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マイネルレノン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260215-win5.html" class="race-card">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">WIN5</span>
+                                </div>
+                                <i class="fas fa-trophy venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">WIN5</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">WIN5 買い目提案</div>
+                                <div class="race-info">
+                                    <i class="fas fa-flag-checkered"></i>京都・東京・小倉 5レース
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">5レース本命まとめ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="date-header"><i class="far fa-calendar-alt"></i>2月21日（土）</div>
+
+                    <div class="race-cards">
+                        <a href="output/20260221-hanshin-hankyu-hai.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月21日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">阪急杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1400m（内）/ 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ディアナザール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ソンシ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">マイネルチケット</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260221-tokyo-diamond-stakes.html" class="race-card result-partial tier-2">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月21日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">ダイヤモンドS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝3400m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">スティンガーグラス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ファウストラーゼン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>2月22日（日）</div>
+                        <a href="output/20260222-tokyo-february-stakes.html" data-roi="134%" class="race-card tier-1 result-hit">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">東京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月22日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">フェブラリーS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダ1600m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">コスタノヴァ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ダブルハートボンド</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">ウィルソンテソーロ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260222-kokura-kokura-daishoten.html" class="race-card tier-3 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">小倉競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月22日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">小倉大賞典</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">センツブラッド</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ショウナンアデイブ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">タガノデュード</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>2月28日（土）</div>
+                        <a href="output/20260228-nakayama-ocean-stakes.html" class="race-card tier-2 result-miss">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年2月28日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">オーシャンステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ルガル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ママコチャ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">ファンダム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3月〜12月（空の月） -->
+
+                <div class="month-content" data-year="2026" data-month="mar">
+                    <div class="race-grid">
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月1日（日）</div>
+                        <a href="output/20260301-nakayama-nakayama-kinen.html" data-roi="133%" class="race-card tier-1 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月1日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">中山記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">エコロヴァルツ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マテンロウスカイ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260301-hanshin-tulip-sho.html" data-roi="175%" class="race-card tier-3 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月1日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">チューリップ賞</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">タイセイボーグ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ブラウンラチェット</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月7日（土）</div>
+                        <a href="output/20260307-nakayama-nakayama-himba-stakes.html" data-roi="13%" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月7日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">中山牝馬ステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">レーゼドラマ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アンゴラブラック</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260307-hanshin-fillies-revue.html" data-roi="0%" class="race-card tier-3 result-miss">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月7日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">フィリーズレビュー</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1400m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">テイエムスティール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">デアヴェローチェ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月8日（日）</div>
+                        <a href="output/20260308-nakayama-yayoi-sho.html" data-roi="9%" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">報知杯弥生賞ディープインパクト記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ライヒスアドラー</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ステラスペース</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20260308-hanshin-12r.html" data-roi="145%" class="race-card tier-3 result-hit">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-listed">2勝C</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月8日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">阪神12R 4歳上2勝クラス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1400m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ニューオーリンズ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">チュウワチーフ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月14日（土）</div>
+                        <a href="output/20260314-hanshin-spring-jump.html" data-roi="104%" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">J・G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月14日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">阪神スプリングジャンプ</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>障害 芝3900m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">エコロデュエル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ネビーイーム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月15日（日）</div>
+                        <a href="output/20260315-chukyo-kinko-sho.html" data-roi="224%" class="race-card tier-1 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">東海テレビ杯金鯱賞</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">クイーンズウォーク</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">シェイクユアハート</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260315-nakayama-spring-stakes.html" data-roi="60%" class="race-card tier-1 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g2">G2</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月15日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">フジTVスプリングS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">アスクエジンバラ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">テルヒコウ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月21日（土）</div>
+                        <a href="output/20260321-chukyo-falcon-s.html" class="race-card tier-2 result-partial" data-roi="25%">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月21日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">中スポ賞ファルコンS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1400m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ダイヤモンドノット</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">フクチャンショウ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260321-nakayama-flower-cup.html" class="race-card tier-2 result-miss" data-roi="0%">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g3">G3</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月21日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">フラワーカップ</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">アメティスタ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ゴディアーモ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月22日（日）</div>
+                        <a href="output/20260322-chukyo-aichi-hai.html" class="race-card tier-2 result-miss">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g3">GIII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月22日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">愛知杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1400m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ウイントワイライト</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ワイドラトゥール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">ドロップオブライト</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260322-hanshin-hanshin-daishoten.html" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g2">GII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月22日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">阪神大賞典</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝3000m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">アクアヴァーナル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マイネルエンペラー</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">レッドバンデ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>3月28日（土）</div>
+                        <a href="output/20260328-hanshin-mainichi-hai.html" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g3">GIII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月28日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">毎日杯</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1800m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">カフジエメンタール</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アルトラムス</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">ローベルクランツ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260328-nakayama-nikkei-sho.html" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g2">GII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月28日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">日経賞</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2500m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">コスモキュランダ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">マイユニバース</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">アスクナイスショー</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="date-header"><i class="far fa-calendar-alt"></i>3月29日（日）</div>
+                    <div class="race-grid">
+                        <a href="output/20260329-nakayama-march-stakes.html" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g3">GIII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月29日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">マーチステークス</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1800m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ブレイクフォース</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ヴァルツァーシャル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">アクションプラン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260329-chukyo-takamatsunomiya-kinen.html" class="race-card tier-2 result-miss">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中京競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g1">GI</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年3月29日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">高松宮記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1200m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ナムラクレア</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">サトノレーヴ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">ママコチャ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="apr">
+                    <div class="race-grid">
+                        <a href="output/20260404-hanshin-churchill-downs-cup.html" class="race-card tier-2 result-miss">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">阪神競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g3">GIII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年4月4日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">チャーチルダウンズC</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">アンドゥーリル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">サンダーストラック</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">バルセシート</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="output/20260404-nakayama-derby-kyo-ct.html" class="race-card tier-2 result-partial">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <span class="grade grade-g3">GIII</span>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2026年4月4日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">ダービー卿チャレンジトロフィー</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝1600m
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">イミグラントソング</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ファーヴェント</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-tanana">▲</span>
+                                        <span class="horse-name">サイルーン</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="may">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="jun">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="jul">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="aug">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="sep">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="oct">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="nov">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2026" data-month="dec">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2025年 -->
+        <div class="year-section">
+            <div class="year-header" onclick="toggleYear(this)">
+                <div class="year-title">
+                    <h2>2025年</h2>
+                    <span class="year-badge archive">アーカイブ</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-year"></i>
+            </div>
+            
+            <div class="year-content">
+                <div class="month-tabs">
+                    <div class="month-row">
+                        <div class="month-tab active" onclick="switchMonth(this, '2025', 'jan')">
+                            <span class="month-name">1月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'feb')">
+                            <span class="month-name">2月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'mar')">
+                            <span class="month-name">3月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'apr')">
+                            <span class="month-name">4月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'may')">
+                            <span class="month-name">5月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'jun')">
+                            <span class="month-name">6月</span>
+                            <span class="count">0</span>
+                        </div>
+                    </div>
+                    <div class="month-row">
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'jul')">
+                            <span class="month-name">7月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'aug')">
+                            <span class="month-name">8月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'sep')">
+                            <span class="month-name">9月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'oct')">
+                            <span class="month-name">10月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'nov')">
+                            <span class="month-name">11月</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="month-tab" onclick="switchMonth(this, '2025', 'dec')">
+                            <span class="month-name">12月</span>
+                            <span class="count">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1月〜11月（空の月） -->
+                <div class="month-content active" data-year="2025" data-month="jan">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="feb">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="mar">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="apr">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="may">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="jun">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="jul">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="aug">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="sep">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="oct">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <div class="month-content" data-year="2025" data-month="nov">
+                    <div class="no-races">
+                        <i class="fas fa-inbox"></i>
+                        <p>レースデータがまだありません</p>
+                    </div>
+                </div>
+
+                <!-- 12月 -->
+                <div class="month-content" data-year="2025" data-month="dec">
+                    <div class="race-grid">
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>12月27日（土）- 28日（日）</div>
+                        <a href="output/20251228-arima-kinen.html" class="race-card result-partial tier-1">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月28日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">有馬記念</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2500m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ドウデュース</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">ジャスティンパレス</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251227-hopeful-stakes.html" class="race-card result-miss tier-3">
+                            <div class="race-venue">
+                                <div class="venue-info">
+                                    <span class="venue-type">中央競馬</span>
+                                    <span class="venue-name">中山競馬場</span>
+                                </div>
+                                <i class="fas fa-horse venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月27日（土）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">ホープフルS</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>芝2000m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ジャスティンビスタ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">バドリナート</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="date-header"><i class="far fa-calendar-alt"></i>12月29日（月）- 31日（水）</div>
+                        <a href="output/20251229-tokyo-daishoten.html" class="race-card result-hit tier-1">
+                            <div class="race-venue local">
+                                <div class="venue-info">
+                                    <span class="venue-type">地方競馬</span>
+                                    <span class="venue-name">大井競馬場</span>
+                                </div>
+                                <i class="fas fa-flag venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-g1">G1</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月29日（日）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">東京大賞典</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート2000m / 左回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">サンライズホープ</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">オメガパフューム</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251230-tokyo-cinderella-mile.html" class="race-card result-miss tier-1">
+                            <div class="race-venue local">
+                                <div class="venue-info">
+                                    <span class="venue-type">地方競馬</span>
+                                    <span class="venue-name">大井競馬場</span>
+                                </div>
+                                <i class="fas fa-flag venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-si">SI</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月30日（火）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">東京シンデレラマイル</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">スピーディキック</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">グレイトミッション</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="output/20251231-tokyo-2sai-yushun-hinba.html" class="race-card result-hit tier-1">
+                            <div class="race-venue local">
+                                <div class="venue-info">
+                                    <span class="venue-type">地方競馬</span>
+                                    <span class="venue-name">大井競馬場</span>
+                                </div>
+                                <i class="fas fa-flag venue-icon"></i>
+                            </div>
+                            <div class="race-card-header">
+                                <div class="race-badges">
+                                    <span class="badge badge-si">SI</span>
+                                </div>
+                                <div class="race-date">
+                                    <i class="far fa-calendar"></i>2025年12月31日（水）
+                                </div>
+                            </div>
+                            <div class="race-card-body">
+                                <div class="race-name">第49回 東京2歳優駿牝馬</div>
+                                <div class="race-info">
+                                    <i class="fas fa-road"></i>ダート1600m / 右回り
+                                </div>
+                                <div class="predictions">
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-honmei">◎</span>
+                                        <span class="horse-name">ナーサリーテイル</span>
+                                    </div>
+                                    <div class="prediction-item">
+                                        <span class="prediction-mark mark-taikou">○</span>
+                                        <span class="horse-name">アンジュルナ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p><i class="fas fa-exclamation-triangle"></i>予想は参考情報です。馬券購入は自己責任でお願いします。</p>
+        <p>© 2026 AI競馬予想アーカイブ</p>
+    </footer>
+
+    <script>
+        function toggleYear(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        function switchMonth(tab, year, month) {
+            // 同じ年内のタブを切り替え
+            const yearSection = tab.closest('.year-section');
+            const tabs = yearSection.querySelectorAll('.month-tab');
+            const contents = yearSection.querySelectorAll('.month-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            contents.forEach(c => {
+                if (c.dataset.year === year && c.dataset.month === month) {
+                    c.classList.add('active');
+                } else {
+                    c.classList.remove('active');
+                }
+            });
+        }
+        // Auto-select current month on page load
+        (function() {
+            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            const now = new Date();
+            const year = now.getFullYear().toString();
+            const month = months[now.getMonth()];
+            document.querySelectorAll('.year-section').forEach(function(section) {
+                const content = section.querySelector('.month-content[data-year="' + year + '"][data-month="' + month + '"]');
+                if (content) {
+                    section.querySelectorAll('.month-tab').forEach(function(t) { t.classList.remove('active'); });
+                    section.querySelectorAll('.month-content').forEach(function(c) { c.classList.remove('active'); });
+                    content.classList.add('active');
+                    section.querySelectorAll('.month-tab').forEach(function(tab) {
+                        if (tab.getAttribute('onclick') && tab.getAttribute('onclick').indexOf("'" + year + "', '" + month + "'") !== -1) {
+                            tab.classList.add('active');
+                        }
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
