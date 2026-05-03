@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>府中Ｓ / 東京9R | 個別馬評価</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;
+  --bg:#fafafa;
+  --line:#e5e5e5;
+  --line-mid:#d4d4d4;
+  --line-strong:#a3a3a3;
+  --ink-1:#0a0a0a;
+  --ink-2:#262626;
+  --ink-3:#525252;
+  --ink-4:#737373;
+  --ink-5:#a3a3a3;
+  --ink-6:#d4d4d4;
+  --tint:#f5f5f5;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-weight:400;}
+html,body{font-family:'Inter','Hiragino Sans','Yu Gothic UI',Meiryo,system-ui,sans-serif;background:var(--bg);color:var(--ink-1);font-feature-settings:"palt" 1, "tnum" 1;-webkit-font-smoothing:antialiased;font-size:13px;line-height:1.5;}
+strong{font-weight:inherit;color:inherit;}
+.app{max-width:1920px;margin:0 auto;padding:14px 20px 18px;}
+.topbar{display:grid;grid-template-columns:auto 1fr auto auto;gap:18px;align-items:center;padding:10px 14px;background:var(--white);border:1px solid var(--line);margin-bottom:10px;}
+.race-id{display:flex;align-items:center;gap:10px;}
+.race-id .grade{background:var(--ink-1);color:var(--white);font-size:11px;padding:3px 8px;letter-spacing:.08em;}
+.race-id h1{font-size:20px;line-height:1;letter-spacing:.01em;}
+.race-id .sub{color:var(--ink-4);font-size:11px;margin-top:3px;letter-spacing:.04em;}
+.race-meta{display:flex;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.race-meta .item{padding:0 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.race-meta .item:last-child{border-right:none;}
+.race-meta .label{color:var(--ink-5);font-size:9px;letter-spacing:.12em;text-transform:uppercase;}
+.race-meta .value{color:var(--ink-1);font-size:12px;}
+.tier-pill{display:flex;align-items:center;gap:8px;padding:5px 10px;background:var(--tint);border:1px solid var(--line);}
+.tier-pill .dot{width:6px;height:6px;background:var(--ink-1);border-radius:50%;}
+.tier-pill .label{font-size:11px;letter-spacing:.06em;color:var(--ink-1);}
+.tier-pill .meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-4);}
+.back-btn{text-decoration:none;background:var(--ink-1);color:var(--white);font-size:11px;padding:6px 12px;letter-spacing:.05em;}
+.back-btn:hover{background:var(--ink-3);}
+.hero{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px;}
+.pick{background:var(--white);border:1px solid var(--line);padding:8px 10px 9px;position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.pick.honmei{border:1.5px solid var(--ink-1);background:var(--tint);}
+.pick .role-mark{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:32px;}
+.pick .role-mark .mk{font-size:24px;line-height:1;color:var(--ink-1);}
+.pick .role-mark .role{font-size:8.5px;color:var(--ink-4);letter-spacing:.18em;}
+.pick .body{flex:1;min-width:0;}
+.pick .name{font-size:14px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pick .meta{display:flex;gap:6px;align-items:baseline;margin-top:3px;font-size:10.5px;color:var(--ink-4);}
+.pick .meta .no{font-family:'JetBrains Mono',monospace;background:var(--ink-1);color:var(--white);padding:1px 5px;font-size:10px;}
+.pick .index{text-align:right;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1;color:var(--ink-1);}
+.pick .index .sub{display:block;font-size:8.5px;color:var(--ink-5);letter-spacing:.16em;margin-top:3px;font-family:'Inter',sans-serif;}
+.umabashira{background:var(--white);border:1px solid var(--line);margin-bottom:10px;}
+.uma-head{display:grid;grid-template-columns:28px 36px 36px 220px 88px 64px 1fr;background:var(--ink-1);color:var(--white);font-size:10px;letter-spacing:.14em;}
+.uma-head > div{padding:8px;border-right:1px solid var(--ink-3);display:flex;align-items:center;}
+.uma-head > div:last-child{border-right:none;padding:0;}
+.uma-head .c-center{justify-content:center;}
+.uma-head .eval-head{display:grid;grid-template-columns:repeat(3,1fr);width:100%;}
+.uma-head .eval-head > span{padding:8px 10px;border-right:1px solid var(--ink-3);display:flex;align-items:center;}
+.uma-head .eval-head > span:last-child{border-right:none;}
+.uma-row{display:grid;grid-template-columns:28px 36px 36px 220px 88px 64px 1fr;border-top:1px solid var(--line);min-height:62px;align-items:stretch;transition:background .12s;}
+.uma-row:hover{background:var(--bg);}
+.uma-row.honmei{background:var(--tint);}
+.uma-row.honmei:hover{background:#eeeeee;}
+.waku{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;background:var(--ink-1);color:var(--white);}
+.umaban{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink-1);border-right:1px solid var(--line);}
+.mark-cell{display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;border-right:1px solid var(--line);color:var(--ink-1);}
+.mark-none{color:var(--ink-5);font-size:14px;}
+.id-cell{padding:7px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;}
+.id-cell .name{font-size:14.5px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-1);}
+.id-cell .meta{display:flex;align-items:baseline;gap:6px;font-size:10.5px;color:var(--ink-3);}
+.id-cell .jockey{color:var(--ink-2);}
+.id-cell .kg{font-family:'JetBrains Mono',monospace;color:var(--ink-4);}
+.id-cell .pedigree{font-size:9.5px;color:var(--ink-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
+.index-cell{display:grid;grid-template-columns:1fr;align-items:center;border-right:1px solid var(--line);padding:4px 8px;background:var(--bg);}
+.index-cell .num{font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1;text-align:center;letter-spacing:-.02em;color:var(--ink-1);}
+.index-cell .bar{height:3px;background:var(--line);margin-top:4px;overflow:hidden;}
+.index-cell .bar > i{display:block;height:100%;background:var(--ink-1);}
+.idx-tier-1 .num{color:var(--ink-1);}
+.idx-tier-2 .num{color:var(--ink-2);}
+.idx-tier-2 .bar > i{background:var(--ink-2);}
+.idx-tier-3 .num{color:var(--ink-3);}
+.idx-tier-3 .bar > i{background:var(--ink-3);}
+.idx-tier-4 .num{color:var(--ink-4);}
+.idx-tier-4 .bar > i{background:var(--ink-4);}
+.idx-tier-5 .num{color:var(--ink-5);}
+.idx-tier-5 .bar > i{background:var(--ink-5);}
+.pop-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:1px solid var(--line);padding:4px;}
+.pop-cell .pop-num{font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1;color:var(--ink-1);}
+.pop-cell .odds{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--ink-4);}
+.eval-cell{display:grid;grid-template-columns:repeat(3,1fr);}
+.eval-block{padding:8px 12px;border-right:1px solid var(--line);font-size:11.5px;line-height:1.55;color:var(--ink-2);display:flex;align-items:center;}
+.eval-block:last-child{border-right:none;}
+.ana-strip{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:stretch;background:var(--white);border:1px solid var(--line);padding:8px 12px;margin-bottom:10px;}
+.ana-strip .ana-label{display:flex;align-items:center;font-size:11px;letter-spacing:.16em;color:var(--ink-1);border-right:1px solid var(--ink-1);padding-right:12px;text-transform:uppercase;}
+.ana-card-mini{display:flex;align-items:center;gap:8px;padding:5px 10px;border:1px dashed var(--line-strong);}
+.ana-card-mini .stars{color:var(--ink-1);font-size:11px;letter-spacing:.05em;}
+.ana-card-mini .stars .empty{color:var(--ink-6);}
+.ana-card-mini .name{font-size:12px;color:var(--ink-1);}
+.ana-card-mini .pop-line{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);}
+.bottom-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.panel{background:var(--white);border:1px solid var(--line);padding:10px 12px;}
+.panel-head{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--ink-1);}
+.panel-head .ttl{font-size:12px;letter-spacing:.08em;}
+.panel-head .sub{font-size:9.5px;color:var(--ink-5);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-left:auto;}
+.bets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.bet-block h5{display:flex;align-items:baseline;gap:6px;font-size:11px;letter-spacing:.06em;color:var(--ink-2);border-bottom:1px solid var(--line);padding-bottom:3px;margin-bottom:4px;}
+.bet-block h5 .pts{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-5);}
+.bet-list{list-style:none;display:flex;flex-direction:column;gap:1px;}
+.bet-list li{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 4px;display:flex;align-items:center;gap:5px;color:var(--ink-2);}
+.bet-list li.honsen{border-left:2px solid var(--ink-1);padding-left:6px;color:var(--ink-1);}
+.bet-list li .tag{font-family:'Inter',sans-serif;font-size:8.5px;background:var(--ink-5);color:var(--white);padding:1px 4px;letter-spacing:.04em;}
+.bet-list li.honsen .tag{background:var(--ink-1);}
+.context{display:grid;grid-template-columns:1fr;gap:8px;}
+.context-row{font-size:11px;line-height:1.5;}
+.context-row .label{font-size:9.5px;color:var(--ink-1);letter-spacing:.16em;margin-bottom:2px;text-transform:uppercase;border-bottom:1px solid var(--line);padding-bottom:2px;}
+.context-row p{color:var(--ink-2);}
+.notes{display:flex;flex-direction:column;gap:6px;}
+.notes .note-row{font-size:11px;line-height:1.55;color:var(--ink-2);padding:4px 0;border-bottom:1px dashed var(--line);}
+.notes .note-row:last-child{border-bottom:none;}
+.notes .note-label{font-size:9.5px;color:var(--ink-1);letter-spacing:.14em;display:block;margin-bottom:2px;text-transform:uppercase;}
+footer{text-align:center;font-size:10px;color:var(--ink-5);padding:12px 0 4px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;}
+footer .disclaimer{margin-top:2px;}
+@media (max-width:1280px){.uma-head, .uma-row{grid-template-columns:24px 32px 32px 180px 76px 56px 1fr;}.hero{grid-template-columns:repeat(3,1fr);}.bottom-grid{grid-template-columns:1fr;}.eval-block{padding:6px 10px;font-size:11px;}}
+@media (max-width:900px){.topbar{grid-template-columns:1fr auto;}.race-meta{grid-column:1/-1;flex-wrap:wrap;}.uma-head{display:none;}.uma-row{grid-template-columns:24px 32px 32px 1fr;}.uma-row > .index-cell, .uma-row > .pop-cell, .uma-row > .eval-cell{grid-column:1/-1;border-right:none;border-top:1px dashed var(--line);}.eval-cell{grid-template-columns:1fr;}.eval-block{border-right:none;border-bottom:1px solid var(--line);}.eval-block:last-child{border-bottom:none;}}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="race-id">
+      <span class="grade">3勝C</span>
+      <div>
+        <h1>府中ステークス</h1>
+        <div class="sub">東京 9R / 芝2000m（左A） / 18頭立て / 4歳上3勝クラス・定量</div>
+      </div>
+    </div>
+    <div class="race-meta">
+      <div class="item"><span class="label">発走</span><span class="value">14:15</span></div>
+      <div class="item"><span class="label">馬場</span><span class="value">良</span></div>
+      <div class="item"><span class="label">天候</span><span class="value">曇</span></div>
+      <div class="item"><span class="label">展開</span><span class="value">スロー〜平均</span></div>
+      <div class="item"><span class="label">日付</span><span class="value">2026.05.03</span></div>
+    </div>
+    <div class="tier-pill">
+      <span class="dot"></span>
+      <span class="label">TIER 2 / 中信頼</span>
+      <span class="meta">最高41pt / 差0pt / 印7頭 / 平場</span>
+    </div>
+    <a class="back-btn" href="../index.html">← 一覧</a>
+  </header>
+
+  <!-- ============ HERO PICKS ============ -->
+  <section class="hero">
+
+    <div class="pick honmei">
+      <div class="role-mark"><span class="mk">◎</span><span class="role">本命</span></div>
+      <div class="body">
+        <div class="name">ログラール</div>
+        <div class="meta"><span class="no">15</span>横山武 / 3人気</div>
+      </div>
+      <div class="index">41<span class="sub">指数</span></div>
+    </div>
+
+    <div class="pick">
+      <div class="role-mark"><span class="mk">○</span><span class="role">対抗</span></div>
+      <div class="body">
+        <div class="name">ヴァリディシームス</div>
+        <div class="meta"><span class="no">11</span>M.デムーロ / 5人気</div>
+      </div>
+      <div class="index">41<span class="sub">指数</span></div>
+    </div>
+
+    <div class="pick">
+      <div class="role-mark"><span class="mk">▲</span><span class="role">単穴</span></div>
+      <div class="body">
+        <div class="name">ホウオウアートマン</div>
+        <div class="meta"><span class="no">12</span>田辺 / 10人気</div>
+      </div>
+      <div class="index">41<span class="sub">指数</span></div>
+    </div>
+
+    <div class="pick">
+      <div class="role-mark"><span class="mk">△</span><span class="role">連下</span></div>
+      <div class="body">
+        <div class="name">アスクセクシーモア</div>
+        <div class="meta"><span class="no">5</span>岩田康 / 1人気</div>
+      </div>
+      <div class="index">40<span class="sub">指数</span></div>
+    </div>
+
+    <div class="pick">
+      <div class="role-mark"><span class="mk">△</span><span class="role">連下</span></div>
+      <div class="body">
+        <div class="name">ユキワリザクラ</div>
+        <div class="meta"><span class="no">17</span>三浦 / 4人気</div>
+      </div>
+      <div class="index">39<span class="sub">指数</span></div>
+    </div>
+
+    <div class="pick">
+      <div class="role-mark"><span class="mk">×</span><span class="role">押え</span></div>
+      <div class="body">
+        <div class="name">キングノジョー</div>
+        <div class="meta"><span class="no">10</span>佐々木 / 6人気</div>
+      </div>
+      <div class="index">40<span class="sub">指数</span></div>
+    </div>
+
+  </section>
+
+  <!-- ============ UMABASHIRA ============ -->
+  <section class="umabashira">
+    <div class="uma-head">
+      <div class="c-center">枠</div>
+      <div class="c-center">番</div>
+      <div class="c-center">印</div>
+      <div>馬名 / 騎手 / 父-母父</div>
+      <div class="c-center">指数</div>
+      <div class="c-center">人気</div>
+      <div class="eval-head">
+        <span>良い点</span>
+        <span>不安材料</span>
+        <span>期待点</span>
+      </div>
+    </div>
+
+    <!-- 1 スパークリシャール (☆) -->
+    <div class="uma-row">
+      <div class="waku">1</div>
+      <div class="umaban">1</div>
+      <div class="mark-cell">☆</div>
+      <div class="id-cell">
+        <span class="name">スパークリシャール</span>
+        <span class="meta"><span class="jockey">横山和</span><span class="kg">セ5 / 58.0</span></span>
+        <span class="pedigree">スワーヴリチャード × シンボリクリスエス</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">38</span>
+        <span class="bar"><i style="width:93%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">8</span>
+        <span class="odds">17.5</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">東京芝2000mでイクイノックスM 3着、スワーヴリチャード×東京2000mは好走血統</div>
+        <div class="eval-block">直近4走で大敗続き（13/8/7/10着）。3勝C突破力に疑問</div>
+        <div class="eval-block">採点8位×8人気の妙味馬。1枠で内ロス回避できれば一発</div>
+      </div>
+    </div>
+
+    <!-- 2 マルチャン (─) -->
+    <div class="uma-row">
+      <div class="waku">1</div>
+      <div class="umaban">2</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">マルチャン</span>
+        <span class="meta"><span class="jockey">小崎</span><span class="kg">牡6 / 58.0</span></span>
+        <span class="pedigree">ラブリーデイ × スウェプトオーヴァーボード</span>
+      </div>
+      <div class="index-cell idx-tier-5">
+        <span class="num">29</span>
+        <span class="bar"><i style="width:71%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">15</span>
+        <span class="odds">40.8</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">2ヶ月の休み明けで馬体+12kg、リフレッシュ感はある</div>
+        <div class="eval-block">直近5走全て二桁着順。3勝Cで通用する素地に乏しい</div>
+        <div class="eval-block">妙味なし。馬連・3連系の押えにも不採用</div>
+      </div>
+    </div>
+
+    <!-- 3 マイネルトルファン (─) -->
+    <div class="uma-row">
+      <div class="waku">2</div>
+      <div class="umaban">3</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">マイネルトルファン</span>
+        <span class="meta"><span class="jockey">柴田大</span><span class="kg">牡7 / 58.0</span></span>
+        <span class="pedigree">オルフェーヴル × ロージズインメイ</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">37</span>
+        <span class="bar"><i style="width:90%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">17</span>
+        <span class="odds">45.3</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前々走で2勝C完勝、東京芝2000m香港JCT 2着実績、ステイゴールド系</div>
+        <div class="eval-block">前走スピカS 8着で3勝C壁の印象。7歳で上昇余地は薄い</div>
+        <div class="eval-block">17人気45倍は過小評価。3連単穴目に押さえる選択肢</div>
+      </div>
+    </div>
+
+    <!-- 4 フクノブルーレイク (─) -->
+    <div class="uma-row">
+      <div class="waku">2</div>
+      <div class="umaban">4</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">フクノブルーレイク</span>
+        <span class="meta"><span class="jockey">松岡</span><span class="kg">牡4 / 58.0</span></span>
+        <span class="pedigree">ウインブライト × ロードカナロア</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">35</span>
+        <span class="bar"><i style="width:85%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">7</span>
+        <span class="odds">14.0</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前走美浦S 4着0.2差、寿S 3着0.1差と3勝Cで接戦</div>
+        <div class="eval-block">通算1勝[1-2-3-7]で3勝C出走の異例。東京芝1600で10着</div>
+        <div class="eval-block">7人気14倍は過剰人気寄り。買い目には組み込まない</div>
+      </div>
+    </div>
+
+    <!-- 5 アスクセクシーモア (△) -->
+    <div class="uma-row">
+      <div class="waku">3</div>
+      <div class="umaban">5</div>
+      <div class="mark-cell">△</div>
+      <div class="id-cell">
+        <span class="name">アスクセクシーモア</span>
+        <span class="meta"><span class="jockey">岩田康</span><span class="kg">牡4 / 58.0</span></span>
+        <span class="pedigree">キタサンブラック × Ready's Image</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">40</span>
+        <span class="bar"><i style="width:98%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">1</span>
+        <span class="odds">5.5</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前走JCベストレース記念（東京2000）3着0.2差・10人気で激走、馬場指数-20で上り指数101</div>
+        <div class="eval-block">2ヶ月強の休み明け、3勝Cでまだ未勝利</div>
+        <div class="eval-block">1人気5.5倍は妥当。連下評価で3連系の3着付け中心に</div>
+      </div>
+    </div>
+
+    <!-- 6 トラマンダーレ (─) -->
+    <div class="uma-row">
+      <div class="waku">3</div>
+      <div class="umaban">6</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">トラマンダーレ</span>
+        <span class="meta"><span class="jockey">団野</span><span class="kg">セ6 / 58.0</span></span>
+        <span class="pedigree">ドゥラメンテ × Tapit</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">36</span>
+        <span class="bar"><i style="width:88%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">16</span>
+        <span class="odds">40.8</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">2勝C時は4着4回・連対率高め、ドゥラメンテで東京2000m向き</div>
+        <div class="eval-block">4ヶ月以上の長期休み明け、直近2走15着・13着</div>
+        <div class="eval-block">久々で叩き台の可能性。買い目対象外</div>
+      </div>
+    </div>
+
+    <!-- 7 キャントウェイト (─) -->
+    <div class="uma-row">
+      <div class="waku">4</div>
+      <div class="umaban">7</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">キャントウェイト</span>
+        <span class="meta"><span class="jockey">石橋脩</span><span class="kg">牡5 / 58.0</span></span>
+        <span class="pedigree">ゴールドシップ × アグネスデジタル</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">35</span>
+        <span class="bar"><i style="width:85%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">13</span>
+        <span class="odds">28.2</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">大原S 3着、京都2200で2勝C完勝、ステイゴールド系</div>
+        <div class="eval-block">6ヶ月の超長期休み明け、東京コース実績ほぼ皆無</div>
+        <div class="eval-block">久々が最大の不安。3連系深い穴で押さえるレベル</div>
+      </div>
+    </div>
+
+    <!-- 8 ミッキーゴールド (×) -->
+    <div class="uma-row">
+      <div class="waku">4</div>
+      <div class="umaban">8</div>
+      <div class="mark-cell">×</div>
+      <div class="id-cell">
+        <span class="name">ミッキーゴールド</span>
+        <span class="meta"><span class="jockey">菅原明</span><span class="kg">セ4 / 58.0</span></span>
+        <span class="pedigree">リアルスティール × Global Hunter</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">40</span>
+        <span class="bar"><i style="width:98%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">2</span>
+        <span class="odds">6.3</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">通算9戦で複勝率77%、池江厩舎、リアルスティール東京好相性</div>
+        <div class="eval-block">前走御堂筋S 4人気10着0.6差、東京芝2000m未経験</div>
+        <div class="eval-block">2人気6.3倍は過剰評価寄り。押え程度に格下げ</div>
+      </div>
+    </div>
+
+    <!-- 9 キュクヌス (─) -->
+    <div class="uma-row">
+      <div class="waku">5</div>
+      <div class="umaban">9</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">キュクヌス</span>
+        <span class="meta"><span class="jockey">高杉</span><span class="kg">牝5 / 56.0</span></span>
+        <span class="pedigree">Saxon Warrior × Giant's Causeway</span>
+      </div>
+      <div class="index-cell idx-tier-5">
+        <span class="num">34</span>
+        <span class="bar"><i style="width:83%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">11</span>
+        <span class="odds">22.2</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">紅葉S（東京1600）2着実績、池江厩舎、牝馬2kg減恩恵</div>
+        <div class="eval-block">直近5走で複勝圏なし、東京芝2000m未経験、450kg小柄</div>
+        <div class="eval-block">期待薄。買い目には不採用</div>
+      </div>
+    </div>
+
+    <!-- 10 キングノジョー (×) -->
+    <div class="uma-row">
+      <div class="waku">5</div>
+      <div class="umaban">10</div>
+      <div class="mark-cell">×</div>
+      <div class="id-cell">
+        <span class="name">キングノジョー</span>
+        <span class="meta"><span class="jockey">佐々木</span><span class="kg">牡4 / 58.0</span></span>
+        <span class="pedigree">シルバーステート × Royal Anthem</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">40</span>
+        <span class="bar"><i style="width:98%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">6</span>
+        <span class="odds">12.2</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">東京芝1800m 1着（上33.5）、小倉日経賞OPで7着とレベル経験あり</div>
+        <div class="eval-block">3ヶ月の休み明け、456kg軽量、3勝Cでは3着止まり</div>
+        <div class="eval-block">押え評価。3連系の3着付けで配当押し上げ役</div>
+      </div>
+    </div>
+
+    <!-- 11 ヴァリディシームス (○) -->
+    <div class="uma-row">
+      <div class="waku">6</div>
+      <div class="umaban">11</div>
+      <div class="mark-cell">○</div>
+      <div class="id-cell">
+        <span class="name">ヴァリディシームス</span>
+        <span class="meta"><span class="jockey">M.デムーロ</span><span class="kg">牡4 / 58.0</span></span>
+        <span class="pedigree">キズナ × Dynaformer</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">41</span>
+        <span class="bar"><i style="width:100%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">5</span>
+        <span class="odds">10.6</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">キズナ×Dynaformer東京2000m絶好血統、複勝率80%、東京2000m 3着実績</div>
+        <div class="eval-block">前走京橋S 1人気15着・2.5差大敗、3勝C初挑戦</div>
+        <div class="eval-block">人気急落で5人気10.6倍は妙味。ミルコと中内田厩舎の東京勝負強さ</div>
+      </div>
+    </div>
+
+    <!-- 12 ホウオウアートマン (▲) -->
+    <div class="uma-row">
+      <div class="waku">6</div>
+      <div class="umaban">12</div>
+      <div class="mark-cell">▲</div>
+      <div class="id-cell">
+        <span class="name">ホウオウアートマン</span>
+        <span class="meta"><span class="jockey">田辺</span><span class="kg">牡4 / 58.0</span></span>
+        <span class="pedigree">ドゥラメンテ × ストリートセンス</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">41</span>
+        <span class="bar"><i style="width:100%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">10</span>
+        <span class="odds">21.9</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">陣馬特別（東京2400）3着、本栖湖特別5着、難波S5着0.5差。東京コース得意</div>
+        <div class="eval-block">2400m型の差し馬、2000m短縮で先行できるかが鍵</div>
+        <div class="eval-block">採点1位タイで10人気21.9倍は最大妙味、田辺の東京リーディング常連</div>
+      </div>
+    </div>
+
+    <!-- 13 エゾダイモン (─) -->
+    <div class="uma-row">
+      <div class="waku">7</div>
+      <div class="umaban">13</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">エゾダイモン</span>
+        <span class="meta"><span class="jockey">浜中</span><span class="kg">牡6 / 58.0</span></span>
+        <span class="pedigree">ハーツクライ × スウェプトオーヴァーボード</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">36</span>
+        <span class="bar"><i style="width:88%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">14</span>
+        <span class="odds">40.3</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前走京橋S 14人気6着0.4差、ハーツクライで東京2000m向き、浜中継続</div>
+        <div class="eval-block">通算20戦3勝[3-1-1-15]、東京芝2000m未経験</div>
+        <div class="eval-block">14人気40倍だが3勝C突破力に欠ける。買い目不採用</div>
+      </div>
+    </div>
+
+    <!-- 14 イケイケドンドン (─) -->
+    <div class="uma-row">
+      <div class="waku">7</div>
+      <div class="umaban">14</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">イケイケドンドン</span>
+        <span class="meta"><span class="jockey">木幡巧</span><span class="kg">牡6 / 58.0</span></span>
+        <span class="pedigree">ワールドエース × ブライアンズタイム</span>
+      </div>
+      <div class="index-cell idx-tier-5">
+        <span class="num">31</span>
+        <span class="bar"><i style="width:76%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">18</span>
+        <span class="odds">94.5</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前走京橋S 11人気4着0.2差で見せ場、馬体+8kg</div>
+        <div class="eval-block">通算24戦3勝[3-0-3-18]、ワールドエースで東京2000m向き弱</div>
+        <div class="eval-block">18人気94倍は配当魅力だが連続性に乏しく不採用</div>
+      </div>
+    </div>
+
+    <!-- 15 ログラール (◎) -->
+    <div class="uma-row honmei">
+      <div class="waku">7</div>
+      <div class="umaban">15</div>
+      <div class="mark-cell">◎</div>
+      <div class="id-cell">
+        <span class="name">ログラール</span>
+        <span class="meta"><span class="jockey">横山武</span><span class="kg">セ5 / 58.0</span></span>
+        <span class="pedigree">モーリス × キングカメハメハ</span>
+      </div>
+      <div class="index-cell idx-tier-3">
+        <span class="num">41</span>
+        <span class="bar"><i style="width:100%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">3</span>
+        <span class="odds">6.7</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">東京芝2000mで3走連続好走（4着・1着・3着）、横山武継続、逃げ脚質</div>
+        <div class="eval-block">3勝Cでは4着まで、勝ち切り経験まだ。7枠は微妙</div>
+        <div class="eval-block">同条件マッチング完全一致、3人気6.7倍は妥当。1着信頼度最上位</div>
+      </div>
+    </div>
+
+    <!-- 16 チルカーノ (─) -->
+    <div class="uma-row">
+      <div class="waku">8</div>
+      <div class="umaban">16</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">チルカーノ</span>
+        <span class="meta"><span class="jockey">原</span><span class="kg">牝5 / 56.0</span></span>
+        <span class="pedigree">ハービンジャー × キングカメハメハ</span>
+      </div>
+      <div class="index-cell idx-tier-5">
+        <span class="num">34</span>
+        <span class="bar"><i style="width:83%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">9</span>
+        <span class="odds">19.2</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">前走京橋S 5着0.2差、新潟牝馬L経験、高野厩舎</div>
+        <div class="eval-block">通算[3-0-0-11]で3着なしの極端、東京コース未経験気味、8枠</div>
+        <div class="eval-block">8枠減点で買い目不採用</div>
+      </div>
+    </div>
+
+    <!-- 17 ユキワリザクラ (△) -->
+    <div class="uma-row">
+      <div class="waku">8</div>
+      <div class="umaban">17</div>
+      <div class="mark-cell">△</div>
+      <div class="id-cell">
+        <span class="name">ユキワリザクラ</span>
+        <span class="meta"><span class="jockey">三浦</span><span class="kg">牝5 / 56.0</span></span>
+        <span class="pedigree">サトノダイヤモンド × キングカメハメハ</span>
+      </div>
+      <div class="index-cell idx-tier-4">
+        <span class="num">39</span>
+        <span class="bar"><i style="width:95%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">4</span>
+        <span class="odds">7.1</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">複勝率80%（10戦）、石和特別2着・ユートピアS 3着で東京1800上手い</div>
+        <div class="eval-block">8枠で外々の競馬になりやすい、東京2000m未経験</div>
+        <div class="eval-block">三浦騎手と東京親和性高、3着付け中心の連下評価</div>
+      </div>
+    </div>
+
+    <!-- 18 モズロックンロール (─) -->
+    <div class="uma-row">
+      <div class="waku">8</div>
+      <div class="umaban">18</div>
+      <div class="mark-cell mark-none">─</div>
+      <div class="id-cell">
+        <span class="name">モズロックンロール</span>
+        <span class="meta"><span class="jockey">西塚</span><span class="kg">牡6 / 58.0</span></span>
+        <span class="pedigree">ビーチパトロール × マンハッタンカフェ</span>
+      </div>
+      <div class="index-cell idx-tier-5">
+        <span class="num">31</span>
+        <span class="bar"><i style="width:76%;"></i></span>
+      </div>
+      <div class="pop-cell">
+        <span class="pop-num">12</span>
+        <span class="odds">26.2</span>
+      </div>
+      <div class="eval-cell">
+        <div class="eval-block">関門橋S（小倉2000）2着0.3差・7人気で激走、524kg大型</div>
+        <div class="eval-block">東京芝2000m過去2走で10着・9着、8枠不利</div>
+        <div class="eval-block">東京コース不向きで不採用</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ ANA UMA STRIP ============ -->
+  <section class="ana-strip">
+    <span class="ana-label">穴推奨</span>
+
+    <div class="ana-card-mini">
+      <span class="stars">★★★<span class="empty">☆☆</span></span>
+      <span class="name">12 ホウオウアートマン</span>
+      <span class="pop-line">10人気 21.9倍 ▲単穴</span>
+    </div>
+
+    <div class="ana-card-mini">
+      <span class="stars">★★<span class="empty">☆☆☆</span></span>
+      <span class="name">1 スパークリシャール</span>
+      <span class="pop-line">8人気 17.5倍 ☆穴</span>
+    </div>
+
+    <div class="ana-card-mini">
+      <span class="stars">★★<span class="empty">☆☆☆</span></span>
+      <span class="name">11 ヴァリディシームス</span>
+      <span class="pop-line">5人気 10.6倍 ○対抗</span>
+    </div>
+
+  </section>
+
+  <!-- ============ BOTTOM PANELS ============ -->
+  <section class="bottom-grid">
+
+    <!-- BETS -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="ttl">買い目（全23点）</span>
+        <span class="sub">RECOMMENDED TICKETS</span>
+      </div>
+      <div class="bets">
+
+        <div class="bet-block">
+          <h5>単勝<span class="pts">1点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">本</span>15</li>
+          </ul>
+        </div>
+
+        <div class="bet-block">
+          <h5>複勝<span class="pts">2点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">軸◎</span>15</li>
+            <li class="honsen"><span class="tag">軸○</span>11</li>
+          </ul>
+        </div>
+
+        <div class="bet-block">
+          <h5>ワイド<span class="pts">5点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">本</span>15-11</li>
+            <li class="honsen"><span class="tag">本</span>15-12</li>
+            <li><span class="tag">押</span>15-5</li>
+            <li><span class="tag">押</span>11-12</li>
+            <li><span class="tag">穴</span>15-1</li>
+          </ul>
+        </div>
+
+        <div class="bet-block">
+          <h5>馬連<span class="pts">4点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">本</span>15-11</li>
+            <li class="honsen"><span class="tag">本</span>15-12</li>
+            <li><span class="tag">押</span>11-12</li>
+            <li><span class="tag">押</span>15-17</li>
+          </ul>
+        </div>
+
+        <div class="bet-block">
+          <h5>3連複<span class="pts">8点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">本</span>15-11-12</li>
+            <li class="honsen"><span class="tag">本</span>15-11-5</li>
+            <li class="honsen"><span class="tag">本</span>15-12-5</li>
+            <li><span class="tag">押</span>15-11-17</li>
+            <li><span class="tag">押</span>15-12-17</li>
+            <li><span class="tag">押</span>11-12-5</li>
+            <li><span class="tag">穴</span>15-1-11</li>
+            <li><span class="tag">穴</span>15-1-12</li>
+          </ul>
+        </div>
+
+        <div class="bet-block">
+          <h5>3連単<span class="pts">3点</span></h5>
+          <ul class="bet-list">
+            <li class="honsen"><span class="tag">本</span>15→11→12</li>
+            <li><span class="tag">押</span>15→11→5</li>
+            <li><span class="tag">押</span>15→12→11</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONTEXT -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="ttl">コース・馬場・展開</span>
+        <span class="sub">CONTEXT</span>
+      </div>
+      <div class="context">
+        <div class="context-row">
+          <div class="label">東京芝2000m（左A）</div>
+          <p>1コーナーまで130m、外枠不利。直線525.9m＋残り500mから坂、坂頂上後さらに300m平坦。スタミナ＋持続力の舞台。</p>
+        </div>
+        <div class="context-row">
+          <div class="label">馬場</div>
+          <p>良（クッション値6.4cm前後）。5/2土曜含水19.4%/21.0%。日曜は晴予報で乾く方向。開催4日目で内に小キズあり、フラット〜やや外差し優勢。1〜5枠好枠帯、6〜7枠まで連対圏、8枠不利。</p>
+        </div>
+        <div class="context-row">
+          <div class="label">展開予測</div>
+          <p>逃げ候補は15ログラール／12ホウオウアートマン／8ミッキーゴールド。スロー〜平均濃厚。流れた場合は4角6〜10番手の差しが台頭。上がり33.5〜33.8秒勝負。</p>
+        </div>
+        <div class="context-row">
+          <div class="label">過去傾向</div>
+          <p>1番人気の信頼度高め（複勝率50%前後）。4歳馬の好走率高。スワーヴリチャード／キズナ／リアルスティール／ステイゴールド系が好走血統。2025年勝ち馬アスクカムオンモア（M.デムーロ・1人気・1:57.7）。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 平場モード: 情報制約・備考パネル -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="ttl">情報制約・備考</span>
+        <span class="sub">FLAT-RACE NOTES</span>
+      </div>
+      <div class="notes">
+        <div class="note-row">
+          <span class="note-label">情報制約</span>
+          平場のため追い切り評価・陣営コメント・前走後騎手コメント・ジョッキーシグナル詳細は未取得。採点項目10「調教」は全頭3点固定処理。馬体指数は不明（馬体重±と上がり指数で代替）。
+        </div>
+        <div class="note-row">
+          <span class="note-label">採点の前提</span>
+          上位3頭（11/12/15）が41pt同点で同順位扱い。差別化は「同条件マッチング（15）／血統適性（11）／オッズ妙味（12）」で実施。バイアスチェック：仮印◎○▲と人気上位3頭の重複は1頭のみで過剰追認なし。
+        </div>
+        <div class="note-row">
+          <span class="note-label">妙味馬の根拠</span>
+          12ホウオウアートマン（41pt×10人気）が最大ギャップ。東京コース得意（2400で複数好走）、田辺東京リーディング常連、ドゥラメンテ。1スパークリシャール（38pt×8人気）はスワーヴリチャード×東京2000mのイクイノックスM 3着実績で☆穴採用。
+        </div>
+        <div class="note-row">
+          <span class="note-label">危険人気馬</span>
+          8ミッキーゴールド（2人気・40pt）：東京芝2000m未経験で前走御堂筋S 4人気10着0.6差、2人気は過剰評価寄り。4フクノブルーレイク（7人気・35pt）：通算1勝で3勝C出走の異例、東京芝1600で10着、14倍は過剰。
+        </div>
+        <div class="note-row">
+          <span class="note-label">オッズ取得</span>
+          2026-05-03 13:11:23（発走 14:15 の約1時間前 / netkeiba API）。直前変動次第で評価更新の可能性あり。
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    作成日 2026-05-03 / rules/html-shimbun.md + rules/flat-race.md 適用
+    <div class="disclaimer">※この予想は参考情報です。馬券購入は自己責任でお願いします。</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
