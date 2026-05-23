@@ -19,12 +19,91 @@
   @media (max-width: 767px) {
     body { padding: 15px 12px 60px; }
   }
+  /* デスクトップ: テーブルは横スクロール可能 */
+  .markdown-body .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 16px;
+  }
   .markdown-body table {
-    display: table;
     width: 100%;
   }
-  .markdown-body table th, .markdown-body table td {
-    word-break: keep-all;
+  .markdown-body table th,
+  .markdown-body table td {
+    word-break: break-word;
+    white-space: normal;
+    vertical-align: top;
+  }
+  /* スマホ（640px以下）: テーブルを「行＝カード」形式に縦積み */
+  @media (max-width: 640px) {
+    .markdown-body .table-wrap {
+      overflow-x: visible;
+    }
+    .markdown-body table {
+      display: block;
+      border: 0;
+      background: transparent;
+    }
+    .markdown-body table thead {
+      display: none;
+    }
+    .markdown-body table tbody,
+    .markdown-body table tr,
+    .markdown-body table td {
+      display: block;
+      width: 100%;
+    }
+    .markdown-body table tr {
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .markdown-body table td {
+      border: 0;
+      padding: 7px 0;
+      text-align: left;
+      border-bottom: 1px dashed #eaeef2;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .markdown-body table td:last-child {
+      border-bottom: 0;
+    }
+    .markdown-body table td::before {
+      content: attr(data-label);
+      display: inline-block;
+      font-weight: 600;
+      color: #57606a;
+      margin-right: 6px;
+      min-width: 70px;
+    }
+    /* 「データ列に該当ヘッダがない」場合は擬似要素を出さない */
+    .markdown-body table td[data-label=""]::before {
+      content: "";
+      margin-right: 0;
+      min-width: 0;
+    }
+    /* 1列目（印など）はカード上部に強調表示 */
+    .markdown-body table tr td:first-child {
+      margin: -10px -12px 6px;
+      padding: 8px 12px;
+      background: #f6f8fa;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 1px solid #d0d7de;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .markdown-body table tr td:first-child::before {
+      color: #57606a;
+      font-weight: 600;
+      font-size: 12px;
+      display: block;
+      min-width: 0;
+      margin: 0 0 2px;
+    }
   }
   .footer-note {
     margin-top: 36px;
@@ -1092,5 +1171,24 @@
 <em>※この予想は参考情報です。馬券購入は自己責任でお願いします。</em></p>
 <div class="footer-note">Markdown → HTML 変換: db/scripts/md_to_html.py</div>
 <script>hljs.highlightAll();</script>
+<script>
+  // テーブルを横スクロール用ラッパで囲み、tbodyのtdに data-label を付与
+  document.querySelectorAll('.markdown-body table').forEach(function(table) {
+    if (!table.parentElement.classList.contains('table-wrap')) {
+      var wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      table.parentNode.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    }
+    var headers = Array.from(table.querySelectorAll('thead th')).map(function(th) {
+      return th.textContent.trim();
+    });
+    table.querySelectorAll('tbody tr').forEach(function(tr) {
+      tr.querySelectorAll('td').forEach(function(td, i) {
+        td.setAttribute('data-label', headers[i] || '');
+      });
+    });
+  });
+</script>
 </body>
 </html>
