@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【函館スプリントS 2026】総合評価シート</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8f9fa; }
+        .glass-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e9ecef; }
+        .horse-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .horse-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+        .badge-honmei { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .badge-taikou { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        .badge-tanana { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .badge-renka { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
+        .badge-ana { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+        .badge-kiken { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        .badge-chui { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        html { scroll-behavior: smooth; }
+        .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
+        .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
+        .nav-index a:first-child { background: #6366f1; color: white; }
+        .nav-tooltip { position: absolute; right: 50px; background: #1f2937; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .nav-index a:hover .nav-tooltip { opacity: 1; }
+        #backToTop { position: fixed; bottom: 2rem; right: 1rem; width: 48px; height: 48px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 50; }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        #backToTop:hover { background: #4f46e5; transform: translateY(-3px); }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 50; padding: 0.5rem; display: flex; overflow-x: auto; gap: 0.5rem; -webkit-overflow-scrolling: touch; }
+            .mobile-nav a { flex-shrink: 0; padding: 0.5rem 0.75rem; background: #eef2ff; border-radius: 20px; font-size: 0.75rem; color: #6366f1; text-decoration: none; font-weight: 500; }
+            .mobile-nav a.active { background: #6366f1; color: white; }
+            body { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <nav class="nav-index">
+        <a href="../index.html"><i class="fas fa-home"></i><span class="nav-tooltip">一覧へ戻る</span></a>
+        <a href="#header"><i class="fas fa-flag"></i><span class="nav-tooltip">トップ</span></a>
+        <a href="#trend"><i class="fas fa-chart-line"></i><span class="nav-tooltip">過去傾向</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">最終結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">ランキング</span></a>
+        <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
+        <a href="#longshot"><i class="fas fa-bolt"></i><span class="nav-tooltip">穴馬</span></a>
+        <a href="#betting"><i class="fas fa-ticket-alt"></i><span class="nav-tooltip">買い目</span></a>
+        <a href="#phase3-check"><i class="fas fa-clipboard-check"></i><span class="nav-tooltip">最終チェック</span></a>
+    </nav>
+    <nav class="mobile-nav">
+        <a href="../index.html">一覧</a><a href="#header">トップ</a><a href="#trend">傾向</a><a href="#conclusion">結論</a><a href="#ranking">順位</a><a href="#horses">個別</a><a href="#longshot">穴馬</a><a href="#betting">買い目</a><a href="#phase3-check">チェック</a>
+    </nav>
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- ヘッダー -->
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">函館スプリントステークス 2026</h1>
+            <p class="text-center text-gray-600 mb-4">GⅢ / 3歳以上・別定 / サマースプリントシリーズ第1戦 / 総合評価シート</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催日</div><div class="font-bold text-gray-800">2026年6月13日(土)</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">競馬場</div><div class="font-bold text-gray-800">函館 11R / 1回1日目</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="font-bold text-gray-800">芝1200m (右・洋芝・開幕週)</div></div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200"><div class="text-sm text-gray-600">馬場/天候</div><div class="font-bold text-green-700">良 / 晴（午後 雨予報注意）</div></div>
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">出走頭数</div><div class="font-bold text-amber-700">13頭</div></div>
+            </div>
+        </div>
+
+        <!-- TIER信頼度バー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left: 4px solid #6366f1; background: linear-gradient(135deg, #eef2ff, #e0e7ff);">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
+                <div class="flex items-center gap-2"><i class="fas fa-chart-bar text-xl text-indigo-500"></i><span class="font-bold text-lg text-indigo-700">予想信頼度：TIER2 中信頼</span></div>
+                <div class="flex items-center gap-3 text-sm text-gray-600"><span class="bg-white/70 px-2 py-1 rounded">最高 50pt</span><span class="bg-white/70 px-2 py-1 rounded">上位3頭が50pt同点（混戦）</span></div>
+                <div class="md:ml-auto text-xs px-3 py-1 rounded-full font-medium bg-amber-100 text-amber-700">荒れ度中程度(top3占有50% / 8人気以下3着内37.5%)</div>
+            </div>
+            <div class="mt-3 w-full rounded-full h-2" style="background: #e5e7eb"><div class="h-2 rounded-full" style="background: #6366f1; width: 65%"></div></div>
+        </div>
+
+        <!-- 原則バナー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left:4px solid #f43f5e; background:linear-gradient(135deg,#fff1f2,#ffe4e6);">
+            <div class="font-bold text-rose-700 mb-1"><i class="fas fa-lightbulb mr-1"></i>本シートの大原則：印（強さ）と 買い目（妙味）を分離</div>
+            <p class="text-sm text-gray-700">印は12項目スコア＝<strong>強さ順</strong>。買い目は<strong>妙味順</strong>で複勝・馬連を主役に張る（今年の実績で複勝が最も回収率が高い）。上位3頭（レイピア・エーティーマクフィ・カルプスペルシュ）は同点50ptの三つ巴。儲けは注①モズナナスター(9人気)・☆⑨クラスペディア(7人気)・△②ダノンマッキンリー(11人気)ら<strong>人気薄の複勝・単勝で取る</strong>。</p>
+        </div>
+
+        <!-- 過去傾向 / レース質 -->
+        <div id="trend" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-line mr-2 text-indigo-600"></i>レース質と過去傾向（頭は堅め・3着ヒモ荒れ型）</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-gray-700">荒れ度・コース性質</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500"><span class="font-bold text-amber-700">荒れ度:</span><span class="text-gray-700"> 1-3人気top3占有<strong>50%</strong>・8人気以下3着内<strong>37.5%</strong> → <strong>中程度</strong>。勝ち馬は5人気以内・3着に大穴</span></div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><span class="font-bold text-blue-700">脚質:</span><span class="text-gray-700"> 函館芝1200は<strong>前残りが非常に強い</strong>（後方からの馬の3着内率7.3%）。ただしハイペース時だけ差し浮上(8.8%)</span></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500"><span class="font-bold text-emerald-700">枠:</span><span class="text-gray-700"> 先行馬は<strong>内枠有利</strong>（芝小回りの定石）。直線262mは全場最短級</span></div>
+                        <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><span class="font-bold text-rose-700">時計:</span><span class="text-gray-700"> 開幕週の良なら<strong>1:06台後半〜1:07台</strong>想定（昨年1:06.6）。洋芝でもパワーよりスピード持続</span></div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-gray-700">直近5年の3着内（2021年は札幌代替）</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500"><span class="font-bold text-indigo-700">2025:</span><span class="text-gray-700"> カピリナ(2人)/ジューンブレア(3人)/<strong>ドンアミティエ(10人気)3着</strong></span></div>
+                        <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500"><span class="font-bold text-indigo-700">2024:</span><span class="text-gray-700"> サトノレーヴ(2人)/<strong>ウイングレイテスト(5人・今年も出走)</strong>/ビッグシーザー(3人)</span></div>
+                        <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500"><span class="font-bold text-indigo-700">2022:</span><span class="text-gray-700"> ナムラクレア(1人)/ジュビリーヘッド(7人)/<strong>タイセイアベニール(13人気)3着</strong></span></div>
+                        <div class="p-3 bg-pink-50 rounded-lg border-l-4 border-pink-500"><span class="font-bold text-pink-700">牝馬:</span><span class="text-gray-700"> 直近5年で<strong>牝馬4勝</strong>（2025年は1-2着とも牝馬）。軽斤量55kgの④①に追い風</span></div>
+                    </div>
+                    <div class="mt-4 p-3 bg-gray-900 text-white rounded-lg text-sm">勝ち馬は<strong>4角6番手以内</strong>が大半＝先行・好位が鉄板。頭は人気サイド・3着ヒモ荒れに「人気薄の複勝」で備えるのが本レースの正攻法。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 展開予測 -->
+        <div class="glass-card p-6 md:p-8 mb-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-flag-checkered mr-2 text-indigo-600"></i>展開予測</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <h3 class="font-bold text-amber-700 mb-2">メイン: ハイ寄りミドル（先行型6頭・⑦の逃げ）</h3>
+                    <p class="text-sm text-gray-700 mb-2">⑦ピューロマジック（大逃げ歴）がハナ、⑪④⑨⑫ら先行勢が直後。テンは速くなり、飛ばす逃げを<strong>好位で見る◎③レイピア・中団から差す○⑩エーティーマクフィに最も恩恵</strong>。</p>
+                    <p class="text-sm text-gray-700"><strong>単騎マイペースに持ち込めない⑦は割引</strong>（消し判断の主因のひとつ）。</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h3 class="font-bold text-green-700 mb-2">サブ: 牽制し合うミドル〜スロー（開幕週の前残り極端化）</h3>
+                    <p class="text-sm text-gray-700 mb-2">高速洋芝で前残りが極端化した場合は▲④カルプスペルシュ・△⑫ルシード・☆⑪インビンシブルパパの粘り込みが怖い。</p>
+                    <p class="text-sm text-gray-700"><strong>後方勢（②①⑬）はこのシナリオでは届かない</strong>。①②は「3着すくい」前提の複勝・単勝妙味で買う。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 観点関数サマリー -->
+        <div class="glass-card p-6 md:p-8 mb-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-microscope mr-2 text-indigo-600"></i>分析シグナル サマリー（観点関数を全頭実行）</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div class="p-3 bg-indigo-50 rounded-lg"><strong class="text-indigo-700">地力（着順に表れない実力）:</strong> ⑩エーティーマクフィが<strong>出走馬No.1</strong>（年齢補正後も1位）。函館芝1200の舞台実績は<strong>④4戦3勝・⑩2戦2勝・①3戦2連対</strong>。</div>
+                <div class="p-3 bg-rose-50 rounded-lg"><strong class="text-rose-700">相手レベル補正（負かされた相手のその後躍進＝配当妙味）:</strong> <strong>②(11人気・惜敗5=最多)・⑨(7人気・惜敗4)・⑥(10人気・惜敗4)が対象</strong>→単勝・複勝で馬そのものを買う。⑦は3人気のため対象外（人気馬の僅差負け多数はむしろ過剰人気の罠）。</div>
+                <div class="p-3 bg-green-50 rounded-lg"><strong class="text-green-700">追い切りタイム段階評価:</strong> <strong>⑪インビンシブルパパ・⑫ルシードが最上位（印外不可級）</strong>。専門メディアS評価は⑫（うましる「一番良い仕上がり」）・⑦（複数S）。</div>
+                <div class="p-3 bg-blue-50 rounded-lg"><strong class="text-blue-700">血統・騎手の配当妙味（穴ヒモ向き・強さではない）:</strong> ①モズアスコット産駒は内枠で回収率146%・芝133%＝<strong>大幅プラス</strong>。騎手では横山武史×函館芝短距離が勝率22.4%・回収122%。</div>
+                <div class="p-3 bg-amber-50 rounded-lg"><strong class="text-amber-700">脚質×コース消し:</strong> 前残り強コース×習慣的後方の<strong>②⑬①は軸不適</strong>（ハイペースなら緩和）。①②は押さえ・単複まで、⑬は消し。</div>
+                <div class="p-3 bg-purple-50 rounded-lg"><strong class="text-purple-700">条件適性:</strong> ④は良馬場で過去9戦9回掲示板・⑨⑦は<strong>良馬場でムラ（道悪巧者）</strong>・⑥は休み明けと短距離がデータ上苦手。</div>
+                <div class="p-3 bg-emerald-50 rounded-lg"><strong class="text-emerald-700">厩舎の勢い:</strong> 絶好調=⑨河嶋・⑥畠山・⑧上原／<strong>不調=④石坂・⑤清水久</strong>（④を▲に下げた主因）。</div>
+                <div class="p-3 bg-slate-50 rounded-lg"><strong class="text-slate-700">騎手の選択:</strong> <strong>横山武史は函館4勝実績の④ではなく③を指名</strong>（信頼指名シグナル→◎の決め手）。④の丹内は追い切り騎乗で感触確認済み。</div>
+            </div>
+        </div>
+
+        <!-- 最終結論 -->
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論（7頭印＋注2頭・印＝強さ順）</h2>
+            <div class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 text-sm text-indigo-800">
+                <strong>★ 上位3頭は50pt同点の三つ巴。序列は「騎手の2択指名＋安定感」で③、「地力No.1＋函館2戦2勝」で⑩、「函館4戦3勝だが厩舎不調・乗り替わり」で④の順。</strong><br><span class="text-rose-700">★監査ゲート(Rule C)対応: 強シグナル収束の②（地力★★＋相手レベル妙味筆頭＋追切★★）は◎③と1対1比較の上で注→△に昇格（実績に相手レベル補正+2で42pt）。ゼロサムで①を△→注へ（複勝100円は維持・買い目不変）。</span>
+            </div>
+            <div id="markGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- 総合ランキング -->
+        <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-bar mr-2 text-indigo-600"></i>総合評価ランキング（12項目）</h2>
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 560px; position: relative;"><canvas id="rankingChart"></canvas></div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm"><thead><tr class="bg-indigo-100">
+                    <th class="px-3 py-3 text-left">順位</th><th class="px-3 py-3 text-center">印/馬番</th><th class="px-3 py-3 text-left">馬名</th>
+                    <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th><th class="px-3 py-3 text-center hidden md:table-cell">人気</th>
+                    <th class="px-3 py-3 text-center">総合点</th><th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
+                </tr></thead><tbody id="rankingBody"></tbody></table>
+            </div>
+            <p class="text-xs text-gray-500 mt-3">※オッズは6/13 01:43取得（netkeiba）。確定オッズで乖離があれば直前に再判定。</p>
+        </div>
+
+        <!-- 個別馬評価 -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-horse mr-2 text-indigo-600"></i>個別馬評価（全13頭・12項目レーダーチャート）</h2>
+            <div id="horseCards" class="space-y-4"></div>
+        </div>
+
+        <!-- 穴馬スクリーニング -->
+        <div id="longshot" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-bolt mr-2 text-rose-600"></i>穴馬スクリーニング（7番人気以下・単複で馬そのものを買う）</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="border-2 border-rose-400 rounded-lg p-4 bg-gradient-to-br from-rose-50 to-pink-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><span class="bg-rose-500 text-white px-2 py-1 rounded-full text-xs font-bold">評価5位vs9人気→注・複勝</span>
+                            <div class="text-xl font-bold text-gray-800 mt-2">1番 モズナナスター</div>
+                            <div class="text-xs text-gray-500">9人気（24.4倍）★ギャップ+5の過小評価</div></div>
+                        <div class="text-2xl"><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i></div>
+                    </div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 函館芝1200は3戦2連対・母グランプリエンゼルは2009年本レース勝ち馬</div>
+                        <div><i class="fas fa-check text-green-500"></i> 父モズアスコット産駒は内枠146%・芝133%の配当妙味＋1枠1番の内枠巧者</div>
+                        <div><i class="fas fa-bolt text-rose-500"></i> 後方寄りの脚質（前残りコースで届かない懸念）・中2週</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600"><strong class="text-rose-600">判定：</strong>複勝3.2-4.6倍はヒモ荒れ主役候補。複勝100円</div>
+                </div>
+                <div class="border-2 border-rose-400 rounded-lg p-4 bg-gradient-to-br from-rose-50 to-pink-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><span class="bg-rose-500 text-white px-2 py-1 rounded-full text-xs font-bold">相手レベル妙味→☆・複勝</span>
+                            <div class="text-xl font-bold text-gray-800 mt-2">9番 クラスペディア</div>
+                            <div class="text-xs text-gray-500">7人気（15.8倍）★強敵僅差負け4回</div></div>
+                        <div class="text-2xl"><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i></div>
+                    </div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 葵S 13人気2着0.1差・前走春雷S勝ちの勢い・休み明け[3-0-0-0]</div>
+                        <div><i class="fas fa-check text-green-500"></i> その後重賞で躍進した相手との僅差負け4回＝着順以上の地力・厩舎絶好調</div>
+                        <div><i class="fas fa-bolt text-rose-500"></i> 良馬場でムラ（道悪巧者）・初洋芝・初輸送</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600"><strong class="text-rose-600">判定：</strong>複勝の期待値が高いタイプ。複勝100円</div>
+                </div>
+                <div class="border-2 border-amber-400 rounded-lg p-4 bg-gradient-to-br from-amber-50 to-yellow-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><span class="bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold">強シグナル収束→△・単勝</span>
+                            <div class="text-xl font-bold text-gray-800 mt-2">2番 ダノンマッキンリー</div>
+                            <div class="text-xs text-gray-500">11人気（29.9倍）★強敵僅差負け5回=出走馬最多</div></div>
+                        <div class="text-2xl"><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i></div>
+                    </div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 重賞勝ち（2024ファルコンS）・スプリンターズS 13人気6着0.4差</div>
+                        <div><i class="fas fa-check text-green-500"></i> 池添×函館芝短距離は回収率130%のプラス帯</div>
+                        <div><i class="fas fa-bolt text-rose-500"></i> 後方脚質×前残りコース・近3走15-7-15着・気性難</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600"><strong class="text-amber-600">判定：</strong>軸にはできない（後方脚質）が、地力を配当が織り込んでいない。単勝100円</div>
+                </div>
+                <div class="border-2 border-amber-400 rounded-lg p-4 bg-gradient-to-br from-amber-50 to-yellow-50">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><span class="bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold">コース実績→注・複勝</span>
+                            <div class="text-xl font-bold text-gray-800 mt-2">6番 ウイングレイテスト</div>
+                            <div class="text-xs text-gray-500">10人気（26.6倍）★2024年本レース2着</div></div>
+                        <div class="text-2xl"><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i><i class="fas fa-star text-gray-300"></i></div>
+                    </div>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div><i class="fas fa-check text-green-500"></i> 2024年函館SS 2着（5人気）・今年1月カーバンクルS勝ち・厩舎絶好調</div>
+                        <div><i class="fas fa-check text-green-500"></i> 強敵僅差負け4回・先行型で展開合う</div>
+                        <div><i class="fas fa-bolt text-rose-500"></i> 9歳・105日休み明けはデータ上苦手・松岡騎手本人が「近2走に比べると落ちる」</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-white rounded text-xs text-gray-600"><strong class="text-amber-600">判定：</strong>状態面の割引込みで複勝100円まで</div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-600">※妙味馬は<strong>単複で馬そのものを買う</strong>のが最効率（券種別ROI実績: 単勝121%・複勝80%＞3連複102%＞ワイド63%）。⑤ジョーメッドヴィン(12人気)は僅差負け2回で閾値丁度だが、評価最下位タイ＋厩舎不調のため見送り（理由を決定ログに記録）。</p>
+        </div>
+
+        <!-- 買い目 -->
+        <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-ticket-alt mr-2 text-rose-600"></i>買い目（合計1,000円・10点）— 複勝＋馬連が主役・3連系なし</h2>
+            <div class="mb-4 p-4 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-800">
+                <strong>★ テンプレD-1（1日1Rのみの拡張版）を券種ルールで補正。</strong>レースグレードB（基本500円）だが本日購入はこの1レースのみ→最大1,000円。3連複・ワイドは今年の的中実績ゼロのため不使用。<strong>「頭は人気・3着ヒモ荒れ」のレース質に合わせ、人気薄の複勝に分散</strong>。印馬のどの1頭が飛んでも残りが3着内なら必ずどれかが当たる構成（単一軸依存なし）。
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 mb-4">
+                <div class="border-2 border-rose-300 rounded-lg p-4 bg-rose-50">
+                    <div class="font-bold text-gray-900 mb-2"><i class="fas fa-circle-check mr-1 text-rose-500"></i>複勝・単独買い（6点600円）</div>
+                    <div class="text-sm text-gray-700">◎③レイピア 100円<br>△⑫ルシード 100円<br>注①モズナナスター 100円<br>☆⑨クラスペディア 100円<br>☆⑪インビンシブルパパ 100円<br>注⑥ウイングレイテスト 100円</div>
+                    <div class="text-xs text-gray-500 mt-1">主役券種。◎の保険＋妙味中穴4頭で3着ヒモ荒れを回収。◎③複勝が確定1.5未満なら③は買わず①に振替（D6）</div>
+                </div>
+                <div class="border-2 border-indigo-300 rounded-lg p-4 bg-indigo-50">
+                    <div class="font-bold text-gray-900 mb-2"><i class="fas fa-link mr-1 text-indigo-500"></i>馬連 ◎軸2点＋保険1点（3点300円）</div>
+                    <div class="text-sm text-gray-700">③-⑩ 100円（本線）<br>③-④ 100円（本線）<br>⑩-④ 100円（◎不在保険）</div>
+                    <div class="text-xs text-gray-500 mt-1">同点50ptの3頭で1-2着を直撃。⑩-④は◎が飛んだ時の保険</div>
+                </div>
+                <div class="border-2 border-amber-300 rounded-lg p-4 bg-amber-50">
+                    <div class="font-bold text-gray-900 mb-2"><i class="fas fa-coins mr-1 text-amber-500"></i>単勝・妙味1点（100円）</div>
+                    <div class="text-sm text-gray-700">△②ダノンマッキンリー 100円</div>
+                    <div class="text-xs text-gray-500 mt-1">着順に出ない地力1位×11人気29.9倍＝「馬そのものを買う」枠</div>
+                </div>
+            </div>
+            <div class="p-3 bg-gray-100 rounded-lg text-sm text-gray-700"><strong>検算:</strong> 複勝6点＋馬連3点＋単勝1点 ＝ 10点 × 100円 ＝ <strong>1,000円</strong>（1日1R上限内）</div>
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800">
+                <strong>★当日の差し替えルール：</strong>①馬体重±5kg超の急変馬（特に③④⑫）は再評価 ②雨で稍重以上なら④（良馬場巧者）を割引き、⑨⑦（道悪巧者）を見直し ③同日函館芝の勝ち時計が1:08台続きなら差し有利＝⑩の比重増。
+            </div>
+        </div>
+
+        <!-- Phase3 ハードゲートチェックリスト -->
+        <section id="phase3-check" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4" style="border-left:4px solid #16a34a;">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-clipboard-check mr-2 text-green-600"></i>Phase3 ハードゲートチェックリスト（最終確認）</h2>
+            <div class="grid md:grid-cols-2 gap-2 text-sm">
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ A1 スコア順位と印順位の一致（同点3頭の序列＋①注/②△の逆転理由＝監査ゲートRule C強制反映を決定ログに記録）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ A2 好材料追加馬のスコア下げなし（④厩舎減点はデータ由来）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ A3 印数7頭以内（◎③○⑩▲④△⑫△②☆⑨☆⑪＝7頭・注①⑥カウント外）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ A4 危険シグナル複数馬を○以上にしていない</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ B1 戦績年度の逆算検証（JRA公式DB直結）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ B2 馬体重は当日未発表と明記・発表後に再評価</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ B3 過去傾向の母集団明示（2021札幌代替を明記）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ C1 観点関数 決定ログ作成済（lens-decision.md）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ C2 地力No.1（⑩）を○で確保</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ C3 12項目1位と地力No.1の比較明記（同点タイ・比1.4倍）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ C4 連勝シグナル発火馬なし（全頭4戦以上）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ C5 同父横串（スクリーンヒーロー: ⑫△・⑥注で両頭に買い目）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D1 連下同士は複勝分散方式で全組合せカバー（3連系不使用）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D2 ◎不在保険（馬連⑩-④＋複勝5点）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D3 ○不在保険（馬連③-④＋複勝群）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D4 危険人気馬への投資なし・単一馬集中なし</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D5 地力No.1の1着シナリオを馬連でカバー（§8.5非該当）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D6 ◎複勝1.6-2.0≧1.5（確定オッズで再確認）</div>
+                <div class="p-2 bg-amber-50 rounded border-l-4 border-amber-500">✅ D7 例外2頭＝×⑦（人気先行・消し根拠記録）・⑧（芝OP大敗続き）は理由明記の上で買い目なし</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D8 穴馬スクリーニング4頭（①⑨②⑥）全頭を買い目反映</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D9 軸2頭ながし不使用のため該当なし</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ D10 印馬BOXと比較検討の上、複勝分散を選択（検算済）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ E1 直近教訓の読み返し（単一軸依存の根絶・中穴複勝運用）</div>
+                <div class="p-2 bg-green-50 rounded border-l-4 border-green-500">✅ E2 同型失敗の再発なし（印1-2-3着で0円になる組合せなし）</div>
+            </div>
+        </section>
+
+        <!-- フッター -->
+        <div class="text-center text-gray-500 text-sm mt-8 mb-4">
+            <p>作成日：2026年6月13日</p>
+            <p class="mt-2">分析指示書.md 適用（rules/html-output.md ダッシュボード型／12項目採点＋観点関数全実行＋過去教訓反映）</p>
+            <p class="mt-2 text-xs">※この予想は参考情報です。馬券購入は自己責任でお願いします。</p>
+        </div>
+    </div>
+
+    <script>
+    const evaluationItems = ['実績','Lv','血統','コース','輸送','休明','展開','枠順','騎手','調教','馬体','厩舎'];
+    const horses = [
+        { number:3, name:"レイピア", score:50, jockey:"横山武史", trainer:"栗東・中竹和也", blood:"父タワーオブロンドン / 母父エンパイアメーカー", belonging:"栗東", popularity:"1番人気(4.1倍)", firstExp:"初函館・初洋芝（父は洋芝スプリント実績）", badge:"honmei", mark:"◎", bestWeight:"502-516", lastWeight:516, weightNote:"510kg台の大型馬・当日発表待ち",
+          comment:"◎ 芝1200重賞で0.0/0.1差2着×2の安定感・先行×内枠×開幕週・横山武史が④との2択で本馬を指名",
+          details:{ pros:["オーシャンS 0.0差2着・シルクロードS 0.1差2着＝重賞僅差好走複数","高松宮記念5着(0.7差)でG1でも通用","先行型×3番枠×開幕週の前残りコースは役満","横山武史は函館芝短距離で勝率22.4%・回収122%。函館4勝の④ではなく本馬を選んだ（信頼指名）"],
+            cons:["重賞2着2回と勝ち切れていない","追い切りは「もっと動くかな」とやや地味","初洋芝（血統面で補完）"],
+            expect:["重賞初制覇の最有力。崩れにくさは複勝軸として最適"],
+            scores:[5,4,5,4,4,4,4,4,5,3,3,3] } },
+        { number:10, name:"エーティーマクフィ", score:50, jockey:"富田暁", trainer:"栗東・武英智", blood:"父マクフィ / 母父ハーツクライ", belonging:"栗東", popularity:"4番人気(6.9倍)", firstExp:"函館芝1200は2戦2勝", badge:"taikou", mark:"○", bestWeight:"466-486", lastWeight:476, weightNote:"480kg前後で安定・当日発表待ち",
+          comment:"○ 着順に出ない実力＝出走馬No.1・函館2戦2勝・前走高松宮は接触不利・ハイペース差しの筆頭",
+          details:{ pros:["地力（上がり最速・僅差負けの蓄積）が出走馬No.1（7歳の年齢補正後も1位）","函館芝1200は2戦2勝（青函Sを12人気で勝利）","前走高松宮記念8着はスタート直後接触＋4角不利込みの0.9差＝巻き返し根拠","休み明けでも京阪杯を3ヶ月明けで優勝","函館芝で終い12.0を余力残し（A評価複数）"],
+            cons:["7歳・58kg","富田×函館芝短距離は数字上低い（馬の実績で補う）"],
+            expect:["ハイペースで差し台頭の筆頭。頭まで十分＝馬連の軸格"],
+            scores:[5,4,3,5,4,5,4,3,4,4,3,3] } },
+        { number:4, name:"カルプスペルシュ", score:50, jockey:"丹内祐次", trainer:"栗東・石坂公一", blood:"父シュヴァルグラン / 母父ロードカナロア", belonging:"栗東", popularity:"2番人気(4.6倍)", firstExp:"函館芝1200は4戦3勝（複勝率75%）", badge:"tanana", mark:"▲", bestWeight:"460-480", lastWeight:474, weightNote:"470kg台なら好走圏・当日発表待ち",
+          comment:"▲ 函館4戦3勝の舞台巧者・良馬場9/9掲示板・牝馬55kg。厩舎不調＋主戦離脱＋前走11着で3番手",
+          details:{ pros:["函館芝1200は4戦3勝＝舞台適性断トツ","良馬場で過去9戦9回掲示板の良馬場巧者","昨夏も2ヶ月明けの函館初戦から3連勝＝滞在競馬◎","牝馬55kg＋直近5年牝馬4勝のトレンド合致","丹内「なるべく内枠がいい」→4番枠で注文通り"],
+            cons:["石坂厩舎が今年不調（勝率例年比-2.7pt）","主戦の横山武史にレイピアを選ばれた乗り替わり","前走愛知杯11着（距離長・初左回りの言い訳はある）"],
+            expect:["昨夏の再現なら勝ち負け。◎○▲はどの順列もある"],
+            scores:[5,3,4,5,5,5,4,4,4,4,3,2] } },
+        { number:12, name:"ルシード", score:45, jockey:"横山和生", trainer:"美浦・田島俊明", blood:"父スクリーンヒーロー / 母父ロージズインメイ", belonging:"美浦", popularity:"5番人気(7.3倍)", firstExp:"初函館芝（札幌芝1200で1勝＝洋芝実績あり）", badge:"renka", mark:"△", bestWeight:"500-516", lastWeight:500, weightNote:"絞れて好調・当日発表待ち",
+          comment:"△ 芝1200転向後[3-2-1-1]の上がり馬・持ち時計1:06.8はメンバー上位・「出走馬で一番良い仕上がり」",
+          details:{ pros:["前走朱雀S 1着（1:06.8）＝持ち時計上位","芝1200転向後[3-2-1-1]の充実","追い切りタイム段階評価が最上位級＋専門メディア単独S「一番良い仕上がり」","札幌洋芝1200で1勝・先行型"],
+            cons:["重賞初挑戦（OP実績1戦のみ）","8枠12番＝先行馬の外枠は当コースで割引","父産駒は函館で勝ち切れていない"],
+            expect:["3着内なら十分。複勝向き"],
+            scores:[4,3,3,4,4,3,4,2,4,4,3,3] } },
+        { number:1, name:"モズナナスター", score:45, jockey:"鮫島克駿", trainer:"栗東・矢作芳人", blood:"父モズアスコット / 母父アグネスデジタル", belonging:"栗東", popularity:"9番人気(24.4倍)", firstExp:"函館芝1200は3戦2連対・母は2009年本レース勝ち馬", badge:"chui", mark:"注", bestWeight:"446-460", lastWeight:460, weightNote:"460kg前後が好走帯・当日発表待ち",
+          comment:"注 評価5位タイvs9人気の過小評価。複勝100円で買う（印は強シグナル収束馬②の△昇格に伴うゼロサム調整で注）",
+          details:{ pros:["函館芝1200は3戦2連対（知立S級の実績）","母グランプリエンゼルは2009年函館SS勝ち馬＝母仔制覇がかかる","父モズアスコット産駒は内枠で回収率146%・芝133%（配当妙味大＝穴ヒモ向き）","1枠1番×本馬は内枠時の掲示板率71%"],
+            cons:["習慣的に後方寄りの競馬＝前残り強コースで軸不適（押さえまで）","中2週の連戦（間隔を空けた方が良いタイプ）","輸送で硬さ・右にもたれる面（追い切り時）"],
+            expect:["ハイペースで内をすくう一発。複勝3.2-4.6倍は旨み十分"],
+            scores:[4,3,4,5,4,3,4,4,4,3,3,4] } },
+        { number:9, name:"クラスペディア", score:44, jockey:"小崎綾也", trainer:"栗東・河嶋宏樹", blood:"父ミスターメロディ / 母父アグネスタキオン", belonging:"栗東", popularity:"7番人気(15.8倍)", firstExp:"初函館・初洋芝・初輸送", badge:"ana", mark:"☆", bestWeight:"492-532", lastWeight:532, weightNote:"増加基調は若馬の成長分・当日発表待ち",
+          comment:"☆ 葵S 13人気2着の前科＋強敵僅差負け4回＝7人気の複勝期待値が高い。厩舎絶好調・休み明け得意",
+          details:{ pros:["葵S（G3）0.1差2着を13人気で・前走春雷S勝ちの勢い","その後重賞で躍進した相手との僅差負け4回（着順に出ない地力・配当妙味）","休み明け[3-0-0-0]と間隔空けて走るタイプ","河嶋厩舎が今年絶好調（勝率例年比+3.0pt）・先行型"],
+            cons:["良馬場の掲示板率38%（道悪100%）と良馬場でムラ","初洋芝・初の長距離輸送","小崎は重賞での実績薄"],
+            expect:["馬券は複勝でシンプルに"],
+            scores:[4,4,4,3,3,4,4,3,3,3,3,4] } },
+        { number:11, name:"インビンシブルパパ", score:42, jockey:"佐々木大輔", trainer:"美浦・伊藤大士", blood:"父Shalaa / 母父Canford Cliffs", belonging:"美浦", popularity:"6番人気(11.3倍)", firstExp:"昨年の本レース4着→次走CBC賞1着", badge:"ana", mark:"☆", bestWeight:"512-536", lastWeight:522, weightNote:"大型馬・当日発表待ち",
+          comment:"☆ 追い切りタイム評価が出走馬最上位タイ（印外不可級）・昨年4着→CBC賞Vの夏馬・開幕週の先行型",
+          details:{ pros:["昨年も函館SS 4着→CBC賞勝ちと夏に動く","追い切りタイム段階評価が最上位タイ＝仕上がり今季最高潮（函館芝で終い11.6先着）","佐々木大輔「成長しきった。スピードが生きる競馬になれば」と強気","欧州スプリント血統で洋芝向き・先行型"],
+            cons:["近2走15着・15着（1.0/1.6秒差）の大敗","58kg・7枠11番＝先行馬の外枠ロス"],
+            expect:["6人気なら複勝で拾う価値"],
+            scores:[4,4,4,4,4,3,4,2,4,4,3,3] } },
+        { number:6, name:"ウイングレイテスト", score:43, jockey:"松岡正海", trainer:"美浦・畠山吉宏", blood:"父スクリーンヒーロー / 母父サクラユタカオー", belonging:"美浦", popularity:"10番人気(26.6倍)", firstExp:"2024年本レース2着のリピーター", badge:"chui", mark:"注", bestWeight:"496-520", lastWeight:520, weightNote:"当日発表待ち",
+          comment:"注 2024年2着＋強敵僅差負け4回＋厩舎絶好調。9歳・休み明け苦手・騎手本人の状態下げコメントで複勝1点まで",
+          details:{ pros:["2024年函館SS 2着（5人気）のコース実績","今年1月カーバンクルS勝ち・2023年スワンS勝ちの地力","畠山厩舎が今年絶好調（勝率例年比+3.4pt）・南W22本の乗り込み量"],
+            cons:["9歳（地力の蓄積評価は年齢補正で半減）","105日休み明けはデータ上苦手（掲示板44% vs 通常76%）","松岡本人「去年よりはいいが近2走に比べると落ちる」と正直な下げコメント"],
+            expect:["状態面の割引込みで複勝100円まで"],
+            scores:[4,4,3,4,4,3,4,3,3,3,3,4] } },
+        { number:7, name:"ピューロマジック", score:43, jockey:"北村友一", trainer:"栗東・安田翔伍", blood:"父アジアエクスプレス / 母父ディープインパクト", belonging:"栗東", popularity:"3番人気(6.2倍)", firstExp:"初函館・初洋芝・単騎逃げ困難な組合せ", badge:"kiken", mark:"×", bestWeight:"446-462", lastWeight:456, weightNote:"小柄・当日発表待ち",
+          comment:"× 評価6位タイで3人気は人気先行。近2走1.3秒差以上の大敗・良馬場で落ちるデータ・「力みが強い」コメントで消し",
+          details:{ pros:["昨年アイビスSD勝ち・一昨年北九州記念連対の重賞実力","追い切りは専門メディアS評価複数（函館芝で終い11.6）","開幕週の前残りバイアスは逃げ馬に味方"],
+            cons:["近2走16着(1.3差)・13着(1.4差)の素の大敗","良馬場の掲示板率45%（道悪80%）＝良馬場で落ちる","北村友一「力みが強くて、メリハリがつかない」と直前ネガ","同型先行6頭で単騎マイペース困難。強敵との僅差負け実績も3人気では過剰人気の罠側"],
+            expect:["上振れリスクは認識の上で買い目から除外（予算は10人気⑥の複勝を優先）。雨で渋れば再考"],
+            scores:[4,4,3,3,4,4,3,3,4,4,3,3] } },
+        { number:2, name:"ダノンマッキンリー", score:42, jockey:"池添謙一", trainer:"栗東・藤原英昭", blood:"父モーリス / 母父Holy Roman Emperor", belonging:"栗東", popularity:"11番人気(29.9倍)", firstExp:"初函館（モーリス産駒は洋芝向き）", badge:"renka", mark:"△", bestWeight:"468-476", lastWeight:476, weightNote:"当日発表待ち",
+          comment:"△ 強シグナル収束（地力★★＋相手レベル妙味＋追切★★）を印で反映し△昇格。◎③との1対1比較は◎逆転なし。単勝で馬そのものを買う",
+          details:{ pros:["2024年ファルコンS勝ちの重賞実績","スプリンターズS 13人気6着0.4差など強敵相手の僅差負けが出走馬最多の5回（配当妙味）","池添×函館芝短距離は回収率130%のプラス帯","モーリス産駒×洋芝の血統適性"],
+            cons:["近3走15-7-15着と着順は荒れ気味","習慣的に後方からの競馬＝前残り強コースで軸不適","口向きが難しい気性難"],
+            expect:["◎③と1対1比較済（12項目42vs50・脚質・直近内容で逆転なし）。軸にはせず単勝29.9倍の一発で馬そのものを買う"],
+            scores:[4,4,4,3,4,3,3,3,3,3,3,3] } },
+        { number:8, name:"ポッドベイダー", score:40, jockey:"荻野極", trainer:"美浦・上原佑紀", blood:"父リオンディーズ / 母父ダイワメジャー", belonging:"美浦", popularity:"8番人気(17.4倍)", firstExp:"芝は10ヶ月ぶり（函館芝1200は2歳時2着）", badge:"", mark:"", bestWeight:"478-508", lastWeight:484, weightNote:"増減幅大きめ・当日発表待ち",
+          comment:"無印 ダートで地力強化も、芝OPは葵S2人気14着・CBC賞11着と素の大敗続き。陣営も「チャレンジ」と弱気",
+          details:{ pros:["大和S（ダートOP）勝ちなど地力は強化","函館芝1200は2歳時2着・洋芝適性あり","上原厩舎は今年絶好調"],
+            cons:["芝の上級条件で素の大敗2連続（葵S 14着・CBC賞11着）","陣営「番組の都合。チャレンジという感じ」と弱気","初の北海道輸送"],
+            expect:["評価40ptだが芝実績不足で見送り（チェックリストD7例外として理由記録）"],
+            scores:[4,3,3,4,3,3,4,3,3,3,3,3] } },
+        { number:5, name:"ジョーメッドヴィン", score:38, jockey:"横山琉人", trainer:"栗東・清水久詞", blood:"父ドレフォン / 母父キングヘイロー", belonging:"栗東", popularity:"12番人気(42.8倍)", firstExp:"函館芝1200は4走2複勝（2024年以前）", badge:"", mark:"", bestWeight:"510-530", lastWeight:522, weightNote:"大型馬・当日発表待ち",
+          comment:"無印 短距離OP常連の堅実派だが評価最下位タイ＋厩舎不調。強敵僅差負け2回は閾値丁度だが見送り（理由記録）",
+          details:{ pros:["北九州短距離S勝ち・前走モルガナイトS 0.1差3着","函館ウッドで豪快な動き（評価が割れるが上振れ評価も）"],
+            cons:["12項目評価が最下位タイ","清水久厩舎が今年不調（勝率例年比-4.2pt）","勝ち切れない（OP・L 0勝の善戦止まり）"],
+            expect:["買い目見送り。来た場合は妙味判断の敗北として振り返りで検証"],
+            scores:[4,3,3,3,4,3,3,3,3,3,3,2] } },
+        { number:13, name:"シュタールヴィント", score:38, jockey:"岩田康誠", trainer:"栗東・矢作芳人", blood:"父ロードカナロア / 母父ディープインパクト", belonging:"栗東", popularity:"13番人気(80.0倍)", firstExp:"初函館・初洋芝", badge:"", mark:"", bestWeight:"446-456", lastWeight:446, weightNote:"小柄・当日発表待ち",
+          comment:"無印 父ロードカナロアは本レース連対6度の好相性だが、前残り強コース×習慣的後方脚質の消し警告が直撃",
+          details:{ pros:["父ロードカナロアは本レース連対6度の好相性","前走安土城Sの上がり32.6は最速級（「展開のアヤで負けただけ」と陣営）","スワンS 14人気5着0.2差の前科"],
+            cons:["前残り強コース×習慣的後方（直近5走の位置取りが後方67%）＝軸・連下とも不適","OPでは[0-0-0-9]と壁","矢作2頭出しの2番手格・乗り替わり"],
+            expect:["直線262mでは届かない想定で消し"],
+            scores:[3,3,5,3,3,3,2,2,3,3,3,3] } }
+    ];
+
+    function markBadgeHTML(mark, badge) {
+        return mark ? `<span class="badge-${badge || 'chui'} text-white px-2 py-0.5 rounded-full text-xs font-bold">${mark}</span>` : '';
+    }
+
+    function renderMarkGrid() {
+        const grid = document.getElementById('markGrid');
+        const order = ['◎','○','▲','△','☆'];
+        const marked = horses.filter(h => order.includes(h.mark)).sort((a,b)=>order.indexOf(a.mark)-order.indexOf(b.mark));
+        const borderMap = {'◎':'border-yellow-400 from-yellow-50 to-amber-50','○':'border-indigo-400 from-indigo-50 to-indigo-100','▲':'border-green-400 from-green-50 to-emerald-50','△':'border-purple-400 from-purple-50 to-fuchsia-50','☆':'border-rose-400 from-rose-50 to-pink-50'};
+        marked.forEach(h => {
+            const div = document.createElement('div');
+            div.className = `border-2 rounded-lg p-4 bg-gradient-to-br ${borderMap[h.mark]}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${h.popularity} / ${h.score}pt</span></div>
+                <div class="text-xl font-bold text-gray-800 mb-2">${h.mark} ${h.number} ${h.name}</div>
+                <div class="text-sm text-gray-700">${h.comment.replace(/^[◎○▲△☆注×]+\s*/,'')}</div>`;
+            grid.appendChild(div);
+        });
+    }
+
+    function renderRanking() {
+        const sorted = [...horses].sort((a,b) => b.score - a.score);
+        const ctx = document.getElementById('rankingChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar', data: {
+                    labels: sorted.map(h => (h.mark ? h.mark : '') + h.number + ' ' + h.name),
+                    datasets: [{ label: '総合点', data: sorted.map(h => h.score),
+                        backgroundColor: sorted.map(h => {
+                            if (h.mark === '◎') return '#eab308';
+                            if (h.mark === '○') return '#6366f1';
+                            if (h.mark === '▲') return '#22c55e';
+                            if (h.mark === '△') return '#a855f7';
+                            if (h.mark === '☆') return '#f43f5e';
+                            if (h.mark === '×') return '#6b7280';
+                            if (h.mark === '注') return '#f59e0b';
+                            return '#d1d5db';
+                        }), borderRadius: 6 }]
+                }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 60 } } }
+            });
+        }
+        const tbody = document.getElementById('rankingBody');
+        let rank = 0, prev = -1;
+        sorted.forEach((h, i) => {
+            if (h.score !== prev) { rank = i + 1; prev = h.score; }
+            const bg = h.mark ? (h.mark === '◎' ? 'bg-yellow-50' : h.mark === '○' ? 'bg-indigo-50' : h.mark === '▲' ? 'bg-green-50' : h.mark === '△' ? 'bg-purple-50' : h.mark === '☆' ? 'bg-rose-50' : h.mark === '×' ? 'bg-gray-50' : 'bg-amber-50') : (i % 2 ? 'bg-gray-50' : '');
+            tbody.innerHTML += `<tr class="${bg}"><td class="px-3 py-2">${rank}</td><td class="px-3 py-2 text-center font-bold">${markBadgeHTML(h.mark,h.badge)} ${h.number}</td><td class="px-3 py-2 font-medium">${h.name}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.jockey}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.popularity}</td><td class="px-3 py-2 text-center font-bold">${h.score}</td><td class="px-3 py-2 text-xs hidden md:table-cell">${h.comment}</td></tr>`;
+        });
+    }
+
+    function renderHorseCards() {
+        const container = document.getElementById('horseCards');
+        container.innerHTML = '';
+        [...horses].sort((a, b) => b.score - a.score).forEach(horse => container.appendChild(createHorseCard(horse)));
+    }
+
+    function createHorseCard(horse) {
+        const card = document.createElement('div');
+        card.className = 'horse-card glass-card p-6';
+        const badgeMap = {
+            honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+            taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+            tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+            renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+            ana: '<span class="badge-ana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-bolt"></i> 穴</span>',
+            kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-ban"></i> 消し</span>',
+            chui: '<span class="badge-chui text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-info-circle"></i> 注</span>'
+        };
+        const prosHTML = horse.details.pros.map(p => `<li class="flex items-start"><i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i><span>${p}</span></li>`).join('');
+        const consHTML = horse.details.cons.map(c => `<li class="flex items-start"><i class="fas fa-times-circle text-red-500 mr-2 mt-1"></i><span>${c}</span></li>`).join('');
+        const expectHTML = horse.details.expect.map(e => `<li class="flex items-start"><i class="fas fa-star text-yellow-500 mr-2 mt-1"></i><span>${e}</span></li>`).join('');
+        const firstExpClass = (horse.firstExp.includes('初') || horse.firstExp.includes('困難') || horse.firstExp.includes('ぶり')) && !horse.firstExp.includes('勝') && !horse.firstExp.includes('2着') && !horse.firstExp.includes('連対') ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700';
+        card.innerHTML = `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div class="flex items-center gap-3 mb-2 md:mb-0">
+                    <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800">${horse.mark || '無'} ${horse.name}</div>
+                        <div class="text-sm text-gray-600">${horse.jockey} / ${horse.trainer} / ${horse.popularity}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    ${badgeMap[horse.badge] || ''}
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
+                </div>
+            </div>
+            <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                <div class="text-sm text-gray-700">
+                    <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>
+                    <div class="flex gap-4 flex-wrap">
+                        <div><span class="font-bold">所属：</span>${horse.belonging}</div>
+                        <div><span class="font-bold">適性：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp}</span></div>
+                        <div><span class="font-bold">馬体：</span>好走${horse.bestWeight}kg / 前走${horse.lastWeight}kg / ${horse.weightNote}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4" style="height: 280px; position: relative;">
+                <div class="font-bold text-gray-700 mb-2">12項目評価</div>
+                <canvas id="radarChart${horse.number}" style="height: 250px;"></canvas>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 期待点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+            </div>
+        `;
+        setTimeout(() => createRadarChart(horse), 100);
+        return card;
+    }
+
+    function createRadarChart(horse) {
+        const ctx = document.getElementById(`radarChart${horse.number}`);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'radar',
+            data: { labels: evaluationItems, datasets: [{ data: horse.details.scores, backgroundColor: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(99, 102, 241, 1)' }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderMarkGrid();
+        renderRanking();
+        renderHorseCards();
+    });
+    window.addEventListener('scroll', () => {
+        document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 300);
+    });
+    </script>
+</body>
+</html>
