@@ -1283,9 +1283,47 @@
 <li>[ ] 出走取消・騎手変更</li>
 </ul>
 <hr />
-<h2 id="_12">参照ファイル間の矛盾（報告）</h2>
-<p><code>.claude/CLAUDE.md</code> の買い目要点に「<strong>ワイドに本命を入れない</strong>」とある一方、正本である <code>intel/strategy/buying-rules.md</code> §8.13 の大原則2は「<strong>ワイド ◎軸1頭ながしを主力券種に</strong>」と規定しており、CLAUDE.md 自身の §8.13 索引行も後者を採っている。<br />
-本レースでは<strong>正本（buying-rules §8.13）に従いワイド◎軸1頭ながしを主力</strong>とした。§8.13の券種振り分け表にある「ワイド（本命を入れない）」は「本命を抜いた2-3着（中穴×中穴）を狙う場合のモード」を指す記述と解釈し、そちらは ○⑫軸ながし2点として別建てで確保している。<strong>CLAUDE.md 側の要点リストの表現を正本に合わせて更新することを推奨</strong>。</p>
+<h2 id="20260809">参照ファイル間の矛盾（発見 → <strong>2026/08/09 修正済み</strong>）</h2>
+<h3 id="_12">何が矛盾していたか</h3>
+<p><code>.claude/CLAUDE.md</code> の買い目要点に「<strong>ワイドに本命を入れない</strong>」という<strong>無条件禁止</strong>があった一方、正本 <code>intel/strategy/buying-rules.md</code> §8.13 大原則2は「<strong>ワイド ◎軸1頭ながしを主力券種に</strong>」と規定していた。</p>
+<h3 id="_13">調べた結果</h3>
+<p>無条件禁止のほうが<strong>古い記述の残骸</strong>だった。<br />
+- 出どころは buying-rules の旧節「券種の役割分担」の一文「ワイドに本命を入れると妙味なし」。<br />
+- ところが <strong>2026/06/27 に「ワイドを第2の主力に格上げ」と改定済み</strong>（DB累計でワイドのROI 30%＞複勝23%＞馬連13%＞3連複7%）。改定は memory <code>feedback_no_reflex_sanrenpuku</code> の中にも書かれていたが、<strong>同じファイルの上の行に旧記述が残ったまま</strong>で自己矛盾していた。その旧行だけが CLAUDE.md に写されていた。<br />
+- 正しい基準は「本命かどうか」ではなく <strong>「◎のオッズが薄いかどうか」</strong>。◎がガチガチ1.x倍ならワイドは薄いので馬連・複勝へ寄せる／◎が中穴〜穴なら◎軸ワイドがむしろ主力。</p>
+<h3 id="_14">実害（過去の取りこぼし）</h3>
+<ul>
+<li><strong>2026/05/30 東京6R</strong>: 「ルール『ワイドに本命を入れない』に従い、ワイドは見送り」＝券種そのものを落としていた。</li>
+<li><strong>2026/07/26 札幌11R</strong>: ○1着・▲2着だったのに②-⑬の組合せが1点もなく、<strong>ワイド1,170円・馬連2,870円を取りこぼし</strong>（振り返りに「『ワイドに本命（断然人気）を入れない』原則で②をワイドから外した」と記録あり）。</li>
+</ul>
+<h3 id="4">修正内容（4ファイル）</h3>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>修正</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.claude/CLAUDE.md</code></td>
+<td>無条件禁止を削除し、<strong>2モードの使い分け＋正本へのリンク</strong>に置換</td>
+</tr>
+<tr>
+<td><code>intel/strategy/buying-rules.md</code> 旧節「券種の役割分担」</td>
+<td><strong>旧版と明示</strong>し、現行の正本が §8.13 であること・人気帯列は §0 で廃止済みであることを冒頭に追記</td>
+</tr>
+<tr>
+<td><code>intel/strategy/buying-rules.md</code> §8.13 大原則2</td>
+<td>「無条件禁止として運用してはいけない」旨と実害2件を明記</td>
+</tr>
+<tr>
+<td>memory <code>feedback_no_reflex_sanrenpuku.md</code></td>
+<td>自己矛盾していた旧行を2モード記述へ修正</td>
+</tr>
+</tbody>
+</table>
+<p>本レースは修正前から<strong>正本に従いワイド◎軸1頭ながしを主力</strong>としており、買い目に変更はない（モード②は ○⑫軸ながし2点として別建てで確保済み）。</p>
 <hr />
 <h2 id="phase3">Phase3 ハードゲートチェックリスト（最終確認）</h2>
 <table>
