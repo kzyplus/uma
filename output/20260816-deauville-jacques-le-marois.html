@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【ジャックルマロワ賞 2026】総合評価シート</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,12 +19,12 @@
         .badge-tanana { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
         .badge-renka { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
         .badge-ana { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
-        .badge-chui { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .badge-kiken { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        .badge-chui { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         html { scroll-behavior: smooth; }
         .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
         .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
-        .nav-index a:hover { background: #6366f1; color: white; transform: scale(1.1); }
+        .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
         .nav-index a:first-child { background: #6366f1; color: white; }
         .nav-tooltip { position: absolute; right: 50px; background: #1f2937; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
         .nav-index a:hover .nav-tooltip { opacity: 1; }
@@ -42,151 +43,80 @@
         <a href="../index.html"><i class="fas fa-home"></i><span class="nav-tooltip">一覧へ戻る</span></a>
         <a href="#header"><i class="fas fa-flag"></i><span class="nav-tooltip">トップ</span></a>
         <a href="#trend"><i class="fas fa-chart-line"></i><span class="nav-tooltip">レース質</span></a>
-        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">結論</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">最終結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">レーティング</span></a>
         <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
         <a href="#limits"><i class="fas fa-triangle-exclamation"></i><span class="nav-tooltip">限界</span></a>
         <a href="#check"><i class="fas fa-clipboard-check"></i><span class="nav-tooltip">確認</span></a>
     </nav>
     <nav class="mobile-nav">
-        <a href="../index.html">一覧</a><a href="#header">トップ</a><a href="#trend">レース質</a><a href="#ranking">結論</a><a href="#horses">個別</a><a href="#limits">限界</a><a href="#check">確認</a>
+        <a href="../index.html">一覧</a><a href="#header">トップ</a><a href="#trend">レース質</a><a href="#conclusion">結論</a><a href="#ranking">R</a><a href="#horses">個別</a><a href="#limits">限界</a><a href="#check">確認</a>
     </nav>
     <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
     <div class="max-w-7xl mx-auto">
+        <!-- ヘッダー -->
         <div id="header" class="glass-card p-6 md:p-8 mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">ジャックルマロワ賞 2026</h1>
             <p class="text-center text-gray-600 mb-4">フランス G1 / 芝1600m 直線 / 総合評価シート（人気ブラインド）</p>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
 <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催日</div><div class="font-bold text-gray-800">2026年8月16日(日)</div></div>
-<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">競馬場</div><div class="font-bold text-gray-800">ドーヴィル</div></div>
-<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="font-bold text-gray-800">芝1600m（完全な直線）</div></div>
-<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">発走</div><div class="font-bold text-gray-800">日本時間 22:50（現地15:50）</div></div>
+<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">競馬場</div><div class="font-bold text-gray-800">ドーヴィル（仏）</div></div>
+<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="font-bold text-gray-800">芝1600m 直線</div></div>
+<div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">発走</div><div class="font-bold text-gray-800">日本時間 22:50</div></div>
 <div class="p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">馬場/頭数</div><div class="font-bold text-amber-700">事前 bon souple à bon / 10頭</div></div>
             </div>
         </div>
 
-<div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #4f46e5;background:linear-gradient(135deg,#eef2ff,#e0e7ff);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#4f46e5">この予想の作り方</span><h2 class="text-xl md:text-2xl font-bold" style="color:#4f46e5">オッズを一度も見ずに、材料だけを渡した担当が決めた印です</h2></div><p class="text-sm text-gray-700 mb-2">通常の分析はDBの12項目採点と観点関数で組み立てますが、<strong>海外レースはDBに存在せず、その仕組みが一切使えません</strong>。そこで、10頭の全戦績・脚質・馬場適性・距離適性・直線コース経験・陣営コメント・前哨戦のラップ分析・直接対決を<strong>1本の資料に集約</strong>し、<strong>オッズ・人気・他人の予想印を完全に除いたうえで</strong>、担当に印を決めさせました。</p><p class="text-sm text-gray-700 mb-2">資料はすべて一次ソース（Racing Post / France Galop / Equidia / geny / zeturf / TDN / netkeiba / JRA公式）に当たり、<strong>2ソースで一致しないものは「未確認」と明記</strong>しています。日本の競馬系動画2本からも<strong>事実部分だけ</strong>を取り出し、出所を明記して収録しました（発言者の印・オッズ・評価は除外）。</p><p class="text-sm text-gray-700 mb-2">★<strong>検証の副産物</strong>★ この過程で、検索の要約が<strong>実在しない勝ち馬名を生成</strong>する事例が発生しました。レースは未施行です。以後、すべての事実を一次ソースのページで照合しています。</p></div>
-<div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #0891b2;background:linear-gradient(135deg,#ecfeff,#cffafe);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#0891b2">検証</span><h2 class="text-xl md:text-2xl font-bold" style="color:#0891b2">2人の担当に独立に決めさせ、突き合わせました</h2></div><p class="text-sm text-gray-700 mb-2">材料を小出しに足しながら4回改訂した担当（継ぎ足し版）と、<strong>完成した資料だけを一度に見て一発で決めた担当（白紙版）</strong>の2つを走らせ、比較しました。どちらもオッズは見ていません。</p><p class="text-sm text-gray-700 mb-2">継ぎ足し版: ◎⑩プリサイス ○⑤モアサンダー ▲⑧ライフ △①ゼウス △③シックスペンス ☆⑨ザシークレット</p><p class="text-sm text-gray-700 mb-2">白紙版（<strong>本シートはこちらを採用</strong>）: ◎⑤モアサンダー ○⑧ライフ ▲⑩プリサイス △①ゼウス △③シックスペンス ☆②ドリームライナー</p><p class="text-sm text-gray-700 mb-2"><strong>上位3頭の顔ぶれ（⑤⑧⑩）と△2頭は完全に一致し、順序だけが逆転</strong>しました。継ぎ表版は<strong>前哨戦のラップ分析</strong>と<strong>馬場への手掛かり一覧</strong>を見る前に◎を固めており、その後4回の改訂でも◎が一度も動きませんでした。<strong>後から入った決定的な材料を、先に出した結論が吸収しきれなかった</strong>と判断し、全材料を一度に見た白紙版を採っています。</p></div>
-<div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #d97706;background:linear-gradient(135deg,#fffbeb,#fef3c7);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#d97706">未確定</span><h2 class="text-xl md:text-2xl font-bold" style="color:#d97706">当日の馬場が、2つの出所で正反対です</h2></div><p class="text-sm text-gray-700 mb-2"><strong>8/14公開の動画</strong>「今年は<strong>パンパンの良馬場開催が濃厚</strong>」／<strong>8/16公開の動画</strong>（前日8/15のレース映像と調教映像を実際に見たうえで）「<strong>ちょっとタフかなという感じ</strong>」。</p><p class="text-sm text-gray-700 mb-2"><strong>どちらも公式発表ではなく、ペネトロメーター値にも触れていません。</strong> 作成時点でパリは早朝で、France Galop の当日terrainは未掲載、同日ドーヴィルの前のレースも未施行でした。<strong>発走前に公式terrainとペネトロメーター値を必ず確認してください。</strong></p><p class="text-sm text-gray-700 mb-2">参考: <strong>2週間前(8/2)の同コース・ロートシルト賞は Bon-Souple・ペネトロメーター3.3</strong>、昨年8/17の同コース・ブータン賞G3も <strong>bon souple・3.3</strong> でした。</p></div>
+<div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #4f46e5;background:linear-gradient(135deg,#eef2ff,#e0e7ff);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#4f46e5">作り方</span><h2 class="text-xl md:text-2xl font-bold" style="color:#4f46e5">オッズを一度も見ていない担当が、材料だけで決めた印です</h2></div><p class="text-sm text-gray-700 mb-2">通常の分析はDBの12項目採点と観点関数で組み立てますが、<strong>海外レースはDBに存在せず、その仕組みが一切使えません</strong>。そこで10頭の全戦績・脚質・馬場適性・距離適性・直線コース経験・陣営コメント・前哨戦のラップ分析・直接対決を<strong>1本の資料に集約</strong>し、<strong>オッズ・人気・他人の予想印を完全に除いたうえで</strong>担当に印を決めさせました。</p><p class="text-sm text-gray-700 mb-2">材料はすべて一次ソース（Racing Post / France Galop / Equidia / geny / ZEturf / TDN / netkeiba / JRA公式）に当たり、<strong>2ソースで一致しないものは「未確認」と明記</strong>しています。日本の競馬系動画2本からも<strong>事実部分だけ</strong>を出所つきで収録し、発言者の印・オッズ・評価は除外しました。</p><p class="text-sm text-gray-700 mb-2">★この過程で、検索の要約が<strong>実在しない勝ち馬名を生成</strong>する事例が起きました。レースは未施行です。以後すべての事実を一次ソースのページで照合しています。</p></div><div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #0891b2;background:linear-gradient(135deg,#ecfeff,#cffafe);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#0891b2">検証</span><h2 class="text-xl md:text-2xl font-bold" style="color:#0891b2">2人の担当に独立に決めさせ、突き合わせました</h2></div><p class="text-sm text-gray-700 mb-2">材料を小出しに足しながら4回改訂した担当（継ぎ足し版）と、<strong>完成した資料だけを一度に見て一発で決めた担当（白紙版）</strong>を走らせ、比較しました。どちらもオッズは見ていません。</p><p class="text-sm text-gray-700 mb-2">継ぎ足し版 ◎⑤モアサンダー…ではなく <strong>◎⑩プリサイス ○⑤モアサンダー ▲⑧ライフ △①ゼウス △③シックスペンス ☆⑨ザシークレット</strong></p><p class="text-sm text-gray-700 mb-2">白紙版（<strong>本シートはこちら</strong>） <strong>◎⑤モアサンダー ○⑧ライフ ▲⑩プリサイス △①ゼウス △③シックスペンス ☆②ドリームライナー</strong></p><p class="text-sm text-gray-700 mb-2"><strong>上位3頭の顔ぶれ（⑤⑧⑩）と△2頭は完全に一致し、順序だけが逆転</strong>しました。継ぎ足し版は<strong>前哨戦のラップ分析と馬場への手掛かり一覧を見る前に◎を固めており、その後4回の改訂でも◎が一度も動きませんでした</strong>。後から入った決定的な材料を先の結論が吸収しきれていないと判断し、全材料を一度に見た白紙版を採っています。</p></div><div class="glass-card p-5 md:p-6 mb-6" style="border-left:6px solid #d97706;background:linear-gradient(135deg,#fffbeb,#fef3c7);"><div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:#d97706">未確定</span><h2 class="text-xl md:text-2xl font-bold" style="color:#d97706">当日の馬場が、2つの出所で正反対です</h2></div><p class="text-sm text-gray-700 mb-2"><strong>8/14公開の動画</strong>「今年は<strong>パンパンの良馬場開催が濃厚</strong>」／<strong>8/16公開の動画</strong>（前日8/15のレース映像と調教映像を実際に見たうえで）「<strong>ちょっとタフかなという感じ</strong>」。</p><p class="text-sm text-gray-700 mb-2"><strong>どちらも公式発表ではなく、ペネトロメーター値にも触れていません。</strong> 作成時点でパリは早朝で、France Galop の当日terrainは未掲載、同日ドーヴィルの前のレースも未施行でした。<strong>発走前に公式terrainとペネトロメーター値を必ず確認してください。</strong></p><p class="text-sm text-gray-700 mb-2">参考: <strong>2週間前(8/2)の同コース・ロートシルト賞は Bon-Souple・ペネトロメーター3.3</strong>、昨年8/17の同コース・ブータン賞G3も <strong>bon souple・3.3</strong> でした。</p></div>
 
+        <!-- レース質と傾向 -->
         <div id="trend" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-line mr-2 text-indigo-600"></i>レース質と傾向（ドーヴィル 芝1600m 直線）</h2>
-<div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500 mb-3"><div class="font-bold text-rose-700 mb-1">★前哨戦3レースが、すべて例年よりスローだった★</div><p class="text-sm text-gray-700">本番の直近平均は<strong>前半47.99／後半46.56＝後傾約1.4秒のミドルペース</strong>（2025年だけ合計3.8秒の超スローで例外）。対して上位人気5頭が使ってきた3レースは——<strong>ロートシルト賞 48.74／45.76（後傾3.0秒）</strong>、<strong>サマーマイルS 51.47／47.48（後傾4.0秒・良馬場で前半13秒台連発）</strong>、<strong>ジャンプラ賞 41.98／38.96（後傾3.0秒）</strong>。<strong>すべて例年より緩い流れ</strong>でした。つまり前走の着順は、本番で求められる能力とは別物の可能性があります。</p></div><div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-3"><div class="font-bold text-indigo-700 mb-1">その結果、前走の勝ち負けが逆の意味を持つ</div><p class="text-sm text-gray-700"><strong>サマーマイルSは「後方にいる馬は物理的に差し切り不可能」</strong>なラップで、前で立ち回ったゼウスオリンピオスが勝ち、最後方のモアサンダーが<strong>上がり最速33秒64</strong>を使って4着。勝った騎手自身が「<strong>2ハロンほどタダで前をもらってしまった</strong>」と語っています。<strong>ジャンプラ賞</strong>もスタック師が「<strong>前に行く馬がいなかったのでスミヨンが自分でハナを切った</strong>」＝戦術的な逃げ切り。<strong>ロートシルト賞</strong>もプリサイスが「離れた2番手」で<strong>数字よりさらにスロー</strong>、展開が向いたうえでの½馬身2着でした。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-3"><div class="font-bold text-emerald-700 mb-1">唯一の高レベル戦はクイーンアンS（G1）</div><p class="text-sm text-gray-700"><strong>勝ちタイム1分37秒53は、2022年（勝ち馬は怪物バーイド）より速い</strong>。高速馬場の影響を差し引いても「前半が速いのに後半が失速していない」ラップで、3着オペラバルロは<strong>次走サセックスSで怪物2頭相手に僅差3着</strong>。ここで<strong>½馬身2着がモアサンダー、2¼馬身後の4着がゼウスオリンピオス</strong>でした。</p></div><div class="p-3 bg-sky-50 rounded-lg border-l-4 border-sky-500 mb-3"><div class="font-bold text-sky-700 mb-1">コース形態 ― 新潟の千直とは違う</div><p class="text-sm text-gray-700"><strong>コーナーが1つもない完全な直線1600m</strong>（メゾンラフィットに次ぐフランス2番目の長さ）。<strong>平坦でパワーよりスピードが求められる</strong>。ただし<strong>外ラチ沿いが有利とは限らず、馬場の中央や、馬群が2つに割れる展開が十分にありうる</strong>のが欧州の直線競馬です（2つの出所が一致）。<strong>位置の取り直しが効かない</strong>ため、スタート後200〜300mで取ったポジションと進路がほぼ最後まで固定されます。<strong>馬番とゲート番（＝枠）は別</strong>です。</p></div><div class="p-3 bg-violet-50 rounded-lg border-l-4 border-violet-500 mb-3"><div class="font-bold text-violet-700 mb-1">過去11回（2015〜2025）の勝ち馬と、日本馬の成績</div><p class="text-sm text-gray-700"><strong>3歳5勝・4歳5勝・5歳以上は1勝のみ</strong>（2015年 Esoterique 牝5）。<strong>牝馬が4勝</strong>。勝ち馬のゲート番は過去5年で 10 / 4 / 1 / 8 / 7 とばらけ、<strong>一貫した内外の偏りは見えません</strong>。日本調教馬は<strong>通算6戦1勝・3着内2回</strong>（1998タイキシャトル1着、2003テレグノシス3着、2003ローエングリン10着、2022バスラットレオン7着、2025ゴートゥファースト5着・アスコリピチェーノ6着）。<strong>斤量は4歳以上59.5kg／3歳牡56.5kg／3歳牝55.0kg</strong>で、3歳牡は3.0kg、3歳牝は4.5kgもらいます。</p></div>
+<div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500 mb-3"><div class="font-bold text-rose-700 mb-1">★前哨戦3レースが、すべて例年よりスローだった★</div><p class="text-sm text-gray-700">本番の直近平均は<strong>前半47.99／後半46.56＝後傾約1.4秒のミドルペース</strong>（2025年だけ合計3.8秒の超スローで例外）。対して上位人気5頭が使ってきた3レースは——<strong>ロートシルト賞 48.74／45.76（後傾3.0秒）</strong>、<strong>サマーマイルS 51.47／47.48（後傾4.0秒・良馬場で前半13秒台連発）</strong>、<strong>ジャンプラ賞 41.98／38.96（後傾3.0秒）</strong>。<strong>すべて例年より緩い流れ</strong>でした。つまり前走の着順は、本番で求められる能力とは別物の可能性があります。</p></div><div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-3"><div class="font-bold text-indigo-700 mb-1">その結果、前走の勝ち負けが逆の意味を持つ</div><p class="text-sm text-gray-700"><strong>サマーマイルSは「後方にいる馬は物理的に差し切り不可能」</strong>なラップで、前で立ち回ったゼウスオリンピオスが勝ち、最後方のモアサンダーが<strong>上がり最速33秒64</strong>を使って4着。勝った騎手自身が「<strong>2ハロンほどタダで前をもらってしまった</strong>」と語っています。<strong>ジャンプラ賞</strong>もスタック師が「<strong>前に行く馬がいなかったのでスミヨンが自分でハナを切った</strong>」＝戦術的な逃げ切り。<strong>ロートシルト賞</strong>もプリサイスが「離れた2番手」で<strong>数字よりさらにスロー</strong>、展開が向いたうえでの½馬身2着でした。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-3"><div class="font-bold text-emerald-700 mb-1">唯一の高レベル戦はクイーンアンS（G1）</div><p class="text-sm text-gray-700"><strong>勝ちタイム1分37秒53は、2022年（勝ち馬は怪物バーイド）より速い</strong>。高速馬場を差し引いても「前半が速いのに後半が失速していない」ラップで、3着オペラバルロは<strong>次走サセックスSで怪物2頭相手に僅差3着</strong>。ここで<strong>½馬身2着がモアサンダー、2¼馬身後の4着がゼウスオリンピオス</strong>でした。</p></div><div class="p-3 bg-sky-50 rounded-lg border-l-4 border-sky-500 mb-3"><div class="font-bold text-sky-700 mb-1">コース形態 ― 新潟の千直とは違う</div><p class="text-sm text-gray-700"><strong>コーナーが1つもない完全な直線1600m</strong>（メゾンラフィットに次ぐフランス2番目の長さ）。<strong>平坦でパワーよりスピードが求められる</strong>。ただし<strong>外ラチ沿いが有利とは限らず、馬場の中央や、馬群が2つに割れる展開が十分にありうる</strong>のが欧州の直線競馬です（2つの出所が一致）。<strong>位置の取り直しが効かない</strong>ため、スタート後200〜300mで取ったポジションと進路がほぼ最後まで固定されます。<strong>馬番とゲート番（＝枠）は別</strong>です。</p></div><div class="p-3 bg-violet-50 rounded-lg border-l-4 border-violet-500 mb-3"><div class="font-bold text-violet-700 mb-1">過去11回（2015〜2025）の勝ち馬と、日本馬の成績</div><p class="text-sm text-gray-700"><strong>3歳5勝・4歳5勝・5歳以上は1勝のみ</strong>（2015年 Esoterique 牝5）。<strong>牝馬が4勝</strong>。勝ち馬のゲート番は過去5年で 10 / 4 / 1 / 8 / 7 とばらけ、<strong>一貫した内外の偏りは見えません</strong>。日本調教馬は<strong>通算6戦1勝・3着内2回</strong>（1998タイキシャトル1着、2003テレグノシス3着、2003ローエングリン10着、2022バスラットレオン7着、2025ゴートゥファースト5着・アスコリピチェーノ6着）。<strong>斤量は4歳以上59.5kg／3歳牡56.5kg／3歳牝55.0kg</strong>で、3歳牡は3.0kg、3歳牝は4.5kgもらいます。</p></div>
         </div>
 
+        <!-- 最終結論 -->
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論（6頭印・オッズを見ずに ①能力 ②今回条件への適合 ③状態 だけで決定）</h2>
+            <div class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 text-sm text-indigo-800">
+                <strong>★<strong>◎⑤モアサンダー</strong>＝資料中もっとも水準の高かったクイーンアンS(G1)で½馬身2着、同レースでゼウスに2¼馬身先着。<strong>2025年以降の好走がすべて直線コース</strong>で、唯一の周回戦だけが最悪。<strong>Very SoftのG1で4着／Good・GFのG1で2着2回＝馬場がどちらに転んでも手掛かりがある唯一の馬</strong>。／<strong>○⑧ライフ</strong>＝<strong>同じコース・同じペネト3.3の bon souple でG3を2½馬身圧勝</strong>、前走5着は距離短縮とスローが理由。／<strong>▲⑩プリサイス</strong>＝<strong>14日前に同じコース・同じ馬場で½馬身2着</strong>、最軽量55.0kg。ただし<strong>牡馬と戦った経験がゼロ</strong>。／<strong>△①ゼウス</strong>＝状態は上向きだが前走の勝ちは超スローの恩恵で、軟らかい馬場は未経験。／<strong>△③シックスペンス</strong>＝能力と状態は互角、条件だけが全部空欄。／<strong>☆②ドリームライナー</strong>＝<strong>同コースの持ち時計は資料内で最速</strong>、馬場がタフに出た場合の保険。</strong>
+            </div>
+            <div id="markGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <p class="text-xs text-gray-500 mt-3">※印は<strong>オッズ・人気・他人の予想印を一切見ずに</strong>決めています。<strong>×は使っていません</strong>（消し専用の印で、能力・条件で確実に消せると裏の取れた馬がいないため）。<strong>買い目は組んでいません</strong>——買い目のルールを持つプログラムが海外レースを扱えず、文章から手で組むことは禁止しているためです。10頭立てで印6頭＝少頭数キャップ（N−2＝8頭）の範囲内。</p>
+        </div>
+
+        <!-- 公式レーティング -->
         <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論</h2>
-            <p class="text-sm text-gray-600 mb-4">印は<strong>オッズを一度も見ずに</strong>①能力 ②今回条件への適合 ③状態だけで決めています。<strong>×は使っていません</strong>（消し専用の印で、今回は能力・条件で確実に消せると裏の取れた馬がいないため）。<strong>買い目は組んでいません</strong>——買い目のルールを持つプログラムが海外レースを扱えず、文章から手で組むことは禁止しているためです。</p>
-            <div class="overflow-x-auto"><table class="w-full">
-                <thead><tr class="bg-gray-100 text-left"><th class="p-3 text-center">印</th><th class="p-3">馬</th><th class="p-3">プロフィール</th><th class="p-3">要点</th></tr></thead>
-                <tbody>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">◎</td><td class="p-3 font-bold">⑤ モアサンダー</td><td class="p-3 text-sm text-gray-600">牡5・59.5kg・T.マーカンド・W.ハガス厩舎(英)・ゲート8</td><td class="p-3 text-sm text-gray-700"><strong>馬場がどちらに転んでも手掛かりを持つ唯一の馬</strong>。最高レベルだったクイーンアンSで½馬身2着</td></tr>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">○</td><td class="p-3 font-bold">⑧ ライフ（Rayif）</td><td class="p-3 text-sm text-gray-600">牡3・56.5kg・M.バルザローナ・F.グラファール厩舎(仏)・ゲート10</td><td class="p-3 text-sm text-gray-700"><strong>同じコース・同じ数値の馬場でG3を2½馬身圧勝</strong>。前走5着は距離短縮とスローが理由</td></tr>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">▲</td><td class="p-3 font-bold">⑩ プリサイス（Precise）</td><td class="p-3 text-sm text-gray-600">牝3・55.0kg（最軽量）・R.ムーア・A.P.オブライエン厩舎(愛)・ゲート4</td><td class="p-3 text-sm text-gray-700"><strong>14日前に同じコース・同じペネト3.3で½馬身2着</strong>。ただし牡馬と戦った経験がゼロ</td></tr>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">△</td><td class="p-3 font-bold">① ゼウスオリンピオス</td><td class="p-3 text-sm text-gray-600">牡4・59.5kg・C.リー・K.R.バーク厩舎(英)・ゲート6</td><td class="p-3 text-sm text-gray-700">状態は明確に上向き。ただし<strong>前走の勝ちは超スローの恩恵</strong>で、軟らかい馬場は完全な未知</td></tr>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">△</td><td class="p-3 font-bold">③ シックスペンス</td><td class="p-3 text-sm text-gray-600">牡5・59.5kg・武豊・田中博康厩舎(日)・ブリンカー・ゲート5</td><td class="p-3 text-sm text-gray-700"><strong>能力と状態は上位と互角。条件だけが全部空欄</strong>——13戦すべて良馬場、直線コースも海外も初</td></tr>
-<tr class="border-b hover:bg-gray-50"><td class="p-3 text-center font-bold text-lg">☆</td><td class="p-3 font-bold">② ドリームライナー</td><td class="p-3 text-sm text-gray-600">牡4・59.5kg・T.バシュロ・S.ワッテル厩舎(仏)・ゲート2</td><td class="p-3 text-sm text-gray-700"><strong>同じコースの持ち時計は資料内で最速</strong>。馬場がタフに出た場合の保険</td></tr>
-                </tbody>
-            </table></div>
-        </div>
-
-        <div id="horses" class="mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-horse mr-2 text-indigo-600"></i>個別評価（①能力 ②今回条件への適合 ③状態）</h2>
-
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-honmei text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">◎</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">⑤ モアサンダー</div>
-                    <div class="text-sm text-gray-500">牡5・59.5kg・T.マーカンド・W.ハガス厩舎(英)・ゲート8</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">本命</span>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-bar mr-2 text-indigo-600"></i>公式レーティング（ポンド建て・当日の斤量は含まない）</h2>
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 460px; position: relative;"><canvas id="rankingChart"></canvas></div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm"><thead><tr class="bg-indigo-100">
+                    <th class="px-3 py-3 text-left">順</th><th class="px-3 py-3 text-center">印/馬番</th><th class="px-3 py-3 text-left">馬名</th>
+                    <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th><th class="px-3 py-3 text-center hidden md:table-cell">斤量/ゲート</th>
+                    <th class="px-3 py-3 text-center">R</th><th class="px-3 py-3 text-left hidden md:table-cell">要点</th>
+                </tr></thead><tbody id="rankingBody"></tbody></table>
             </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">レーティング120＝単独最高</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">直線コースで4勝＋G1で2着2回</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">14戦5勝・連対9回</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700">資料中もっとも水準の高かったクイーンアンS（G1）で<strong>½馬身2着</strong>。同じレースでゼウスオリンピオスに<strong>2¼馬身先着</strong>し、ロッキンジS（G1）でも2着。<strong>G1で負けた2回はどちらも僅差</strong>で、相手が弱かったわけではありません。レーティング120は単独最高です。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700"><strong>2025年以降の好走がすべて直線コース</strong>（4勝＋G1で2着2回）で、<strong>唯一の周回コース戦だったサマーマイルSだけが近走で最悪</strong>。今回は直線に戻ります。さらに<strong>Very SoftのG1（フォレ賞）で16頭立て4着／Good・GFのG1で2着2回</strong>＝<strong>馬場が緩んでも速くても手掛かりがある唯一の馬</strong>。当日の馬場情報が2つの出所で正反対である以上、この一点は重く見ました。<strong>ゴール前50〜100mで最速の脚</strong>を使う型で、流れが締まれば理想的な舞台です。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700">前走から間隔を置いて「<strong>fresh horse</strong>」。<strong>サマーマイルだけ乗り替わりだった主戦マーカンドに戻ります</strong>。陣営自身が「<strong>あのレースはペースがまるでなく、この馬に向かなかった</strong>」と敗因を明言し、サセックスSを「この馬に合わない」と判断してここを選択＝<strong>狙って使っている</strong>一戦です。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700"><strong>14戦してG1未勝利</strong>（直近2つのG1はどちらも2着）。59.5kgで3歳勢に3.0〜4.5kg与えます。勝ち鞍の主軸は7ハロンで、マイルは2度とも2着どまり。</p></div>
+            <p class="text-xs text-gray-500 mt-3">※このRは<strong>JRA公式アプリが表示する国際レーティング</strong>で、France Galop の valeur（kg建て）と整合します（120−104＝16ポンド ≒ 54.5−47＝7.5kg）。<strong>当日の斤量は含まれていません</strong>。3歳牡は3.0kg（約6.6ポンド）、3歳牝は4.5kg（約9.9ポンド）もらうため、<strong>このグラフだけで序列は決まりません</strong>。こちらで作った点数ではなく、公表値です。</p>
         </div>
 
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-taikou text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">○</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">⑧ ライフ（Rayif）</div>
-                    <div class="text-sm text-gray-500">牡3・56.5kg・M.バルザローナ・F.グラファール厩舎(仏)・ゲート10</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">対抗</span>
-            </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">ドーヴィル直線3戦2勝</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">仏2000ギニー(G1・1600m)勝ち</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">ペネト3.3のbon soupleでG3を2½馬身圧勝</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700">唯一の1600m戦が<strong>仏2000ギニー（G1）勝ち</strong>。<strong>ドーヴィルの直線コースは3戦2勝</strong>で、そのうちブータン賞（G3）を<strong>2½馬身の圧勝</strong>。キャリア5戦3勝で伸びしろのある側です。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700">そのブータン賞が<strong>ペネトロメーター3.3の bon souple</strong>——<strong>事前発表の「bon souple à bon」のど真ん中</strong>で、コースも馬場も実測で証明済みです。父Sea The Moonの産駒統計も<strong>Good 27%／Good to Soft 26%が最良、Heavy 15%が最悪</strong>で、「重馬場の血統」ではなく<strong>良〜やや軟がスイートスポット</strong>。代表産駒 <strong>Alpine Star はこのレースで2着</strong>という直接の前例もあります。3歳で3.0kgもらいます。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700"><strong>前走ジャンプラ賞5着は「1400mへの距離短縮＋スローで前についていけなかった」</strong>が理由で、<strong>陣営の証言・ラップ分析・映像を見た人の発言の3方向が一致</strong>。これは「経験して悪かった」ではなく「条件が違って負けた」に分類しました。陣営「<strong>今季はこまごました不具合が続いたが、今回は今季2走のどちらよりも通常に近い仕上げ</strong>」「火曜の追い切りに調教師も騎手も満足」。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700">仏2000ギニー勝ちは<strong>très souple で標準比3.43秒遅く、1枠から内の開放柵を通って全馬中最短距離</strong>という枠と進路の利がありました。額面どおりには取っていません。</p></div>
+        <!-- 個別馬評価 -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-horse mr-2 text-indigo-600"></i>個別馬評価（全10頭・①能力 ②今回条件への適合 ③状態）</h2>
+            <div id="horseCards" class="space-y-4"></div>
         </div>
 
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-tanana text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">▲</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">⑩ プリサイス（Precise）</div>
-                    <div class="text-sm text-gray-500">牝3・55.0kg（最軽量）・R.ムーア・A.P.オブライエン厩舎(愛)・ゲート4</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">単穴</span>
-            </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">10戦6勝・4着以下は生涯1回</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">マイルG1を3勝</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">14日前に同コース・同馬場で½馬身2着</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700"><strong>10戦6勝で4着以下は生涯1回だけ</strong>。愛1000ギニー・コロネーションS・フィリーズマイルと<strong>マイルG1を3勝</strong>しています。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700"><strong>14日前に、今回とまったく同じドーヴィルの直線1600m・ペネトロメーター3.3で½馬身2着</strong>。今回の条件そのものを走ったばかりです。2歳時には<strong>Yielding（やや重）でもG1勝ち</strong>があり、Good/GFで5勝＝<strong>馬場の両方向に耐える2頭目</strong>。<strong>55.0kgはメンバー最軽量</strong>で古馬から9.9ポンドもらいます。同じブルーボルト相手に<strong>ファルマス2馬身差 → ロートシルト½馬身差</strong>と詰めており、上向きです。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700">中1週。ただし2025年に「メイドン勝ち → <strong>10日後</strong>にG3勝ち」という短間隔の実績があります。オブライエン師「<strong>前走後の状態が想定以上に良かったので戻してきた</strong>」。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700"><strong>牡馬・古馬と戦った経験がゼロ</strong>（10戦すべて牝馬限定か2歳メイドン）。加えて<strong>感染症で出走取消、発熱で大敗</strong>という履歴があり、今季6戦目の最短間隔と重ねると状態のブレ幅が読めません。ロートシルト賞の2着も<strong>スローで位置取りが向いたうえでのもの</strong>で、今日ミドルペースなら割引方向です。<strong>同厩のペースメーカーもいません</strong>（最終10頭にオブライエン厩舎は本馬のみ）。</p></div>
-        </div>
-
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-renka text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">△</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">① ゼウスオリンピオス</div>
-                    <div class="text-sm text-gray-500">牡4・59.5kg・C.リー・K.R.バーク厩舎(英)・ゲート6</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">連下</span>
-            </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">レーティング118</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">8戦5勝</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">直線コースは3戦0勝</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700">レーティング118。G1でロッキンジ3着・クイーンアン4着があり、能力そのものは足りています。8戦5勝。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700">ここを二重に割り引きました。<strong>直線コースは3戦0勝</strong>（G2は勝ちましたが、G1では3着・4着）で、陣営の「この馬は直線コースで走る」という見立ては<strong>実績と食い違います</strong>。前走サマーマイルG2の勝ちは<strong>平均比+0.95秒の超スローを前で立ち回った</strong>もので、ラップ分析・映像確認・勝った騎手自身の証言の3方向が一致。<strong>今日ミドルペースに戻るなら再現しません</strong>。さらに<strong>Good to Soft以下の経験がゼロ</strong>で、馬場がタフに出た場合は完全な未知です。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700">ここは明確な加点。3着→3着→4着→G2勝ちと上向き、バーク師「<strong>調子がよく強くなってきている。夏の間ずっとより2〜3kg重く、より成熟した馬に見える</strong>」。前走だけ乗り替わりだった主戦C.リーに戻ります。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700">フランス初出走・ドーヴィル初。</p></div>
-        </div>
-
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-renka text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">△</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">③ シックスペンス</div>
-                    <div class="text-sm text-gray-500">牡5・59.5kg・武豊・田中博康厩舎(日)・ブリンカー・ゲート5</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">連下</span>
-            </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">レーティング118</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">安田記念(G1)勝ち</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">13戦すべて良馬場</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700">レーティング118。<strong>安田記念（G1）を17頭立ての通過2-2から押し切って制覇</strong>。芝1600で5戦3勝、G2を3勝（中山記念はレコード）。能力は上位と互角です。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700">ここが最大の不安です。<strong>13戦すべて良馬場で、稍重以上の手掛かりがゼロ</strong>。<strong>直線だけのコースも未経験</strong>（新潟の千直にも出走歴なし）。海外遠征も初。ただし<strong>未経験は減点しない</strong>方針なので、コース形態そのものは中立に置いています。<strong>加点材料は隊列</strong>——ゲート5の内寄りで、内側の集団で前に行けるのは本馬とゼウスくらい。安田記念の勝ち方（逃げ馬が手薄でペースが落ち着き、最良の位置を取って抜け出す）が<strong>内側の集団で再現する余地</strong>はあります。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700">良好です。<strong>国内最終追い切りは美浦Wでラスト1F 11.1を馬なり、2勝クラスに2馬身先着</strong>（東スポのみ1馬身＝不一致）。検疫後の立ち遅れは解消し、田中博師「<strong>転厩後、今までにないくらい歩様も良くなってきた</strong>」「<strong>前みたいに左へ行きたがる感じがなくなってきた</strong>」。現地8/13に<strong>実際にドーヴィルの直線コースで調教</strong>して「travelled very well」。<strong>ブリンカーは初着用ではなく2回目</strong>で、着用時1戦1勝（初着用が安田記念でそこでG1制覇）。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700"><strong>安田記念の直前2走はダートG1で9着・11着</strong>、間のマイラーズCも7着。芝マイルでの好走は安田記念の1回に集中しています。</p></div>
-        </div>
-
-        <div class="horse-card glass-card p-5 mb-4">
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <span class="badge-ana text-white font-bold text-2xl w-12 h-12 flex items-center justify-center rounded-full shadow">☆</span>
-                <div>
-                    <div class="text-xl font-bold text-gray-800">② ドリームライナー</div>
-                    <div class="text-sm text-gray-500">牡4・59.5kg・T.バシュロ・S.ワッテル厩舎(仏)・ゲート2</div>
-                </div>
-                <span class="ml-auto text-xs px-3 py-1 rounded-full font-medium bg-gray-100 text-gray-600">穴・押さえ</span>
-            </div>
-            <div class="mb-3"><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">1600mで5戦4勝</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">同コースのG3を1分34秒36で勝利</span><span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">140日の休み明け・G1初出走</span></div>
-            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500 mb-2"><div class="text-xs font-bold text-indigo-700 mb-1">① 能力</div><p class="text-sm text-gray-700"><strong>1600m限定なら5戦4勝</strong>のマイル特化。<strong>ドーヴィルの直線1600mでキャンシー賞（G3）を1分34秒36で勝利</strong>——これは資料内の同コース比較タイムで最速です（プリサイスのロートシルト賞1分35秒73より速い。年・馬場・格が違うので単純比較でないことは承知のうえで）。</p></div><div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 mb-2"><div class="text-xs font-bold text-emerald-700 mb-1">② 今回条件への適合</div><p class="text-sm text-gray-700"><strong>Souple〜Bon Souple がベストゾーン</strong>＝<strong>8/16の「ちょっとタフ」が当たった場合にいちばん得をする馬</strong>。同コース1戦1勝で、脚質は<strong>残り350mから外を強襲する追込み</strong>。◎○▲がやや良〜速い側に寄っているため、<strong>逆側の保険</strong>としてここに置いています。</p></div><div class="p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500 mb-2"><div class="text-xs font-bold text-amber-700 mb-1">③ 状態</div><p class="text-sm text-gray-700"><strong>不明</strong>です。前走3/29から<strong>140日（約20週）、中間にトライアルなし</strong>。<strong>陣営コメントが一次ソースにも動画にも一件も存在せず</strong>、休養理由も仕上がりも取得できていません。</p></div>
-            <div class="p-3 bg-rose-50 rounded-lg border-l-4 border-rose-500"><div class="text-xs font-bold text-rose-700 mb-1">割り引いた点</div><p class="text-sm text-gray-700"><strong>G1は初出走</strong>。現地評は「約7ポンド足りない」。父Adlerflugは独ダービー馬でスタミナと道悪の血統、マイルG1級の産駒をほぼ出しておらず、<strong>血統の傾向と実馬の適性が食い違う</strong>タイプです。</p></div>
-        </div>
-        </div>
-
+        <!-- この予想の限界 -->
         <div id="limits" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4" style="border-left:6px solid #dc2626;background:linear-gradient(135deg,#fef2f2,#fee2e2);">
             <h2 class="text-2xl font-bold mb-4 text-red-700 flex items-center"><i class="fas fa-triangle-exclamation mr-2"></i>この予想の限界（必ずお読みください）</h2>
-<p class="text-sm text-gray-700 mb-2"><strong>通常の分析とは別物です。</strong> DBに海外レースのデータがないため、<strong>12項目の機械採点も、150〜200件走らせる観点関数も、追い切りの相対評価も、コース実測も、一切使えていません</strong>。検証可能な生出力も残りません。</p><p class="text-sm text-gray-700 mb-2"><strong>欧州8頭には追い切りタイムが存在しません。</strong> 日本のように全馬の追い切りを計測・公表する制度が欧州にはなく、取れるのは陣営のコメントと報道された調教の様子だけです。つまり<strong>「状態」という軸は、日本馬2頭だけ数字で測れて、欧州8頭は言葉でしか測れない</strong>という非対称があります。</p><p class="text-sm text-gray-700 mb-2"><strong>②ドリームライナーと⑥ノーランチは、陣営コメントが世界のどこにも存在しません。</strong> France Galop・TDN・BloodHorse・Racing Post・Equidia・仏語圏のニュースをすべて当たり、日本の競馬系動画2本（前編・後編）の字幕も全文検索しましたが、<strong>ドリームライナーの140日休養の理由も、ノーランチのサマーマイル最下位の敗因も、誰も語っていません</strong>。</p><p class="text-sm text-gray-700 mb-2"><strong>枠順に不一致が残っています。</strong> netkeiba・Sporting Life・日本語報道の3つは一致していますが、attheraces だけ順序が異なります。<strong>直線コースは枠が効きうるので、発走前に公式で確認してください。</strong></p><p class="text-sm text-gray-700 mb-2"><strong>当日の馬場は未確定です。</strong> 作成時点でパリは早朝、France Galop の公式terrainもペネトロメーター値も未掲載、同日ドーヴィルの前のレースも未施行でした。<strong>発走前の確認を強く推奨します。</strong></p><p class="text-sm text-gray-700 mb-2"><strong>買い目は組んでいません。</strong> 買い目のルールを持つプログラムが海外レースを扱えず、文章から手で組むことは禁止しているためです。券種・点数の提案は本シートには含まれません。</p>
+<p class="text-sm text-gray-700 mb-2"><strong>通常の分析とは別物です。</strong> DBに海外レースのデータがないため、<strong>12項目の機械採点も、150〜200件走らせる観点関数も、追い切りの相対評価も、コース実測も、一切使えていません</strong>。検証可能な生出力も残りません。</p><p class="text-sm text-gray-700 mb-2"><strong>このページにレーダーチャートがないのは、そのためです。</strong> 12項目の機械採点が存在しないので、描けば捏造になります。代わりに各馬のカードには「①能力 ②今回条件への適合 ③状態」の3ブロックを置いています。横棒グラフの数値は<strong>公式レーティング（実在する公表値）</strong>で、こちらで作った点数ではありません。</p><p class="text-sm text-gray-700 mb-2"><strong>欧州8頭には追い切りタイムが存在しません。</strong> 日本のように全馬の追い切りを計測・公表する制度が欧州にはなく、取れるのは陣営のコメントと報道された調教の様子だけです。つまり<strong>「状態」という軸は、日本馬2頭だけ数字で測れて、欧州8頭は言葉でしか測れない</strong>という非対称があります。</p><p class="text-sm text-gray-700 mb-2"><strong>②ドリームライナーと⑥ノーランチは、陣営コメントが世界のどこにも存在しません。</strong> France Galop・TDN・BloodHorse・Racing Post・Equidia・仏語圏のニュースをすべて当たり、日本の競馬系動画2本（前編・後編）の字幕も全文検索しましたが、<strong>ドリームライナーの140日休養の理由も、ノーランチのサマーマイル最下位の敗因も、誰も語っていません</strong>。</p><p class="text-sm text-gray-700 mb-2"><strong>枠順に不一致が残っています。</strong> netkeiba・Sporting Life・日本語報道の3つは一致していますが、attheraces だけ順序が異なります。<strong>直線コースは枠が効きうるので、発走前に公式で確認してください。</strong></p><p class="text-sm text-gray-700 mb-2"><strong>当日の馬場は未確定です。</strong> 作成時点でパリは早朝、France Galop の公式terrainもペネトロメーター値も未掲載、同日ドーヴィルの前のレースも未施行でした。</p><p class="text-sm text-gray-700 mb-2"><strong>買い目は組んでいません。</strong> 買い目のルールを持つプログラムが海外レースを扱えず、文章から手で組むことは禁止しているためです。券種・点数の提案は本シートには含まれません。</p>
         </div>
 
-        <div id="check" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+        <!-- 発走前チェック -->
+        <div id="check" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4" style="border-left:4px solid #16a34a; background:linear-gradient(135deg,#f0fdf4,#dcfce7);">
             <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-clipboard-check mr-2 text-emerald-600"></i>発走前の確認事項</h2>
             <div class="overflow-x-auto"><table class="w-full"><tbody>
-<tr class="border-b"><td class="p-2 text-center">⬜</td><td class="p-2 text-sm"><strong>France Galop の当日 terrain とペネトロメーター値</strong>を確認する（事前情報は bon souple à bon）</td></tr><tr class="border-b"><td class="p-2 text-center">⬜</td><td class="p-2 text-sm"><strong>同日ドーヴィルの前のレースの勝ち時計</strong>を確認する（芝1600m直線が組まれていれば決定的な物差しになる）</td></tr><tr class="border-b"><td class="p-2 text-center">⬜</td><td class="p-2 text-sm"><strong>公式の枠順（ゲート番）</strong>を確認する（netkeiba系と attheraces で順序が不一致）</td></tr><tr class="border-b"><td class="p-2 text-center">⬜</td><td class="p-2 text-sm"><strong>出走取消・騎手変更</strong>を確認する</td></tr><tr class="border-b"><td class="p-2 text-center">✅</td><td class="p-2 text-sm"><strong>馬番とゲート番は別</strong>。馬券は馬番で購入する</td></tr><tr class="border-b"><td class="p-2 text-center">✅</td><td class="p-2 text-sm">印を決めるまでオッズ・人気・他人の予想印を一切見ていない（人気ブラインド）</td></tr><tr class="border-b"><td class="p-2 text-center">✅</td><td class="p-2 text-sm"><strong>×は使用していない</strong>（消し専用の印。今回は確実に消せると裏の取れた馬がいない）</td></tr><tr class="border-b"><td class="p-2 text-center">✅</td><td class="p-2 text-sm">10頭立てで印6頭＝少頭数キャップ（N−2＝8頭）の範囲内</td></tr>
+<tr class="border-b"><td class="p-2 text-center w-10">⬜</td><td class="p-2 text-sm"><strong>France Galop の当日 terrain とペネトロメーター値</strong>を確認する（事前情報は bon souple à bon）</td></tr><tr class="border-b"><td class="p-2 text-center w-10">⬜</td><td class="p-2 text-sm"><strong>同日ドーヴィルの前のレースの勝ち時計</strong>を確認する（芝1600m直線が組まれていれば決定的な物差しになる）</td></tr><tr class="border-b"><td class="p-2 text-center w-10">⬜</td><td class="p-2 text-sm"><strong>公式の枠順（ゲート番）</strong>を確認する（netkeiba系と attheraces で順序が不一致）</td></tr><tr class="border-b"><td class="p-2 text-center w-10">⬜</td><td class="p-2 text-sm"><strong>出走取消・騎手変更</strong>を確認する</td></tr><tr class="border-b"><td class="p-2 text-center w-10">✅</td><td class="p-2 text-sm"><strong>馬番とゲート番は別</strong>。馬券は馬番で購入する</td></tr><tr class="border-b"><td class="p-2 text-center w-10">✅</td><td class="p-2 text-sm">印を決めるまでオッズ・人気・他人の予想印を一切見ていない（人気ブラインド）</td></tr><tr class="border-b"><td class="p-2 text-center w-10">✅</td><td class="p-2 text-sm"><strong>×は使用していない</strong>（消し専用の印。今回は確実に消せると裏の取れた馬がいない）</td></tr><tr class="border-b"><td class="p-2 text-center w-10">✅</td><td class="p-2 text-sm">10頭立てで印6頭＝少頭数キャップ（N−2＝8頭）の範囲内</td></tr><tr class="border-b"><td class="p-2 text-center w-10">✅</td><td class="p-2 text-sm">2人の担当（継ぎ足し版・白紙版）を独立に走らせ、突き合わせた</td></tr>
             </tbody></table></div>
         </div>
 
@@ -198,10 +128,523 @@
         <p class="text-center text-xs text-gray-500 mb-8">この予想は参考情報です。馬券購入は自己責任でお願いします。</p>
     </div>
 
-    <script>
-    window.addEventListener('scroll', function() {
+<script>
+    const horses = [
+        {
+                "number": "⑤",
+                "name": "モアサンダー",
+                "mark": "◎",
+                "badge": "honmei",
+                "rating": 120,
+                "jockey": "T.マーカンド",
+                "style": "追込",
+                "trainer": "W.ハガス厩舎(英)",
+                "weight": "59.5kg",
+                "gate": "8",
+                "record": "14戦5勝・2着4回・3着2回",
+                "blood": "父 Night Of Thunder × 母父 Hat Trick",
+                "material": "★レーティング120＝単独最高／直線コースで4勝＋G1で2着2回／馬場が緩んでも速くても手掛かりがある唯一の馬",
+                "headline": "最高レベルだったクイーンアンSで½馬身2着。<strong>馬場がどちらに転んでも手掛かりを持つ唯一の馬</strong>",
+                "power": "資料中もっとも水準の高かった<strong>クイーンアンS（G1）で½馬身2着</strong>。同じレースでゼウスオリンピオスに<strong>2¼馬身先着</strong>し、ロッキンジS（G1）でも2着。<strong>G1で負けた2回はどちらも僅差</strong>で、相手が弱かったわけではありません。レーティング120は単独最高です。",
+                "fit": "<strong>2025年以降の好走がすべて直線コース</strong>（4勝＋G1で2着2回）で、<strong>唯一の周回コース戦だったサマーマイルSだけが近走で最悪</strong>。今回は直線に戻ります。さらに<strong>Very SoftのG1（フォレ賞）で16頭立て4着／Good・GFのG1で2着2回</strong>＝<strong>馬場が緩んでも速くても手掛かりがある唯一の馬</strong>。当日の馬場情報が2つの出所で正反対である以上、この一点は重く見ました。<strong>ゴール前50〜100mで最速の脚</strong>を使う型で、流れが締まれば理想的な舞台です。",
+                "cond": "前走から間隔を置いて「<strong>fresh horse</strong>」。<strong>サマーマイルだけ乗り替わりだった主戦マーカンドに戻ります</strong>。陣営自身が「<strong>あのレースはペースがまるでなく、この馬に向かなかった</strong>」と敗因を明言し、サセックスSを「この馬に合わない」と判断してここを選択＝<strong>狙って使っている</strong>一戦です。",
+                "details": {
+                        "pros": [
+                                "資料中最高レベルのクイーンアンS(G1)で½馬身2着（勝ちタイムは2022年バーイドの年より速い）",
+                                "同じG1を2度一緒に走り、ロッキンジ・クイーンアンとも<strong>ゼウスオリンピオスに先着</strong>",
+                                "2025年以降の好走が<strong>すべて直線コース</strong>（4勝＋G1で2着2回）",
+                                "<strong>Very SoftのG1で16頭立て4着</strong>＝軟らかい馬場の一次証拠を持つ",
+                                "14戦で2着4回・3着2回＝<strong>相手なりに堅実</strong>",
+                                "サマーマイルだけ乗り替わりだった<strong>主戦マーカンドに戻る</strong>"
+                        ],
+                        "cons": [
+                                "<strong>14戦してG1未勝利</strong>（直近2つのG1はどちらも2着）",
+                                "59.5kgで3歳勢に3.0〜4.5kg与える",
+                                "勝ち鞍の主軸は7ハロンで、マイルは2度とも2着どまり",
+                                "<strong>フランス2度目・ドーヴィルは初</strong>",
+                                "陣営が「家ではあまり動かないタイプ」と述べている"
+                        ],
+                        "expect": [
+                                "流れが締まるほど有利。前哨戦のような超スローにならなければ本領",
+                                "馬場がどちらに振れても崩れにくい構造"
+                        ]
+                }
+        },
+        {
+                "number": "⑧",
+                "name": "ライフ（Rayif）",
+                "mark": "○",
+                "badge": "taikou",
+                "rating": 117,
+                "jockey": "M.バルザローナ",
+                "style": "差し",
+                "trainer": "F.グラファール厩舎(仏)",
+                "weight": "56.5kg",
+                "gate": "10",
+                "record": "5戦3勝（キャリア最浅）",
+                "blood": "父 Sea The Moon × 母父 Holy Roman Emperor（アガカーン牧場）",
+                "material": "★ドーヴィル直線3戦2勝／ペネト3.3のbon soupleでG3を2½馬身圧勝＝今日の馬場そのもの",
+                "headline": "<strong>同じコース・同じ数値の馬場でG3を2½馬身圧勝</strong>。前走5着は距離短縮とスローが理由",
+                "power": "唯一の1600m戦が<strong>仏2000ギニー（G1）勝ち</strong>。<strong>ドーヴィルの直線コースは3戦2勝</strong>で、そのうちブータン賞（G3）を<strong>2½馬身の圧勝</strong>。キャリア5戦3勝で伸びしろのある側です。",
+                "fit": "そのブータン賞が<strong>ペネトロメーター3.3の bon souple</strong>——<strong>事前発表の「bon souple à bon」のど真ん中</strong>で、コースも馬場も実測で証明済みです。父 Sea The Moon の産駒統計も<strong>Good 27%／Good to Soft 26%が最良、Heavy 15%が最悪</strong>で、「重馬場の血統」ではなく<strong>良〜やや軟がスイートスポット</strong>。代表産駒 <strong>Alpine Star はこのレースで2着</strong>という直接の前例もあります。3歳で3.0kgもらいます。",
+                "cond": "<strong>前走ジャンプラ賞5着は「1400mへの距離短縮＋スローで前についていけなかった」</strong>が理由で、<strong>陣営の証言・ラップ分析・映像を見た人の発言の3方向が一致</strong>。これは「経験して悪かった」ではなく「条件が違って負けた」に分類しました。陣営「<strong>今季はこまごました不具合が続いたが、今回は今季2走のどちらよりも通常に近い仕上げ</strong>」「火曜の追い切りに調教師も騎手も満足」。",
+                "details": {
+                        "pros": [
+                                "<strong>ドーヴィル直線3戦2勝</strong>。ブータン賞G3は<strong>ペネト3.3のbon soupleで2½馬身圧勝</strong>＝今日の馬場と同じ",
+                                "唯一の1600m戦が<strong>仏2000ギニー（G1）勝ち</strong>",
+                                "父Sea The Moonの産駒統計は<strong>良〜やや軟が最良</strong>で今日の条件に合う",
+                                "同父の<strong>Alpine Star がこのレースで2着</strong>という直接の前例",
+                                "3歳で<strong>3.0kgもらう</strong>",
+                                "<strong>5戦3勝でキャリア最浅</strong>＝上積みの余地"
+                        ],
+                        "cons": [
+                                "仏2000ギニー勝ちは<strong>très souple で標準比3.43秒遅く、1枠から内の最短距離</strong>を通った枠と進路の利つき",
+                                "<strong>Good to Firm は未経験</strong>",
+                                "陣営は「良〜速い馬場が良い」と繰り返すが、その根拠に挙げた昨年のブータン賞の<strong>公式馬場は bon souple</strong>＝主観と発表が食い違う",
+                                "今季は発熱でセントジェームズパレスSを回避するなど<strong>不具合続き</strong>"
+                        ],
+                        "expect": [
+                                "馬場が事前発表どおりなら、コースと馬場の両方を実測で持つ数少ない1頭",
+                                "1400mから1600mへの距離延長は明確な前進材料"
+                        ]
+                }
+        },
+        {
+                "number": "⑩",
+                "name": "プリサイス（Precise）",
+                "mark": "▲",
+                "badge": "tanana",
+                "rating": 115,
+                "jockey": "R.ムーア",
+                "style": "自在",
+                "trainer": "A.P.オブライエン厩舎(愛)",
+                "weight": "55.0kg（最軽量）",
+                "gate": "4",
+                "record": "10戦6勝・4着以下は生涯1回",
+                "blood": "父 Starspangledbanner × 母父 Galileo",
+                "material": "★14日前に同コース・同ペネト3.3で½馬身2着／マイルG1を3勝／メンバー最軽量55.0kg",
+                "headline": "<strong>14日前に同じコース・同じペネト3.3で½馬身2着</strong>。ただし<strong>牡馬と戦った経験がゼロ</strong>",
+                "power": "<strong>10戦6勝で4着以下は生涯1回だけ</strong>。愛1000ギニー・コロネーションS・フィリーズマイルと<strong>マイルG1を3勝</strong>しています。",
+                "fit": "<strong>14日前に、今回とまったく同じドーヴィルの直線1600m・ペネトロメーター3.3で½馬身2着</strong>。今回の条件そのものを走ったばかりです。2歳時には<strong>Yielding（やや重）でもG1勝ち</strong>があり、Good/GFで5勝＝<strong>馬場の両方向に耐える2頭目</strong>。<strong>55.0kgはメンバー最軽量</strong>で古馬から9.9ポンドもらいます。同じブルーボルト相手に<strong>ファルマス2馬身差 → ロートシルト½馬身差</strong>と詰めており上向きです。",
+                "cond": "中1週。ただし2025年に「メイドン勝ち → <strong>10日後</strong>にG3勝ち」という短間隔の実績があります。オブライエン師「<strong>前走後の状態が想定以上に良かったので戻してきた</strong>」。",
+                "details": {
+                        "pros": [
+                                "<strong>14日前に同じコース・同じペネト3.3で½馬身2着</strong>",
+                                "<strong>10戦6勝で4着以下は生涯1回</strong>、マイルG1を3勝",
+                                "<strong>55.0kg＝メンバー最軽量</strong>で古馬から9.9ポンドもらう",
+                                "2歳時に<strong>Yielding（やや重）でもG1勝ち</strong>＝馬場の両方向に手掛かり",
+                                "同じブルーボルト相手に<strong>2馬身差→½馬身差と詰めている</strong>",
+                                "愛1000ギニーは通過9-9-9、ロートシルトは2-2-2＝<strong>位置取りが自在</strong>"
+                        ],
+                        "cons": [
+                                "<strong>牡馬・古馬と戦った経験がゼロ</strong>（10戦すべて牝馬限定か2歳メイドン）",
+                                "<strong>感染症で出走取消、発熱で大敗</strong>という履歴があり、今季6戦目の最短間隔と重なる",
+                                "ロートシルト賞の2着は<strong>スローで位置取りが向いたうえでのもの</strong>",
+                                "<strong>同厩のペースメーカーがいない</strong>（最終10頭にオブライエン厩舎は本馬のみ）"
+                        ],
+                        "expect": [
+                                "条件そのものを2週間前に走っている点は、伝聞のレーティングより強い証拠",
+                                "ミドルペースに戻った場合、前走の展開利が消える点をどう見るか"
+                        ]
+                }
+        },
+        {
+                "number": "①",
+                "name": "ゼウスオリンピオス",
+                "mark": "△",
+                "badge": "renka",
+                "rating": 118,
+                "jockey": "C.リー",
+                "style": "先行〜好位",
+                "trainer": "K.R.バーク厩舎(英)",
+                "weight": "59.5kg",
+                "gate": "6",
+                "record": "8戦5勝（キャリア全部）",
+                "blood": "父 Night Of Thunder × 母父 Siyouni",
+                "material": "直線コースは3戦0勝／Good to Soft以下の経験ゼロ／状態は明確に上向き",
+                "headline": "状態は明確に上向き。ただし<strong>前走の勝ちは超スローの恩恵</strong>で、軟らかい馬場は完全な未知",
+                "power": "レーティング118。G1でロッキンジ3着・クイーンアン4着があり、能力そのものは足りています。8戦5勝。",
+                "fit": "ここを二重に割り引きました。<strong>直線コースは3戦0勝</strong>（G2は勝ちましたが、G1では3着・4着）で、陣営の「この馬は直線コースで走る」という見立ては<strong>実績と食い違います</strong>。前走サマーマイルG2の勝ちは<strong>平均比+0.95秒の超スローを前で立ち回った</strong>もので、ラップ分析・映像確認・勝った騎手自身の証言の3方向が一致。<strong>今日ミドルペースに戻るなら再現しません</strong>。さらに<strong>Good to Soft以下の経験がゼロ</strong>で、馬場がタフに出た場合は完全な未知です。",
+                "cond": "ここは明確な加点。3着→3着→4着→G2勝ちと上向き、バーク師「<strong>調子がよく強くなってきている。夏の間ずっとより2〜3kg重く、より成熟した馬に見える</strong>」。前走だけ乗り替わりだった主戦C.リーに戻ります。",
+                "details": {
+                        "pros": [
+                                "レーティング118で、G1でロッキンジ3着・クイーンアン4着",
+                                "<strong>3着→3着→4着→G2勝ちと明確に上向き</strong>",
+                                "バーク師「夏の間ずっとより2〜3kg重く、より成熟した馬に見える」",
+                                "主戦C.リーに戻る",
+                                "4歳は過去11回で5勝の最良年齢帯"
+                        ],
+                        "cons": [
+                                "<strong>直線コースは3戦0勝</strong>。G1ではロッキンジ3着・クイーンアン4着",
+                                "前走サマーマイルの勝ちは<strong>平均比+0.95秒の超スローを前で立ち回った</strong>もの",
+                                "<strong>Good to Soft 以下の経験がゼロ</strong>＝馬場がタフに出ると完全な未知",
+                                "同じG1を2度走って<strong>モアサンダーに2度とも先着されている</strong>",
+                                "フランス初出走・ドーヴィル初"
+                        ],
+                        "expect": [
+                                "陣営の「直線コース向き」という見立てと、実績が食い違っている点をどう取るか"
+                        ]
+                }
+        },
+        {
+                "number": "③",
+                "name": "シックスペンス",
+                "mark": "△",
+                "badge": "renka",
+                "rating": 118,
+                "jockey": "武豊",
+                "style": "先行",
+                "trainer": "田中博康厩舎(日)",
+                "weight": "59.5kg",
+                "gate": "5",
+                "record": "13戦6勝（ブリンカー2回目）",
+                "blood": "父 キズナ × 母父 Twirling Candy",
+                "material": "13戦すべて良馬場／直線コースも海外も初／国内最終追い切りはラスト1F 11.1を馬なり",
+                "headline": "<strong>能力と状態は上位と互角。条件だけが全部空欄</strong>——13戦すべて良、直線も海外も初",
+                "power": "レーティング118。<strong>安田記念（G1）を17頭立ての通過2-2から押し切って制覇</strong>。芝1600で5戦3勝、G2を3勝（中山記念はレコード）。能力は上位と互角です。",
+                "fit": "ここが最大の不安です。<strong>13戦すべて良馬場で、稍重以上の手掛かりがゼロ</strong>。<strong>直線だけのコースも未経験</strong>（新潟の千直にも出走歴なし）。海外遠征も初。ただし<strong>未経験は減点しない</strong>方針なので、コース形態そのものは中立に置いています。<strong>加点材料は隊列</strong>——ゲート5の内寄りで、内側の集団で前に行けるのは本馬とゼウスくらい。安田記念の勝ち方（逃げ馬が手薄でペースが落ち着き、最良の位置を取って抜け出す）が<strong>内側の集団で再現する余地</strong>はあります。",
+                "cond": "良好です。<strong>国内最終追い切りは美浦Wでラスト1F 11.1を馬なり、2勝クラスに2馬身先着</strong>（東スポのみ1馬身＝不一致）。検疫後の立ち遅れは解消し、田中博師「<strong>転厩後、今までにないくらい歩様も良くなってきた</strong>」「<strong>前みたいに左へ行きたがる感じがなくなってきた</strong>」。現地8/13に<strong>実際にドーヴィルの直線コースで調教</strong>して「travelled very well」。<strong>ブリンカーは初着用ではなく2回目</strong>で、着用時1戦1勝（初着用が安田記念でそこでG1制覇）。",
+                "details": {
+                        "pros": [
+                                "<strong>安田記念（G1）を17頭立ての通過2-2から押し切って制覇</strong>",
+                                "レーティング118は古馬勢で2番手タイ",
+                                "<strong>国内最終追い切りでラスト1F 11.1を馬なり、2勝クラスに2馬身先着</strong>",
+                                "田中博師「転厩後、今までにないくらい歩様も良くなってきた」「左へ行きたがる感じがなくなってきた」",
+                                "<strong>現地でドーヴィルの直線コースを実際に走らせて「travelled very well」</strong>",
+                                "<strong>ブリンカーは2回目で着用時1戦1勝</strong>（初着用が安田記念でG1制覇）"
+                        ],
+                        "cons": [
+                                "<strong>13戦すべて良馬場</strong>。稍重以上の手掛かりがゼロ",
+                                "<strong>直線だけのコースは未経験</strong>（新潟千直の出走歴もなし）",
+                                "<strong>海外遠征も初</strong>（長距離輸送は昨秋の盛岡・南部杯2着のみ）",
+                                "<strong>安田記念の直前2走はダートG1で9着・11着</strong>、間のマイラーズCも7着",
+                                "59.5kgで3歳勢に3.0〜4.5kg与える",
+                                "5歳以上は過去11回で1勝のみ"
+                        ],
+                        "expect": [
+                                "未経験は減点しない方針。<strong>能力と状態は上位互角で、条件だけが空欄</strong>という位置づけ",
+                                "内側の集団で前を取れれば、安田記念の形が再現する余地"
+                        ]
+                }
+        },
+        {
+                "number": "②",
+                "name": "ドリームライナー",
+                "mark": "☆",
+                "badge": "ana",
+                "rating": 112,
+                "jockey": "T.バシュロ",
+                "style": "追込",
+                "trainer": "S.ワッテル厩舎(仏)",
+                "weight": "59.5kg",
+                "gate": "2",
+                "record": "11戦5勝（G1は初出走）",
+                "blood": "父 Adlerflug × 母父 Aussie Rules",
+                "material": "★同コースのG3を1分34秒36で勝利＝資料内の同コース比較で最速／ただし140日の休み明け",
+                "headline": "<strong>同コースの持ち時計は資料内で最速</strong>。馬場がタフに出た場合の保険",
+                "power": "<strong>1600m限定なら5戦4勝</strong>のマイル特化。<strong>ドーヴィルの直線1600mでキャンシー賞（G3）を1分34秒36で勝利</strong>——これは資料内の同コース比較タイムで最速です（プリサイスのロートシルト賞1分35秒73より速い。年・馬場・格が違うので単純比較でないことは承知のうえで）。",
+                "fit": "<strong>Souple〜Bon Souple がベストゾーン</strong>＝<strong>8/16の「ちょっとタフ」が当たった場合にいちばん得をする馬</strong>。同コース1戦1勝で、脚質は<strong>残り350mから外を強襲する追込み</strong>。◎○▲がやや良〜速い側に寄っているため、<strong>逆側の保険</strong>としてここに置いています。",
+                "cond": "<strong>不明</strong>です。前走3/29から<strong>140日（約20週）、中間にトライアルなし</strong>。<strong>陣営コメントが一次ソースにも動画にも一件も存在せず</strong>、休養理由も仕上がりも取得できていません。",
+                "details": {
+                        "pros": [
+                                "<strong>ドーヴィル直線1600mのG3を1分34秒36で勝利</strong>＝資料内の同コース比較で最速",
+                                "<strong>1600mでは5戦4勝</strong>のマイル特化",
+                                "<strong>Souple〜Bon Souple がベストゾーン</strong>＝馬場がタフに出た場合に最も得をする",
+                                "同じコースで<strong>⑥ノーランチに5½馬身差</strong>をつけている"
+                        ],
+                        "cons": [
+                                "<strong>前走3/29から140日（約20週）の休み明け。中間にトライアルなし</strong>",
+                                "<strong>陣営コメントが世界のどこにも存在しない</strong>（休養理由も仕上がりも取得できず）",
+                                "<strong>G1は初出走</strong>。現地評は「約7ポンド足りない」",
+                                "父Adlerflugは独ダービー馬でスタミナと道悪の血統。<strong>マイルG1級の産駒をほぼ出していない</strong>",
+                                "レーティング112はメンバー下から2番目"
+                        ],
+                        "expect": [
+                                "◎○▲がやや良〜速い側に寄っているため、<strong>逆側（タフ馬場）の保険</strong>として置いた1頭"
+                        ]
+                }
+        },
+        {
+                "number": "⑨",
+                "name": "ザシークレットアドヴァーサリー",
+                "mark": "",
+                "badge": "kiken",
+                "rating": 115,
+                "jockey": "C.スミヨン",
+                "style": "かかる先行",
+                "trainer": "J.A.スタック厩舎(愛)",
+                "weight": "56.5kg",
+                "gate": "9",
+                "record": "10戦4勝",
+                "blood": "父 St Mark's Basilica × 母父 Gleneagles",
+                "material": "1600mは3戦0勝（12¼馬身差・約5馬身差の大敗）／主戦が「7ハロンが限界」と明言",
+                "headline": "同コースのG1勝ちはあるが、<strong>マイルは走って負けている</strong>（未経験ではない）",
+                "power": "ジャンプラ賞（G1）勝ち。ジャージーS（G3）は16頭立てを勝っており、直線・大頭数の経験は豊富です。",
+                "fit": "<strong>1600mは3戦0勝</strong>——英2000ギニー5着（<strong>12¼馬身差</strong>）、愛2000ギニー6着（約5馬身差）、ウッドバインのG1で5着。これは「未経験」ではなく<strong>経験して悪かった</strong>方です。<strong>主戦スミヨン自身が「7ハロンがこの馬のスタミナの限界」「6ハロンならもっと良い」</strong>と明言。ジャンプラ賞の勝ちも「1枠で前に行く馬がいなかったので自分でハナを切った」という<strong>戦術判断</strong>で、8頭立て・前半41秒98のスローでした。",
+                "cond": "上昇一途（ジャージーS→ジャンプラ賞がキャリア初の連勝）。ただし<strong>このレースは本命プランではなく</strong>、当初は8/22シティオブヨークS（7ハロン）の予定で、他馬の引退・故障でメンバーが変わったため直前に変更。<strong>宣言前日の時点でスタック師は「50-50」</strong>と述べています。",
+                "details": {
+                        "pros": [
+                                "<strong>同じドーヴィルの直線でジャンプラ賞（G1）を勝っている</strong>",
+                                "ジャージーS（G3）は<strong>16頭立てを勝利</strong>＝直線・大頭数の経験が豊富",
+                                "3歳で3.0kgもらう",
+                                "ジャージーS→ジャンプラ賞が<strong>キャリア初の連勝</strong>で上昇一途"
+                        ],
+                        "cons": [
+                                "<strong>1600mは3戦0勝</strong>（英ギニー5着12¼馬身差／愛ギニー6着約5馬身差）＝<strong>経験して悪かった</strong>",
+                                "<strong>主戦スミヨンが「7ハロンが限界」「6ハロンならもっと良い」と明言</strong>",
+                                "ジャンプラ賞の逃げ切りは<strong>8頭立て・前半41秒98のスロー</strong>での戦術判断",
+                                "走行コメント9走中6走に「かかる」の記載",
+                                "<strong>本命プランではなく直前の変更</strong>（宣言前日「50-50」）"
+                        ],
+                        "expect": [
+                                "今回は⑦が確実に行き、位置の取り直しが効かない直線コース。前を突かれる形が最も苦しい"
+                        ]
+                }
+        },
+        {
+                "number": "④",
+                "name": "シュトラウス",
+                "mark": "",
+                "badge": "kiken",
+                "rating": 115,
+                "jockey": "J.モレイラ",
+                "style": "不定（逃げ〜最後方）",
+                "trainer": "武井亮厩舎(日)",
+                "weight": "59.5kg",
+                "gate": "1",
+                "record": "14戦4勝",
+                "blood": "父 モーリス × 母父 アドマイヤベガ",
+                "material": "気性の難しさが反復パターン／古馬になってからの稍重以上は0-0-0-2／輸送耐性は実証済み",
+                "headline": "輸送耐性と現地調教は加点。ただし<strong>気性の反復とG1で通用した実績のなさ</strong>が重い",
+                "power": "レーティング115は下位ではありませんが、<strong>G1では朝日杯10着・NHKマイル16着・香港チャンピオンズマイル12着（8¼馬身差）</strong>と通用した実績がありません。",
+                "fit": "<strong>古馬になってからの稍重以上は0-0-0-2</strong>で、馬場がタフに出ると二重苦。<strong>直線だけのコースは未経験</strong>（新潟千直の出走歴なし）。武井師は「基本はスローになるので自分のリズムで行く作戦」としています。",
+                "cond": "<strong>豪→UAE→香港→仏と4戦連続の海外遠征で輸送耐性は実証済み</strong>（UAEで1着）。国内最終追い切りは8/5 美浦W単走 6F 80.0 − ラスト1F 11.6。ただし<strong>「力み」はキャリアを通じた反復パターン</strong>で、香港12着も「力みが強くて反応できなかった」。白富士Sの記事にも「デビュー以来、気性面との戦いが続いている」とあります。",
+                "details": {
+                        "pros": [
+                                "<strong>4戦連続の海外遠征で輸送耐性は実証済み</strong>（UAEで1着）",
+                                "シックスペンスと同便で移動でき、1頭での移動を嫌う本馬には好材料",
+                                "現地でドーヴィルの芝コースを実際に走らせている",
+                                "1200mで上がり32.6を使うなど<strong>決め手そのものは持っている</strong>"
+                        ],
+                        "cons": [
+                                "<strong>G1で通用した実績が一度もない</strong>（朝日杯10着・NHKマイル16着・香港12着8¼馬身差）",
+                                "<strong>気性の難しさが反復パターン</strong>。4角の位置が1番手と18番手を年ごとに往復",
+                                "<strong>古馬になってからの稍重以上は0-0-0-2</strong>",
+                                "<strong>直線だけのコースは未経験</strong>",
+                                "前走から112日（約16週）"
+                        ],
+                        "expect": [
+                                "ゲート1。折り合えば内ラチ沿いの最短距離、力めば序盤で終わる、という振れ幅そのもの"
+                        ]
+                }
+        },
+        {
+                "number": "⑥",
+                "name": "ノーランチ",
+                "mark": "",
+                "badge": "kiken",
+                "rating": 114,
+                "jockey": "M.ギュイヨン",
+                "style": "差し（かかる）",
+                "trainer": "C.フェルラン厩舎(仏)",
+                "weight": "59.5kg",
+                "gate": "3",
+                "record": "19戦10勝・2着0回・3着1回",
+                "blood": "父 Dubawi × 母父 Shamardal",
+                "material": "仏オールウェザーは8戦8勝の無敗／芝は10戦2勝／ドーヴィルの芝直線は2戦0勝（7着・7着）",
+                "headline": "<strong>オールウェザーの鬼</strong>。ドーヴィルの芝＝直線では2戦とも7着で、G1も初",
+                "power": "19戦10勝ですが、<strong>仏オールウェザー（PSF）が8戦8勝の無敗</strong>で、<strong>芝は10戦2勝</strong>。芝の勝ち鞍はメイデンとミュゲ賞（G2）の2つだけです。<strong>G1は今回が初出走</strong>。",
+                "fit": "<strong>ドーヴィルの芝＝直線コースでは2戦0勝、7着・7着</strong>（ダフニ賞G3で7頭立て最下位、キャンシー賞G3で7着＝②ドリームライナーから5½馬身差）。<strong>souple 以下では芝0勝</strong>で、陣営自身が「<strong>この馬は良馬場を好む。だからフランスではオールウェザーであれだけ走る</strong>」と明言しています。",
+                "cond": "直近は6連勝（うち5つはオールウェザーの条件戦・リステッド）ののち、<strong>前走サマーマイルS（G2）で8頭立て最下位・6馬身差</strong>。「かかって中団→残り1Fで失速」で、他7頭より3ポンド重い斤量、10週ぶりの実戦でした。",
+                "details": {
+                        "pros": [
+                                "<strong>仏オールウェザーは8戦8勝の無敗</strong>",
+                                "ミュゲ賞（G2）を芝で勝っている",
+                                "<strong>父Dubawi自身が2005年のジャックルマロワ賞勝ち馬</strong>"
+                        ],
+                        "cons": [
+                                "<strong>ドーヴィルの芝直線は2戦0勝（7着・7着）</strong>",
+                                "<strong>souple 以下では芝0勝</strong>。陣営自ら「良馬場を好む」",
+                                "<strong>G1は今回が初出走</strong>",
+                                "前走サマーマイルS<strong>最下位・6馬身差</strong>",
+                                "<strong>19戦中18戦が「1着か5着以下」</strong>という極端な分布"
+                        ],
+                        "expect": [
+                                "同じコースで②ドリームライナーに5½馬身離された点が、直接の比較材料"
+                        ]
+                }
+        },
+        {
+                "number": "⑦",
+                "name": "サートミーセン",
+                "mark": "",
+                "badge": "kiken",
+                "rating": 104,
+                "jockey": "A.ルメートル",
+                "style": "逃げ",
+                "trainer": "P.オラベ厩舎(仏・ポー)",
+                "weight": "59.5kg",
+                "gate": "7",
+                "record": "12戦5勝（G1は初出走）",
+                "blood": "父 Dark Angel × 母父 Haafhd",
+                "material": "レーティング104＝単独最低で次点と10ポンド差／12戦中8戦が新馬・条件戦／明確な逃げ馬",
+                "headline": "<strong>展開の鍵は握るが、レーティングは単独最低で次点と10ポンド差</strong>",
+                "power": "<strong>レーティング104は単独最低で、次点と10ポンド差</strong>。12戦中8戦が新馬・条件戦で、2026年の2勝は<strong>ポーの条件戦</strong>と<strong>8頭立て・総賞金約9千ポンドのトゥールーズの条件戦</strong>。G3勝ちのバーデンマイルも<strong>6頭立て</strong>で、相手の最高RPRは105でした。<strong>G1は今回が初出走</strong>。",
+                "fit": "<strong>芝の5勝はすべて Bon souple / Bon / Good to Soft</strong>＝<strong>今回のど真ん中</strong>。Souple でも1馬身差4着・3着で崩れません。<strong>ドーヴィルの直線も1戦1勝</strong>ですが、<strong>3頭立ての2歳条件戦</strong>です。",
+                "cond": "<strong>RPRが 83→105→100→113→110 と明確に右肩上がり</strong>で、2025年12月の転厩後に一変。<strong>独G3勝ち以来ずっと使わず温存</strong>（前走から73日）。オラベ師「状態が良いのだから行くべき」。",
+                "details": {
+                        "pros": [
+                                "<strong>明確な逃げ馬</strong>（&quot;Made all&quot; が複数）。控えると総崩れ＝<strong>行くしかない</strong>",
+                                "<strong>芝の5勝はすべて今回と同じ帯の馬場</strong>",
+                                "RPRが83→105→100→113→110と<strong>明確に右肩上がり</strong>",
+                                "独G3勝ち以来<strong>温存</strong>（73日）"
+                        ],
+                        "cons": [
+                                "<strong>レーティング104＝単独最低。次点と10ポンド差</strong>",
+                                "<strong>12戦中8戦が新馬・条件戦</strong>。2026年の2勝は小さな条件戦",
+                                "G3勝ちも<strong>6頭立て</strong>で相手の最高RPRは105",
+                                "<strong>⑥ノーランチに10ポンド重い斤量で3½馬身離されている</strong>",
+                                "<strong>G1は今回が初出走</strong>"
+                        ],
+                        "expect": [
+                                "<strong>この馬が行くかどうかが、レース全体のペースを決める</strong>。前哨戦のようなスローにならない最大の理由"
+                        ]
+                }
+        }
+];
+
+    const MARK_ORDER = ['◎','○','▲','△','☆','注'];
+    function markBadgeHTML(mark, badge) {
+        return mark ? `<span class="badge-${badge || 'chui'} text-white px-2 py-0.5 rounded-full text-xs font-bold">${mark}</span>` : '';
+    }
+    function sortKey(h) {
+        const i = MARK_ORDER.indexOf(h.mark);
+        return (i < 0 ? 99 : i) * 1000 - (h.rating || 0);
+    }
+
+    function renderMarkGrid() {
+        const grid = document.getElementById('markGrid');
+        const borderMap = {'◎':'border-yellow-400 from-yellow-50 to-amber-50','○':'border-indigo-400 from-indigo-50 to-indigo-100','▲':'border-green-400 from-green-50 to-emerald-50','△':'border-purple-400 from-purple-50 to-fuchsia-50','☆':'border-rose-400 from-rose-50 to-pink-50'};
+        horses.filter(h => MARK_ORDER.slice(0,5).includes(h.mark))
+              .sort((a,b) => sortKey(a) - sortKey(b))
+              .forEach(h => {
+            const div = document.createElement('div');
+            div.className = `border-2 rounded-lg p-4 bg-gradient-to-br ${borderMap[h.mark]}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${h.weight} / R${h.rating}</span></div>
+                <div class="text-xl font-bold text-gray-800 mb-2">${h.mark} ${h.number} ${h.name}</div>
+                <div class="text-sm text-gray-700">${h.headline}</div>`;
+            grid.appendChild(div);
+        });
+    }
+
+    function renderRanking() {
+        const sorted = [...horses].sort((a,b) => b.rating - a.rating);
+        const ctx = document.getElementById('rankingChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(h => (h.mark ? h.mark : '') + h.number + ' ' + h.name),
+                    datasets: [{ label: '公式レーティング', data: sorted.map(h => h.rating),
+                        backgroundColor: sorted.map(h => {
+                            if (h.mark === '◎') return '#eab308';
+                            if (h.mark === '○') return '#6366f1';
+                            if (h.mark === '▲') return '#22c55e';
+                            if (h.mark === '△') return '#a855f7';
+                            if (h.mark === '☆') return '#f43f5e';
+                            if (h.mark === '注') return '#f59e0b';
+                            return '#d1d5db';
+                        }), borderRadius: 6 }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { min: 100, max: 124 } } }
+            });
+        }
+        const tbody = document.getElementById('rankingBody');
+        let rank = 0, prev = -1;
+        sorted.forEach((h, i) => {
+            if (h.rating !== prev) { rank = i + 1; prev = h.rating; }
+            const bg = h.mark ? (h.mark === '◎' ? 'bg-yellow-50' : h.mark === '○' ? 'bg-indigo-50' : h.mark === '▲' ? 'bg-green-50' : h.mark === '△' ? 'bg-purple-50' : h.mark === '☆' ? 'bg-rose-50' : 'bg-amber-50') : (i % 2 ? 'bg-gray-50' : '');
+            tbody.innerHTML += `<tr class="${bg}"><td class="px-3 py-2">${rank}</td><td class="px-3 py-2 text-center font-bold">${markBadgeHTML(h.mark,h.badge)} ${h.number}</td><td class="px-3 py-2 font-medium">${h.name}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.jockey}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.weight} / ${h.gate}</td><td class="px-3 py-2 text-center font-bold">${h.rating}</td><td class="px-3 py-2 text-xs hidden md:table-cell">${h.headline}</td></tr>`;
+        });
+    }
+
+    function renderHorseCards() {
+        const container = document.getElementById('horseCards');
+        container.innerHTML = '';
+        [...horses].sort((a,b) => sortKey(a) - sortKey(b)).forEach(h => container.appendChild(createHorseCard(h)));
+    }
+
+    function createHorseCard(horse) {
+        const card = document.createElement('div');
+        card.className = 'horse-card glass-card p-6';
+        const badgeMap = {
+            honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+            taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+            tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+            renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+            ana: '<span class="badge-ana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-bolt"></i> 穴・押さえ</span>',
+            kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-ban"></i> 無印</span>'
+        };
+        const li = (arr, icon, color) => arr.map(x => `<li class="flex items-start"><i class="fas ${icon} ${color} mr-2 mt-1"></i><span>${x}</span></li>`).join('');
+        const prosHTML = li(horse.details.pros, 'fa-check-circle', 'text-green-500');
+        const consHTML = li(horse.details.cons, 'fa-times-circle', 'text-red-500');
+        const expectHTML = li(horse.details.expect, 'fa-star', 'text-yellow-500');
+        const matClass = horse.material.includes('★') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+        const axis = (label, icon, color, text) => text ? `
+            <div class="p-3 bg-${color}-50 rounded-lg border-l-4 border-${color}-500 mb-2">
+                <div class="text-xs font-bold text-${color}-700 mb-1"><i class="fas ${icon} mr-1"></i>${label}</div>
+                <p class="text-sm text-gray-700">${text}</p>
+            </div>` : '';
+        card.innerHTML = `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div class="flex items-center gap-3 mb-2 md:mb-0">
+                    <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
+                        <div class="text-sm text-gray-600">${horse.jockey} / ${horse.style} / ${horse.trainer}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    ${badgeMap[horse.badge] || ''}
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">R${horse.rating}</span>
+                </div>
+            </div>
+            <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                <div class="text-sm text-gray-700">
+                    <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>
+                    <div class="flex gap-4 flex-wrap">
+                        <div><span class="font-bold">斤量：</span>${horse.weight}</div>
+                        <div><span class="font-bold">ゲート：</span>${horse.gate}</div>
+                        <div><span class="font-bold">戦績：</span>${horse.record}</div>
+                        <div><span class="font-bold">材料：</span><span class="px-2 py-1 rounded text-sm ${matClass}">${horse.material}</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <div class="font-bold text-gray-700 mb-2">評価プロフィール</div>
+                ${axis('① 能力', 'fa-bolt', 'indigo', horse.power)}
+                ${axis('② 今回条件への適合', 'fa-bullseye', 'emerald', horse.fit)}
+                ${axis('③ 状態', 'fa-heart-pulse', 'amber', horse.cond)}
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 着目点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+            </div>`;
+        return card;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderMarkGrid();
+        renderRanking();
+        renderHorseCards();
+    });
+    window.addEventListener('scroll', () => {
         document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
     });
-    </script>
+</script>
 </body>
 </html>
