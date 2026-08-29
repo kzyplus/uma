@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026-08-30 新潟8R 農林水産省賞典　新潟記念（G3）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8f9fa; }
+        .glass-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e9ecef; }
+        .horse-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .horse-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+        .badge-honmei { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .badge-taikou { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        .badge-tanana { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .badge-renka { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
+        .badge-ana { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+        .badge-kiken { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        .badge-chui { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        html { scroll-behavior: smooth; }
+        /* ★セクション内の表は自分の中で横スクロールさせる（2026/08/16）★
+           Markdownの表は列数が読めない。狭い画面だとセルが1文字幅まで潰れて縦書きの列になるか、
+           ページごと横にはみ出す。表自体をブロック化して独立にスクロールさせ、
+           セルには下限幅を与えて潰れないようにする。 */
+        .prose table { display: block; overflow-x: auto; max-width: 100%; }
+        .prose table th, .prose table td { min-width: 6em; }
+        .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
+        .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
+        .nav-index a:first-child { background: #6366f1; color: white; }
+        .nav-tooltip { position: absolute; right: 50px; background: #1f2937; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .nav-index a:hover .nav-tooltip { opacity: 1; }
+        #backToTop { position: fixed; bottom: 2rem; right: 1rem; width: 48px; height: 48px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 50; }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 50; padding: 0.5rem; display: flex; overflow-x: auto; gap: 0.5rem; }
+            .mobile-nav a { flex-shrink: 0; padding: 0.5rem 0.75rem; background: #eef2ff; border-radius: 20px; font-size: 0.75rem; color: #6366f1; text-decoration: none; font-weight: 500; }
+            body { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <nav class="nav-index">
+        <a href="../index.html"><i class="fas fa-home"></i><span class="nav-tooltip">一覧へ戻る</span></a>
+        <a href="#header"><i class="fas fa-flag"></i><span class="nav-tooltip">トップ</span></a>
+        <a href="#trend"><i class="fas fa-chart-line"></i><span class="nav-tooltip">過去傾向</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">最終結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">ランキング</span></a>
+        <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
+        <a href="#betting"><i class="fas fa-ticket-alt"></i><span class="nav-tooltip">買い目</span></a>
+        <a href="#phase3-check"><i class="fas fa-clipboard-check"></i><span class="nav-tooltip">最終チェック</span></a>
+    </nav>
+    <nav class="mobile-nav">
+        <a href="../index.html">一覧</a><a href="#header">トップ</a><a href="#trend">傾向</a><a href="#conclusion">結論</a><a href="#ranking">順位</a><a href="#horses">個別</a><a href="#betting">買い目</a><a href="#phase3-check">確認</a>
+    </nav>
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- ヘッダー -->
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">新潟記念（G3）</h1>
+            <p class="text-center text-gray-600 mb-4">新潟 芝2000m・左回り・外回り・11頭（3歳以上オープン／別定）</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催</div><div class="font-bold text-gray-800">2026-08-30 新潟8R（3回新潟4日目）</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">条件</div><div class="font-bold text-gray-800">農林水産省賞典　新潟記念（G3・芝2000m・別定）</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="font-bold text-gray-800">新潟 芝2000m（左回り・<strong>外回り</strong>・平坦／直線658.7m）</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">頭数</div><div class="font-bold text-gray-800">11頭</div></div>
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">馬場</div><div class="font-bold text-amber-700">良（★前日時点で未発表。既定の「良」で採点しており実測値ではない★）</div></div>
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">荒れ度</div><div class="font-bold text-gray-800">中程度（新潟記念の過去7年：1〜3番人気のtop3占有52.4%／8番人気以下の3着内85.7%）</div></div>
+            </div>
+
+        </div>
+
+        <!-- 信頼度バー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left: 4px solid #6366f1; background: linear-gradient(135deg, #eef2ff, #e0e7ff);">
+            <!-- ★横並びにしない（2026/08/16）★ 見出しは1文でなく段落のことがあり、
+                 チップも10個を超える。flex-row + flex-wrap 無しだと各チップが1文字幅まで
+                 潰れて縦書きの列になる（実際に公開ページで起きた）。縦に積んで折り返す。 -->
+            <div class="flex flex-col gap-3">
+                <div class="flex items-start gap-2"><i class="fas fa-chart-bar text-xl text-indigo-500 mt-1 shrink-0"></i><span class="font-bold text-indigo-700 min-w-0"></span></div>
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600"></div>
+                <div class="md:ml-auto text-xs px-3 py-1 rounded-full font-medium bg-amber-100 text-amber-700"></div>
+            </div>
+            <div class="mt-3 w-full rounded-full h-2" style="background: #e5e7eb"><div class="h-2 rounded-full" style="background: #6366f1; width: 70%"></div></div>
+        </div>
+
+        <!-- 原則バナー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left:4px solid #f43f5e; background:linear-gradient(135deg,#fff1f2,#ffe4e6);">
+            <div class="font-bold text-rose-700 mb-1"><i class="fas fa-lightbulb mr-1"></i>本シートの大原則：印（強さ）は人気ブラインドの採点順／買い目（妙味）は別軸／<span class="text-indigo-700">オッズは印確定後の配分でのみ使用</span></div>
+            <p class="text-sm text-gray-700"></p>
+        </div>
+
+        <div id="コース" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas  mr-2 text-indigo-600"></i>コース特性（内回りと分けて測り直した）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p>新潟芝2000mは<strong>左回り・外回り・平坦</strong>。★内回りではない★ 同じ日の第3レースも芝2000mだが<strong>あちらは内回り</strong>で、直線の長さが300m違う。新潟記念は2017年以降すべて外回り（<code>track_cd=12</code>）で施行されている。今回は3回新潟4日目。</p>
+<p>★<strong>このコースの傾向は、内回りと分けて測り直している</strong>★ 手元の観点関数は新潟芝2000mの内外を区別せずに集計しており（内79レース／外76レースでほぼ半々）、<strong>混ぜると打ち消し合って向きが消える</strong>。以下は外回り（<code>track_cd=12</code>）だけを2021年以降で数え直したもの。</p>
+<p><strong>前残りではない。</strong> 3着以内馬の4コーナー通過は<strong>平均6.1番手・位置率0.48</strong>（平均12.6頭立て）。内訳は1〜3番手32.9%／4〜6番手26.1%／7〜9番手19.8%／<strong>10番手以降21.2%</strong>。内回りが1〜3番手47.4%・10番手以降9.1%（平均4.6番手・位置率0.33）と明確に前残りなのに対し、<strong>外回りは後ろからでも2割が3着以内に来る</strong>。差し・追込を脚質だけで消さない。</p>
+<p><strong>枠は内が少し良い。</strong> 外回りの枠別3着内率は2枠28.4%・1枠24.7%・3枠24.1%が上位で、4枠20.2%・8枠20.9%・7枠21.3%が下位。幅は8.2pt。★内回りは1枠16.2%・2枠12.1%が<strong>最下位</strong>で向きが真逆★なので、混ぜた数字は使えない。ただし<strong>芝の枠順は12項目の合計に入れていない</strong>（配点0）ので、これは展開と買い方の材料にとどめる。</p>
+<p><strong>基準時計（外回り・2021年以降）。</strong> 良は平均1:59.7・最速1:57.1（55レース）、稍重は平均2:01.3・最速1:59.4（13レース）、重2:03.0、不良2:03.7（各3レース）。内回りの良が平均2:02.3であることと比べると、<strong>外回りは3秒近く速い</strong>。</p></div>
+        </div>
+        <div id="馬場" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas  mr-2 text-indigo-600"></i>馬場状態（当日の馬場と、道悪になった場合の扱い）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>★前日時点で未発表。良を前提に採点しており、実測値ではない★</strong></p>
+<p>同じ日の先行レースの勝ち時計から馬場差を測る材料も<strong>0件</strong>（当日の結果はまだDBに入らない）。したがって<strong>馬場差の補正はかけていない</strong>。</p>
+<p>稍重以上になった場合は、良の持ち時計を根拠にした部分を割り引いて読み直す。外回りの勝ち時計は良1:59.7 → 稍重2:01.3で約1.6秒遅くなる。</p>
+<p>道悪になったときに関係するのは次の3頭。△②サヴォーナは前走の七夕賞（稍重）で1.8秒差10着、阪神大賞典（稍重）で1.3秒差6着＝<strong>渋ると良くない側</strong>。☆⑨アーバンシックは日経賞（稍重）3着0.1秒差がある一方で宝塚記念（稍重）は2.4秒差14着。▲③ロデオドライブは重馬場の中山芝1600mを勝っている。</p>
+<p>★ただし<strong>道悪の実績を根拠に印を上げたり軸を差し替えたりはしない</strong>（守り専用）。馬場が確定して動かすのは、良の持ち時計を前提にした評価を下げる方向だけ★</p></div>
+        </div>
+        <div id="傾向" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas  mr-2 text-indigo-600"></i>過去傾向（同レース／同条件の実測）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>新潟記念そのものの過去7年（荒れ度の実測）。</strong> 1〜3番人気が3着以内を占める割合は52.4%、8番人気以下の3着内率は85.7%で、荒れ度の判定は<strong>【中程度】</strong>。過去7年の3着以内には10番人気・12番人気・9番人気・8番人気が入っている一方、1〜2番人気も毎年のように絡んでおり、<strong>上位から入って3列目を広く取る形</strong>が合う。</p>
+<p><strong>同条件の過去傾向（新潟芝2000m・新潟記念・2021年以降）。</strong> 3着以内馬の4コーナーは1〜3番手33.3%／4〜6番手23.4%／7〜9番手20.6%／10番手以降22.7%で、上のコース節で出した外回りの数字（32.9%／26.1%／19.8%／21.2%）とほぼ一致する。</p>
+<p><strong>前走のサーフェス。</strong> 前走が芝だった馬の3着内率24.3%（140/575）に対し、前走がダートだった馬は2.0%（1/49）。今回は該当馬なし（11頭とも前走は芝）。</p>
+<p><strong>出走馬の父の、この距離帯（芝1800〜2200m）の産駒成績。</strong> サートゥルナーリア45.3%（86走）＞ドゥラメンテ32.7%（587走）＞キタサンブラック32.2%（292走）＞キズナ28.5%（695走）＞モーリス26.9%（424走）＞エピファネイア24.9%（674走）。★走数の少ない父は「サンプル不足」であって「不向き」ではない★</p></div>
+        </div>
+        <div id="展開" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas  mr-2 text-indigo-600"></i>展開予測（脚質の機械判定にもとづくペース想定）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p>脚質はすべて過去走の通過順からの機械判定で、手入力のラベルは使っていない。</p>
+<p><strong>前に行ける馬が少ない。</strong> 直近5走の4コーナー平均位置率がいちばん前なのは無印④ドゥレッツァ（0.26・逃げ2/先行2）で、△②サヴォーナ（0.34・逃げ1/先行2）、▲③ロデオドライブ（0.36）が続く。<strong>残る8頭は0.46以上＝中団より後ろ</strong>で、☆⑥チェルヴィニア0.52、無印⑪ステレンボッシュ0.51、◎⑧ダノンシーマ0.46、○⑤ゾロアストロ0.62、☆⑨アーバンシック0.59、注⑩バレエマスター0.79、無印⑦ジュンブロッサム0.82。</p>
+<p><strong>11頭立てで、ハナを主張する馬が実質いない</strong>。④ドゥレッツァは273日ぶりで出方が読めず、②サヴォーナが前を取りに行く形が濃い。<strong>前半は緩んで、後半のヨーイドンになりやすい</strong>——直線658.7mの外回りではこれが基本形になる。</p>
+<p><strong>それでも後ろすぎると届かない。</strong> 外回りの3着以内馬の4コーナーは平均6.1番手（位置率0.48）で、10番手以降からでも21.2%が来ているが、裏を返せば<strong>8割は6〜7番手以内から</strong>という数字でもある。脚質バイアスの機械判定は⑦ジュンブロッサムと⑩バレエマスターに「差し届くコース→非適用」を返しており、<strong>後方脚質だけを理由にした消しはしていない</strong>。</p>
+<p>想定する決着は、<strong>中団の内で我慢した組から2〜3頭</strong>。◎⑧ダノンシーマが中団やや前から上がり最速級を使う形をメインに置き、○⑤ゾロアストロと▲③ロデオドライブが外から差してくる形を並べる。△②サヴォーナは前で粘るタイプなので、上位3頭とは<strong>決まり方が違う</strong>ぶん買い目で組み合わせる価値がある。</p></div>
+        </div>
+
+
+        <!-- 最終結論 -->
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論</h2>
+            <div class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 text-sm text-indigo-800"></div>
+            <div id="markGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <p class="text-xs text-gray-500 mt-3"></p>
+        </div>
+
+        <!-- 総合ランキング -->
+        <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-bar mr-2 text-indigo-600"></i>配点合計ランキング</h2>
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 462px; position: relative;"><canvas id="rankingChart"></canvas></div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm"><thead><tr class="bg-indigo-100">
+                    <th class="px-3 py-3 text-left">順位</th><th class="px-3 py-3 text-center">印/馬番</th><th class="px-3 py-3 text-left">馬名</th>
+                    <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th><th class="px-3 py-3 text-center hidden md:table-cell">人気</th>
+                    <th class="px-3 py-3 text-center">配点</th><th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
+                </tr></thead><tbody id="rankingBody"></tbody></table>
+            </div>
+            <p class="text-xs text-gray-500 mt-3"></p>
+        </div>
+
+        <!-- 個別馬評価 -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-horse mr-2 text-indigo-600"></i>個別馬評価（全11頭）</h2>
+            <div id="horseCards" class="space-y-4"></div>
+        </div>
+
+        <!-- 買い目 -->
+        <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-ticket-alt mr-2 text-rose-600"></i>買い目（build_bets.py が生成）</h2>
+            <div class="mb-4 p-4 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-800"><strong>合計12点。</strong> 3連複は装備しない: 重賞の3連複は回収29.1%（794R検証・最大2本抜きで5.9%）／§8.6 ワイドBOXは 5・3・2 の3頭。◎8・☆9・☆6・注10 は入っていないので、これらが絡む1-2-3着ではワイドが0円になりうる（◎を箱に入れると回収が落ちるため、承知のうえで外している）。◎8は馬連の軸で持っているので0円にはならない。</div>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+
+            </div>
+            <div class="overflow-x-auto mb-4">
+                <table class="w-full text-sm"><tbody class="divide-y">
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>複勝</strong> ／ 単独 ／ 5・3 ／ 2点</td><td class="px-3 py-2">§8.13 複勝の主役は○▲（◎単独複勝は実測で安定して悪い）</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>馬連</strong> ／ 軸1頭ながし ／ 8 → 5・3・2・9 ／ 4点</td><td class="px-3 py-2">§8.13 馬連は◎軸でよい（1-2着を直撃する券種）</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>ワイド</strong> ／ ボックス ／ 5・3・2 ／ 3点</td><td class="px-3 py-2">§8.13 大原則2 ワイドの主力は○▲△BOX（◎軸1頭ながしにしない）／§8.10 少頭数（12頭以下）の重賞のためワイドBOXを優先</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>複勝</strong> ／ 単独 ／ 9 ／ 1点</td><td class="px-3 py-2">☆＝押さえは複勝1点</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>複勝</strong> ／ 単独 ／ 6 ／ 1点</td><td class="px-3 py-2">☆＝押さえは複勝1点</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>複勝</strong> ／ 単独 ／ 10 ／ 1点</td><td class="px-3 py-2">注＝3連系3列目の押さえ。A7 印を打った以上どこかで買う</td></tr>
+                </tbody></table>
+            </div>
+            <div class="p-4 bg-slate-900 text-white rounded-lg text-sm mb-4">
+                <strong class="text-amber-300"><i class="fas fa-calculator mr-1"></i>単一軸依存の検算:</strong> 
+            </div>
+            <div class="p-4 bg-rose-50 rounded-lg border-2 border-rose-400 text-sm text-rose-900 mb-4">
+                <strong class="text-base"><i class="fas fa-cloud-rain mr-1"></i>馬場が変わったときの対応は事前に確定済み（書いたら必ず実行する）</strong><br>
+                <div class="overflow-x-auto mt-2"><table class="w-full text-xs bg-white rounded">
+                    <thead><tr class="bg-rose-100"><th class="p-2 text-left">馬場</th><th class="p-2 text-left">実行内容</th></tr></thead>
+                    <tbody>
+                        <tr class="border-b "><td class="p-2 font-bold">良（既定）</td><td class="p-2">このシートのまま。印・買い目とも変更なし</td></tr>
+                        <tr class="border-b "><td class="p-2 font-bold">稍重</td><td class="p-2">良の持ち時計を根拠にした評価だけ割り引く。△②サヴォーナは稍重で1.8秒差・1.3秒差の敗戦があり割引側。★道悪実績を理由に印を上げる・軸を差し替えることはしない（守り専用）★</td></tr>
+                        <tr class="border-b "><td class="p-2 font-bold">重・不良</td><td class="p-2">同上に加えて買い目の縮小を検討する。外回りの基準時計は重2:03.0・不良2:03.7（各n=3と少ない）</td></tr>
+                    </tbody>
+                </table></div>
+            </div>
+            <div class="p-4 bg-rose-50 rounded-lg border-2 border-rose-300 text-sm text-rose-900 mb-4">
+                <strong class="text-base"><i class="fas fa-triangle-exclamation mr-1"></i>点数についての注意（ユーザー判断が必要）</strong><br>
+                
+            </div>
+            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800">金額はここでは扱わない。</div>
+        </div>
+
+        <!-- Phase3 ハードゲートチェックリスト -->
+        <div id="phase3-check" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4" style="border-left:4px solid #16a34a; background:linear-gradient(135deg,#f0fdf4,#dcfce7);">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-clipboard-check mr-2 text-green-600"></i>Phase3 ハードゲートチェックリスト（最終確認）</h2>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A1 決定ログ:</strong> [x] tmp/20260830-niigata-8r-lens-decision.md を作成済み</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A2 印数上限:</strong> [x] 印6頭（◎○▲△☆☆）＋注1頭（印数カウント外）。5〜7頭以内・N−2＝9以内。◎○▲は各1頭</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A3 12項目1位の扱い:</strong> [x] 1位⑤ゾロアストロは○。無印にしていない（◎にしなかった理由＝当該コース形態の好走が2歳新馬1走のみ・2000m未経験）</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A7 印馬の宙ぶらり:</strong> [x] 印6頭＋注1頭すべてが買い目に出ている（⑧=馬連軸／⑤③=複勝+ワイド+馬連／②=ワイド+馬連／⑨=複勝+馬連／⑥=複勝／⑩=複勝）</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>×の使い方:</strong> [x] ×は1頭も使っていない（押さえは☆、薄めの押さえは注）</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>内外の取り違え:</strong> [x] 新潟記念は外回り（track_cd=12）と過去10年ぶんで確認済み。コース傾向は外回りだけで測り直した</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>馬場:</strong> [ ] ★未取得★ 当日発表前。良を前提に採点しており実測値ではない。確定後に race_prompt.py --step 採点 --baba <確定値> で引き直す</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>馬体重:</strong> [ ] ★未取得★ 当日朝発表。特に④ドゥレッツァ（273日ぶり）は発表後に無印の判断を見直す</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>オッズ:</strong> [ ] 採点が済むまで取らない方針のため未取得（§0 人気ブラインド）</div>
+            </div>
+            <p class="mt-4 font-bold text-green-800"><strong>未確定</strong>: ①当日の馬場（発表前・良を前提に採点）②馬体重（当日朝発表）③当日の騎手変更・出走取消 ④オッズ。馬場が確定したら <code>race_prompt.py --step 採点 --baba <確定値></code> で引き直す。</p>
+            <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-300 text-sm text-gray-700"><p><strong>重賞なので、平場では取りに行かない情報も対象になる</strong>（<code>/race</code> 通常モード）。ただし<strong>前日時点では取れないものがある</strong>ので、何を取って何を取っていないかを明示する。</p>
+<ul>
+<li><strong>追い切りタイム</strong>: DB由来で取得済み（<code>jvd_chokyoo_wood/hanro</code>）。<strong>11頭すべてに記録あり</strong>（欠測0）</li>
+<li><strong>追い切りの相対評価</strong>: 同じ日・同じ調教場で追われた馬のなかでの位置まで取得済み</li>
+<li><strong>陣営コメント・追い切りVTR・馬具変更</strong>: 前日時点で未取得。媒体の追い切り評価は<strong>重賞では効きが弱い</strong>（G3で-2.1pt）という実測があるため、主根拠にはしない</li>
+<li><strong>馬体重・当日の騎手変更・出走取消</strong>: 当日朝発表のため未取得</li>
+<li><strong>オッズ</strong>: 採点が済むまで取らない方針（§0 人気ブラインド）のため未取得</li>
+<li><strong>同日の先行レースの勝ち時計（馬場差の材料）</strong>: 0件。当日の結果はDBに入らないため馬場差補正なし</li>
+</ul></div>
+
+        </div>
+
+        <div class="text-center text-xs text-gray-400 mb-8"></div>
+    </div>
+
+    <script>
+    const evaluationItems = ["実績", "Lv", "血統", "コース", "輸送", "休明", "展開", "騎手", "調教", "馬体", "厩舎"];
+    const horses = [
+  {
+    "number": 5,
+    "name": "ゾロアストロ",
+    "score": 65.8,
+    "mark": "○",
+    "badge": "taikou",
+    "jockey": "岩田望来",
+    "style": "自在 （最頻=追込 先1/差2/追2・4角平均位置率0.62）",
+    "blood": "父モーリス×母父ディープインパクト",
+    "kinryo": "55.0kg",
+    "popularity": "1人気 3.3倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "12項目の合計65.8は単独1位。新潟芝1800m外回りの新馬戦を上がり32.9で勝っており、55kgは11頭最軽量",
+    "comment": "<p><strong>12項目の合計65.8は11頭で単独1位</strong>（2位とは3.8pt差）。それでも◎でなく○に置いた。理由は採点基準の「◎不可条件」にはっきり当たるためで、<strong>今回のコース形態での好走が2歳夏の新馬戦1走だけ</strong>、しかも<strong>2000mは未経験</strong>という状態にある（適性が実戦で未実証＝12項目1位でも◎にしない）。点が高いのは能力・状態の評価が高いからで、そこは○として素直に買う。</p>\n<p>買える材料は多い。2025/07/27 新潟芝1800m（外回り）の新馬戦を1:47.4・<strong>上がり32.9</strong>で勝っており、この長い直線で切れる脚を使えることは一度は見せている。2026/02/10 きさらぎ賞（京都芝1800m）1着、2025/11/24 東京スポーツ杯2歳S 2着は勝ち馬と同タイム、サウジアラビアロイヤルカップ3着も0.3秒差。<strong>3歳世代の重賞で通用する地力</strong>はある。</p>\n<p><strong>斤量55.0kgは11頭で最も軽い</strong>（最重の59.0kgとは4kg差）。追い切りは相手内2/11で、同じ日・同じ調教場の779頭中<strong>上位1%</strong>、しかも<strong>自己最高</strong>を記録している。状態面は11頭のなかでも上位に読める。</p>\n<p>不安は前走の皐月賞12着（1.0秒差）と133日の休み明け。ただし皐月賞は15番手からの競馬で上がりは34.0。中山内回りで位置を取れなかった敗戦で、<strong>直線658.7mの外回りとは要求が違う</strong>ため、この着順だけで割り引くことはしない。</p>",
+    "pros": [
+      "12項目の合計65.8は11頭で単独1位（2位と3.8pt差）",
+      "新潟芝1800m外回りの新馬戦を上がり32.9で勝っている（長い直線で切れる脚を使えた実績）",
+      "きさらぎ賞1着・東京スポーツ杯2歳S 2着（勝ち馬と同タイム）・サウジアラビアRC 3着",
+      "斤量55.0kgは11頭で最軽量（最重59.0kgとは4kg差）",
+      "追い切りは同じ日・同じ調教場の779頭中で上位1%、かつ自己最高を更新",
+      "コース適性は5.0の満点評価"
+    ],
+    "cons": [
+      "★今回のコース形態での好走が2歳夏の新馬戦1走のみ。2000mは未経験（◎にしなかった理由）",
+      "前走の皐月賞は12着・1.0秒差。133日の休み明けでもある",
+      "古馬との対戦は今回が初めて",
+      "キャリア6走で、直近1年の芯になる地力の絶対量はまだ小さい"
+    ],
+    "expect": [
+      "中団から外を回して、新馬戦で見せた上がりの脚をもう一度使う形",
+      "軽ハンデ55.0kgは、古馬の57〜59kg組との叩き合いで効いてくる",
+      "位置が後ろすぎると外回りでも届かない。4コーナーで中団前めにいられるかが分かれ目"
+    ],
+    "radar": [
+      5,
+      4,
+      5,
+      5,
+      4,
+      3,
+      4,
+      5,
+      5,
+      3,
+      5
+    ]
+  },
+  {
+    "number": 8,
+    "name": "ダノンシーマ",
+    "score": 62.0,
+    "mark": "◎",
+    "badge": "honmei",
+    "jockey": "川田将雅",
+    "style": "差し （最頻=差し 先2/差3・4角平均位置率0.46）",
+    "blood": "父キタサンブラック×母父Include",
+    "kinryo": "57.0kg",
+    "popularity": "2人気 3.8倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "芝2000mを3走して1勝2着1・3着0の崩れなし。前走の目黒記念は勝ち馬と同タイムの3着で上がり33.3はメンバー最速",
+    "comment": "<p><strong>12項目の合計62.0は11頭中2位。1位ゾロアストロとは3.8pt差</strong>で同格ゾーン（3pt以内）の外にある。それでも◎をここに置いたのは、<strong>新潟芝2000m外回りという条件を実戦で確かめられているのがこの馬だけ</strong>だからで、合計点の順番で決めたわけではない。</p>\n<p>決め手は<strong>芝2000mでの中身</strong>。2026/01/31 白富士ステークス（東京芝2000m）を1:57.0・上がり32.7で勝っている。新潟芝2000m外回りの良馬場の勝ち時計は直近5年の実測で平均1:59.7・最速1:57.1（55レース）なので、<strong>このレースで求められる時計の水準はすでに出している</strong>。2026/05/31 目黒記念（芝2500m）は3着だが勝ち馬と同タイムで、上がり33.3は出走馬の最速。2026/03/22 阪神大賞典も3着。<strong>10走して着順が4着以下になったことが一度もない</strong>（1着5回・2着1回・3着3回・4着以下0回）。</p>\n<p>今回条件への当てはまりは8.7（コース3.7＋距離5.0）で11頭中3位。直線658.7mの外回りは差し・追込でも21.2%が3着以内に入るコースで、中団から上がり最速級を使うこの馬の形とかみ合う。</p>\n<p>川田騎手は10走中7走でこの馬に乗っており、乗り替わりの不安がない。追い切りは相手内4/11だが、<strong>同じ日・同じ調教場で追われた772頭のなかでは上位1%</strong>で、平常より2.4秒速い。父キタサンブラックはこの条件（芝1800〜2200m）の産駒3着内率32.2%（292走）で出走馬の父では2番目に高い。</p>\n<p>不安は<strong>91日の休み明け</strong>と、重賞をまだ勝っていないこと。G2・G3で3着が3回あって勝ち切れていないのは事実で、そこは割り引いて読む必要がある。</p>",
+    "pros": [
+      "芝2000mで1:57.0の勝ち鞍（白富士S）。外回り良馬場の勝ち時計平均1:59.7を大きく上回る水準",
+      "10走して4着以下が一度もない（1着5回・2着1回・3着3回）",
+      "前走の目黒記念は勝ち馬と同タイムの3着で、上がり33.3はメンバー最速",
+      "今回条件への当てはまり8.7（コース3.7＋距離5.0）は11頭中3位",
+      "川田騎手は10走中7走で継続騎乗。乗り替わりの不安がない",
+      "追い切りは同じ日・同じ調教場の772頭中で上位1%、平常より2.4秒速い",
+      "父キタサンブラックはこの距離帯の産駒3着内率32.2%（292走）で出走馬中2位"
+    ],
+    "cons": [
+      "91日の休み明け（前走は5月末の目黒記念）",
+      "重賞未勝利。G2・G3では3着が3回で勝ち切れていない",
+      "斤量57.0kgは4歳としては軽くない",
+      "新潟コースは初出走。外回りの長い直線は未経験"
+    ],
+    "expect": [
+      "中団の内めから、4コーナーで外へ持ち出して直線勝負",
+      "外回りは上がり勝負になりやすく、上がり最速級を使えるこの馬の形に合う",
+      "前が飛ばして流れるほど、差し届く形が濃くなる"
+    ],
+    "radar": [
+      5,
+      4,
+      3,
+      4,
+      2,
+      3,
+      5,
+      5,
+      4,
+      3,
+      5
+    ]
+  },
+  {
+    "number": 3,
+    "name": "ロデオドライブ",
+    "score": 55.0,
+    "mark": "▲",
+    "badge": "tanana",
+    "jockey": "ルメール",
+    "style": "自在 （最頻=先行 逃1/先2/追1・4角平均位置率0.36）",
+    "blood": "父サートゥルナーリア×母父スニッツェル",
+    "kinryo": "57.0kg",
+    "popularity": "3人気 4.0倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "4戦3勝2着1でNHKマイルカップ勝ち。ルメール騎手。ただし2000mは初めてで、新潟コースも初出走",
+    "comment": "<p><strong>12項目の合計55.0で3位</strong>。4戦して3勝2着1回、2026/05/10 のNHKマイルカップを1番人気で勝っている。<strong>キャリア1走あたりの地力は11頭で最も高い</strong>（4走で16pt＝1走4.0pt）。父サートゥルナーリアはこの条件（芝1800〜2200m）の産駒3着内率45.3%（86走）で、<strong>出走馬の父では最も高い</strong>。</p>\n<p>NHKマイルカップは14番手から上がり33.3で差し切っており、<strong>長い直線で末脚を伸ばす形は東京で確認済み</strong>。直線658.7mの新潟外回りは、その形が生きるコースにあたる。</p>\n<p>一方で今回条件への当てはまりは3.2（コース3.2＋距離0.0）で11頭中最下位クラス。<strong>1600mしか使っておらず、400mの距離延長は未知</strong>。新潟も初出走になる。追い切りは相手内11/11と11頭で最も遅いが、同じ日・同じ調教場の244頭では上位38%で、極端に悪いという数字ではない。112日の休み明けであることは頭に入れておく。</p>\n<p>能力は文句なしだが、距離とコースが両方とも初めてという形は▲までにとどめた。</p>",
+    "pros": [
+      "4戦3勝2着1回。2026/05/10 NHKマイルカップを1番人気で勝っている",
+      "NHKマイルは14番手から上がり33.3で差し切り。長い直線で伸びる形は東京で確認済み",
+      "父サートゥルナーリアはこの距離帯の産駒3着内率45.3%（86走）で出走馬の父では最高",
+      "キャリア1走あたりの地力は11頭で最も高い（4走で16pt）",
+      "ルメール騎手"
+    ],
+    "cons": [
+      "2000mは初めて。これまで1600mしか使っておらず400mの距離延長になる",
+      "新潟コースは初出走。今回条件への当てはまりは3.2で11頭中最下位クラス",
+      "追い切りは相手内11/11で11頭中最も遅い（同じ日・同じ調教場では上位38%）",
+      "112日の休み明け"
+    ],
+    "expect": [
+      "中団から外を回して、直線の長さを生かして差し込む形",
+      "2000mでも折り合えば、マイルG1の脚はそのまま通用する",
+      "距離が延びて追走に苦しむようだと、直線に向いたときに脚が残らない"
+    ],
+    "radar": [
+      5,
+      5,
+      3,
+      1,
+      4,
+      3,
+      4,
+      5,
+      1,
+      3,
+      4
+    ]
+  },
+  {
+    "number": 2,
+    "name": "サヴォーナ",
+    "score": 50.2,
+    "mark": "△",
+    "badge": "renka",
+    "jockey": "池添謙一",
+    "style": "自在 （最頻=差し 逃1/先2/差2・4角平均位置率0.34）",
+    "blood": "父キズナ×母父スニッツェル",
+    "kinryo": "57.0kg",
+    "popularity": "9人気 30.7倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "芝2000mの重賞・福島民報杯を勝っている。走数と年齢を補正したあとの地力は11頭で1位",
+    "comment": "<p><strong>12項目の合計50.2で4位</strong>。地力の生の数字は28ptで、6歳・19走という条件で補正（≥10走の6〜7歳は×0.85）をかけると23.8となり、<strong>補正後では11頭中1位</strong>になる。</p>\n<p>2026/04/12 福島民報杯（芝2000m）を1:58.4で勝っており、<strong>芝2000mの重賞級で勝ち鞍がある数少ない1頭</strong>。今回条件への当てはまりも8.6と高い。2024年には函館記念4着、オールカマー4着、日経新春杯2着と、この距離帯の重賞で足りる走りを続けていた。</p>\n<p>脚質の機械判定は自在（逃げ1・先行2・差し2）で、勝ち鞍は逃げ。<strong>11頭のなかでは前に行ける数少ない馬</strong>にあたり、外回りで流れが落ち着いたときに残す形が持てる。</p>\n<p>不安は前走の七夕賞10着（1.8秒差・稍重）。これは近走で最も大きな着差で、<strong>同じ芝2000mの重賞での敗戦</strong>なので割り引く材料になる。追い切りは相手内8/11・同じ日同じ調教場の上位16%で、目立つ上積みはない。</p>",
+    "pros": [
+      "2026/04/12 福島民報杯（芝2000m）を1:58.4で勝っている",
+      "走数と年齢を補正したあとの地力は23.8で11頭中1位",
+      "今回条件への当てはまり8.6は11頭中4位",
+      "脚質は自在（逃げ1・先行2・差し2）で勝ち鞍は逃げ。前に行ける数少ない1頭",
+      "2024年は函館記念4着・オールカマー4着・日経新春杯2着とこの距離帯の重賞で足りていた"
+    ],
+    "cons": [
+      "前走の七夕賞は10着・1.8秒差。同じ芝2000mの重賞での大敗",
+      "追い切りは相手内8/11、同じ日・同じ調教場でも上位16%で上積みは目立たない",
+      "6歳で19走。近走は勝ち鞍のあと頭打ちの形",
+      "新潟は2022年の芝1800m 3着が1度あるだけ"
+    ],
+    "expect": [
+      "2〜4番手の前めを確保して、直線で粘り込む形",
+      "外回りで前半が緩めば、前に行けるぶんの利が出る",
+      "前走のような1.8秒差の負け方をもう一度するようだと厳しい"
+    ],
+    "radar": [
+      4,
+      4,
+      5,
+      2,
+      2,
+      5,
+      5,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "number": 9,
+    "name": "アーバンシック",
+    "score": 45.5,
+    "mark": "☆",
+    "badge": "ana",
+    "jockey": "三浦皇成",
+    "style": "差し （最頻=差し 差4/追1・4角平均位置率0.59）",
+    "blood": "父スワーヴリチャード×母父ハービンジャー",
+    "kinryo": "59.0kg",
+    "popularity": "7人気 13.9倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "菊花賞馬。天皇賞（秋）で勝ち馬と0.2秒差の5着に上がり32.2のメンバー最速。ただし59.0kgと168日の休み明け",
+    "comment": "<p><strong>12項目の合計45.5で5位</strong>。2024年の菊花賞を勝っており、2025/11/02 天皇賞（秋）では勝ち馬と0.2秒差の5着に<strong>上がり32.2＝メンバー最速</strong>で追い込んでいる。<strong>11頭のなかでも切れる脚の質は上位</strong>で、直線658.7mの外回りは向く。</p>\n<p>距離への当てはまりも良い。条件別の実測で<strong>「中距離（1800〜2000m級）」は7走中5走で掲示板（71%）</strong>、長めの距離（40%）より31pt高い。今回条件への当てはまりは8.7で11頭中3位タイ。追い切りは相手内3/11、同じ日・同じ調教場の754頭中<strong>上位1%</strong>で状態は悪くない。</p>\n<p>△まで上げなかったのは<strong>斤量59.0kgと168日の休み明けが同時に来ている</strong>ため。前走の金鯱賞は14着・1.0秒差で、そこから半年近く使われていない。能力と状態は買えるが、<strong>実戦を使っていない期間の長さと最重量タイの斤量を、この馬の脚質（後方からの差し）で吸収できるか</strong>が読めない。</p>",
+    "pros": [
+      "2024年の菊花賞を勝っているG1馬",
+      "天皇賞（秋）で勝ち馬と0.2秒差の5着。上がり32.2はメンバー最速",
+      "中距離（1800〜2000m級）は7走中5走で掲示板（71%）。長めの距離より31pt高い",
+      "今回条件への当てはまり8.7は11頭中3位タイ",
+      "追い切りは同じ日・同じ調教場の754頭中で上位1%"
+    ],
+    "cons": [
+      "斤量59.0kgは11頭で最重量タイ",
+      "168日の休み明け。前走は3月の金鯱賞で14着・1.0秒差",
+      "後方からの差し脚質で、展開に左右される",
+      "宝塚記念14着（2.4秒差）など、崩れるときの負け幅が大きい"
+    ],
+    "expect": [
+      "後方から外へ回して、長い直線で一気に伸びる形",
+      "前が流れて上がりのかかる展開になるほど出番が増える",
+      "59.0kgを背負って半年ぶりでは、脚を使い切る前に届かない可能性がある"
+    ],
+    "radar": [
+      3,
+      5,
+      3,
+      4,
+      4,
+      3,
+      2,
+      4,
+      5,
+      3,
+      3
+    ]
+  },
+  {
+    "number": 6,
+    "name": "チェルヴィニア",
+    "score": 44.8,
+    "mark": "☆",
+    "badge": "ana",
+    "jockey": "津村明秀",
+    "style": "自在 （最頻=差し 先1/差3/追1・4角平均位置率0.52）",
+    "blood": "父ハービンジャー×母父キングカメハメハ",
+    "kinryo": "56.0kg",
+    "popularity": "6人気 12.6倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "オークスと秋華賞（芝2000m）を勝った牝馬。追い切りは相手内1位で、平常より5.4秒速い11頭最大の上積み",
+    "comment": "<p><strong>12項目の合計44.8で6位</strong>。2024年にオークスと秋華賞を勝っており、<strong>芝2000mのG1勝ち馬</strong>という点は今回の条件にそのまま乗る。2023/08/12 の新潟芝1800m（外回り）の新馬戦も上がり33.0で勝っており、このコース形態の経験もある。</p>\n<p>いちばんの材料は<strong>追い切り</strong>。相手内1/11で11頭中1位、同じ日・同じ調教場の754頭のなかで<strong>上位1%</strong>、しかも<strong>平常より5.4秒速い</strong>——この上積みは11頭で最大。状態面は明確に上向いている。斤量56.0kgも軽い部類にあたる。</p>\n<p>それでも△まで上げ切れないのは<strong>近走の内容</strong>。2025年以降で掲示板に載ったのはしらさぎステークス2着の1回だけで、京都記念9着・毎日王冠7着・マイルCS 10着・中山記念5着・ヴィクトリアマイル16着と続いている。<strong>能力と状態は買えるが、それが結果に出ていない期間が長い</strong>——☆はまさにそういう馬に付ける印になる。</p>",
+    "pros": [
+      "2024年のオークスと秋華賞を勝ったG1馬。秋華賞は芝2000m",
+      "追い切りは相手内1/11で11頭中1位。同じ日・同じ調教場の754頭で上位1%",
+      "平常より5.4秒速く、上積みは11頭で最大",
+      "2023年の新潟芝1800m外回りの新馬戦を上がり33.0で勝っている",
+      "斤量56.0kgは軽い部類"
+    ],
+    "cons": [
+      "2025年以降で掲示板は しらさぎS 2着の1回だけ。不振の期間が長い",
+      "前走のヴィクトリアマイルは16着・1.1秒差",
+      "105日の休み明け",
+      "父ハービンジャーはこの距離帯の産駒3着内率21.6%で出走馬の父では下位"
+    ],
+    "expect": [
+      "中団から、直線で外へ持ち出して伸びる形",
+      "追い切りの上積みがそのまま出れば、秋華賞を勝った脚が戻る余地はある",
+      "近走のように直線で反応が鈍いままなら、掲示板も難しい"
+    ],
+    "radar": [
+      2,
+      5,
+      5,
+      4,
+      4,
+      3,
+      3,
+      4,
+      5,
+      3,
+      5
+    ]
+  },
+  {
+    "number": 10,
+    "name": "バレエマスター",
+    "score": 41.5,
+    "mark": "注",
+    "badge": "chui",
+    "jockey": "菊沢一樹",
+    "style": "追込 （最頻=追込 差1/追4・4角平均位置率0.79）",
+    "blood": "父スピルバーグ×母父スウェプトオーヴァーボード",
+    "kinryo": "57.0kg",
+    "popularity": "8人気 29.2倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "新潟芝2000mで0.1秒差2着、昨年の新潟記念でも上がり32.8。今回条件への当てはまりは11頭中2位",
+    "comment": "<p><strong>印は「注」＝3連系の3列目・薄めの押さえで、印数には数えない。</strong></p>\n<p>12項目の合計は41.5で7位だが、<strong>今回条件への当てはまりは9.6（コース4.8＋距離4.8）で11頭中2位</strong>。これは数字の裏付けがある。2026/05/16 新潟大賞典（新潟芝2000m）で勝ち馬と0.1秒差の2着、2025/08/31 の新潟記念そのものでも7着ながら<strong>上がり32.8</strong>、2025/08/09 関越ステークス（新潟芝1800m）3着で0.1秒差。<strong>このコースで通用する脚は繰り返し見せている</strong>。</p>\n<p>地力の生の数字は41ptで11頭最大だが、7歳・36走・直近5走で掲示板1回という条件では衰退期の補正（×0.5）がかかり、補正後は20.5になる。<strong>生の数字をそのまま順位にしない</strong>。</p>\n<p>脚質は追込。ただしこのコースの脚質バイアスの機械判定は「差し届くコース→非適用」を返しており、<strong>後方脚質だけを理由にした消しはしていない</strong>。外回りは3着以内馬の21.2%が4コーナー10番手以降から来ている。</p>",
+    "pros": [
+      "2026/05/16 新潟大賞典（新潟芝2000m）で勝ち馬と0.1秒差の2着",
+      "2025年の新潟記念で上がり32.8。同じ舞台で最速級の脚を使っている",
+      "今回条件への当てはまり9.6（コース4.8＋距離4.8）は11頭中2位",
+      "関越ステークス（新潟芝1800m）3着0.1秒差など、新潟の外回りで安定して走る"
+    ],
+    "cons": [
+      "7歳36走で直近5走の掲示板は1回。地力41ptには衰退補正（×0.5）が要る",
+      "追込一手で、前が止まらないと届かない",
+      "追い切りは相手内8/11、同じ日・同じ調教場でも上位16%",
+      "前走のジューンステークスは6着・0.5秒差"
+    ],
+    "expect": [
+      "後方から直線一気。前が流れて上がりがかかるほど出番",
+      "外回りは4コーナー10番手以降からでも21.2%が3着以内に来ている",
+      "スローで前が止まらないと、また届かずに終わる"
+    ],
+    "radar": [
+      4,
+      3,
+      3,
+      5,
+      2,
+      4,
+      1,
+      3,
+      3,
+      3,
+      2
+    ]
+  },
+  {
+    "number": 11,
+    "name": "ステレンボッシュ",
+    "score": 39.5,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "戸崎圭太",
+    "style": "差し （最頻=差し 差4/追1・4角平均位置率0.51）",
+    "blood": "父エピファネイア×母父ルーラーシップ",
+    "kinryo": "56.0kg",
+    "popularity": "5人気 11.7倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "桜花賞馬。ただし条件別の実測で2000m級は4走中1走しか掲示板がなく、この距離では買いにくい",
+    "comment": "<p>12項目の合計39.5で8位。2024年の桜花賞を勝った実力馬で、2026/05/09 エプソムカップでは勝ち馬と同タイムの2着に来ている。追い切りの終い11.6秒は11頭で最も速い。</p>\n<p>無印にしたのは<strong>距離</strong>。条件別の実測で<strong>「中距離（1800〜2000m級）」は4走中1走しか掲示板がなく（25%）、マイル（67%）より42pt低い</strong>。実際に芝2000mでは大阪杯13着（1.1秒差）、札幌記念15着（1.9秒差）で、掲示板は秋華賞3着（0.4秒差）だけ。<strong>今回の距離で走った実績が薄い</strong>。</p>\n<p>今回条件への当てはまりも7.2と11頭のなかでは低い部類にあたる。★人気がどうであれ、能力ではなく<strong>この条件に合っていない</strong>という理由で買い目から外している（×＝消しは使っていない）。</p>",
+    "pros": [
+      "2024年の桜花賞を勝ったG1馬",
+      "2026/05/09 エプソムカップで勝ち馬と同タイムの2着",
+      "追い切りの終い11.6秒は11頭で最も速い"
+    ],
+    "cons": [
+      "★中距離（1800〜2000m級）は4走中1走しか掲示板がない（25%）。マイル（67%）より42pt低い",
+      "芝2000mでは大阪杯13着（1.1秒差）・札幌記念15着（1.9秒差）",
+      "今回条件への当てはまり7.2は11頭中下位",
+      "前走の安田記念は10着・0.8秒差"
+    ],
+    "expect": [
+      "中団から差す形になるが、2000mでは追走に苦しむ場面が多い",
+      "距離が合えば能力は足りるので、掲示板までなら圏内"
+    ],
+    "radar": [
+      2,
+      5,
+      5,
+      1,
+      4,
+      4,
+      2,
+      5,
+      3,
+      3,
+      5
+    ]
+  },
+  {
+    "number": 7,
+    "name": "ジュンブロッサム",
+    "score": 38.5,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "杉原誠人",
+    "style": "追込 （最頻=追込 追5・4角平均位置率0.82）",
+    "blood": "父ワールドエース×母父クロフネ",
+    "kinryo": "58.0kg",
+    "popularity": "10人気 40.9倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "新潟のマイルは得意（関屋記念3着）だが、芝2000mを使うのは2023年以来。追込一手で58.0kg",
+    "comment": "<p>12項目の合計38.5で9位。前走の関越ステークス（新潟芝1800m）は9着だが、<strong>上がり32.0はメンバー最速</strong>で、後方14番手からの競馬だった。新潟の外回りで脚を使えること自体は今回も変わらない。</p>\n<p>無印にしたのは<strong>距離とローテーション</strong>。2023年以降は1600〜1800mに絞って使われており、<strong>芝2000mは2023/03/18 の館山特別（不良・6着）まで遡る</strong>。今回条件への当てはまりは6.2（コース4.2＋距離2.0）で、距離側の評価が低い。斤量58.0kgも7歳の追込馬には軽くない。中22日と間隔が詰まっている点も、前走の内容を見るかぎり上向きの材料にはしにくい。</p>\n<p>追い切りは自己最高を記録しており、状態面は悪くない。3連系の3列目に置く考え方はあるが、<strong>バレエマスターのほうが同じ舞台での実績がはっきりしている</strong>ため、注はそちらに寄せた。</p>",
+    "pros": [
+      "前走の関越ステークス（新潟芝1800m）で上がり32.0のメンバー最速",
+      "2024年の関屋記念3着など、新潟の外回りマイルは得意",
+      "追い切りで自己最高を記録"
+    ],
+    "cons": [
+      "芝2000mは2023/03/18 の館山特別（不良・6着）まで遡る",
+      "今回条件への当てはまり6.2は距離側の評価が低い",
+      "追込一手で58.0kg。7歳28走",
+      "近走は9着・9着・11着と結果が出ていない"
+    ],
+    "expect": [
+      "後方から直線一気。展開が向けば3着まではありうる",
+      "距離が200m延びるぶん、末脚の質がそのまま出るかは読みにくい"
+    ],
+    "radar": [
+      3,
+      4,
+      3,
+      4,
+      2,
+      5,
+      1,
+      2,
+      4,
+      3,
+      5
+    ]
+  },
+  {
+    "number": 4,
+    "name": "ドゥレッツァ",
+    "score": 37.5,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "田辺裕信",
+    "style": "自在 （最頻=逃げ 逃2/先2/差1・4角平均位置率0.26）",
+    "blood": "父ドゥラメンテ×母父More Than Ready",
+    "kinryo": "59.0kg",
+    "popularity": "4人気 9.5倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "菊花賞馬でジャパンカップ2着。今回条件への当てはまりは10.0の満点だが、273日ぶりの実戦で59.0kg",
+    "comment": "<p>12項目の合計37.5で10位。<strong>今回条件への当てはまりは10.0（コース5.0＋距離5.0）で11頭中1位</strong>。2023/08/19 の日本海ステークス（新潟芝2200m）を勝っており、菊花賞1着・ジャパンカップ2着（勝ち馬と同タイム）と、能力そのものは疑いようがない。</p>\n<p>それでも無印にしたのは<strong>3つが同時に来ている</strong>ため。①<strong>273日ぶりの実戦</strong>（前走の2025年ジャパンカップは競走中止・記録なし）②<strong>斤量59.0kg</strong>（最重量タイ）③<strong>追い切りが相手内10/11</strong>で、終い13.1秒は11頭で最も遅い。同じ日・同じ調教場でも上位21%にとどまる。</p>\n<p><strong>能力が足りないから外したのではない</strong>——9か月ぶりの実戦を最重量で迎える状態が数字で確かめられない、という理由で外している。馬体重が当日に発表されたら、この判断は真っ先に見直す対象になる。</p>",
+    "pros": [
+      "今回条件への当てはまり10.0（コース5.0＋距離5.0）は11頭中1位",
+      "2023年の日本海ステークス（新潟芝2200m）を勝っている",
+      "菊花賞1着・ジャパンカップ2着（勝ち馬と同タイム）",
+      "父ドゥラメンテはこの距離帯の産駒3着内率32.7%（587走）"
+    ],
+    "cons": [
+      "★273日ぶりの実戦。前走の2025年ジャパンカップは記録なし（競走中止）",
+      "斤量59.0kgは11頭で最重量タイ",
+      "追い切りは相手内10/11で終い13.1秒は11頭最遅。同じ日・同じ調教場でも上位21%",
+      "2025年は京都大賞典8着・宝塚記念9着と結果が出ていない"
+    ],
+    "expect": [
+      "先行して押し切る形が持ち味。折り合えば条件は最も合っている",
+      "9か月ぶり＋59.0kgをこなせるかどうかがすべて"
+    ],
+    "radar": [
+      1,
+      5,
+      5,
+      5,
+      4,
+      2,
+      5,
+      5,
+      1,
+      3,
+      2
+    ]
+  },
+  {
+    "number": 1,
+    "name": "ボーンディスウェイ",
+    "score": 27.0,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "丸山元気",
+    "style": "差し （最頻=差し 差4/追1・4角平均位置率0.59）",
+    "blood": "父ハーツクライ×母父Platini",
+    "kinryo": "57.0kg",
+    "popularity": "11人気 56.4倍",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "12項目の合計27.0は11頭で最下位。オクトーバーステークス勝ちはあるが、重賞では掲示板が遠い",
+    "comment": "<p>12項目の合計27.0で11頭中最下位。7歳35走のベテランで、2024/10/13 オクトーバーステークス（東京芝2000m）勝ち、2025年の同レース3着があり、<strong>芝2000mそのものが不得手というわけではない</strong>。</p>\n<p>ただし重賞では2025/01/05 中山金杯3着が最後の掲示板で、以降は中山記念8着・函館記念8着・札幌記念9着・アルゼンチン共和国杯8着・ダイヤモンドS 9着・大阪ハンブルクC 6着・目黒記念11着・七夕賞5着と続いている。<strong>このメンバーに入ると地力が足りない</strong>という評価になる。</p>\n<p>追い切りは相手内6/11で平均的。斤量57.0kg。★人気ではなく能力・条件の両面で足りないという理由の無印で、×（消し）は今回1頭も使っていない。</p>",
+    "pros": [
+      "オクトーバーステークス（東京芝2000m）1着・3着。芝2000mの経験は豊富",
+      "2025年の新潟大賞典（新潟芝2000m）で5着0.6秒差"
+    ],
+    "cons": [
+      "12項目の合計27.0は11頭で最下位",
+      "2025年以降の重賞は中山金杯3着が最後の掲示板",
+      "7歳35走で、直近5走の掲示板は七夕賞5着の1回のみ"
+    ],
+    "expect": [
+      "中団から差す形だが、このメンバーでは決め手が足りない"
+    ],
+    "radar": [
+      1,
+      4,
+      3,
+      2,
+      4,
+      5,
+      3,
+      3,
+      3,
+      3,
+      2
+    ]
+  }
+];
+    const RANKING_MAX = 62;
+
+    function markBadgeHTML(mark, badge) {
+        return mark ? `<span class="badge-${badge || 'chui'} text-white px-2 py-0.5 rounded-full text-xs font-bold">${mark}</span>` : '';
+    }
+
+    function renderMarkGrid() {
+        const grid = document.getElementById('markGrid');
+        const order = ['◎','○','▲','△','☆'];
+        const marked = horses.filter(h => order.includes(h.mark)).sort((a,b)=>order.indexOf(a.mark)-order.indexOf(b.mark) || b.score-a.score);
+        const borderMap = {'◎':'border-yellow-400 from-yellow-50 to-amber-50','○':'border-indigo-400 from-indigo-50 to-indigo-100','▲':'border-green-400 from-green-50 to-emerald-50','△':'border-purple-400 from-purple-50 to-fuchsia-50','☆':'border-rose-400 from-rose-50 to-pink-50'};
+        marked.forEach(h => {
+            const div = document.createElement('div');
+            div.className = `border-2 rounded-lg p-4 bg-gradient-to-br ${borderMap[h.mark]}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${h.popularity} / ${h.score}pt</span></div>
+                <div class="text-xl font-bold text-gray-800 mb-2">${h.mark} ${h.number} ${h.name}</div>
+                <div class="text-sm text-gray-700">${h.headline || ''}</div>`;
+            grid.appendChild(div);
+        });
+    }
+
+    function renderRanking() {
+        const sorted = [...horses].sort((a,b) => b.score - a.score);
+        const ctx = document.getElementById('rankingChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar', data: {
+                    labels: sorted.map(h => (h.mark ? h.mark : '') + h.number + ' ' + h.name),
+                    datasets: [{ label: '配点', data: sorted.map(h => h.score),
+                        backgroundColor: sorted.map(h => {
+                            if (h.mark === '◎') return '#eab308';
+                            if (h.mark === '○') return '#6366f1';
+                            if (h.mark === '▲') return '#22c55e';
+                            if (h.mark === '△') return '#a855f7';
+                            if (h.mark === '☆') return '#f43f5e';
+                            if (h.mark === '注') return '#f59e0b';
+                            return '#d1d5db';
+                        }), borderRadius: 6 }]
+                }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: RANKING_MAX } } }
+            });
+        }
+        const tbody = document.getElementById('rankingBody');
+        let rank = 0, prev = -1;
+        sorted.forEach((h, i) => {
+            if (h.score !== prev) { rank = i + 1; prev = h.score; }
+            const bg = h.mark ? (h.mark === '◎' ? 'bg-yellow-50' : h.mark === '○' ? 'bg-indigo-50' : h.mark === '▲' ? 'bg-green-50' : h.mark === '△' ? 'bg-purple-50' : h.mark === '☆' ? 'bg-rose-50' : 'bg-amber-50') : (i % 2 ? 'bg-gray-50' : '');
+            tbody.innerHTML += `<tr class="${bg}"><td class="px-3 py-2">${rank}</td><td class="px-3 py-2 text-center font-bold">${markBadgeHTML(h.mark,h.badge)} ${h.number}</td><td class="px-3 py-2 font-medium">${h.name}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.jockey}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.popularity}</td><td class="px-3 py-2 text-center font-bold">${h.score}</td><td class="px-3 py-2 text-xs hidden md:table-cell">${h.headline || ''}</td></tr>`;
+        });
+    }
+
+    function renderHorseCards() {
+        const container = document.getElementById('horseCards');
+        container.innerHTML = '';
+        [...horses].sort((a, b) => b.score - a.score).forEach(horse => container.appendChild(createHorseCard(horse)));
+    }
+
+    function createHorseCard(horse) {
+        const card = document.createElement('div');
+        card.className = 'horse-card glass-card p-6';
+        const badgeMap = {
+            honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+            taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+            tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+            renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+            ana: '<span class="badge-ana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-bolt"></i> 穴</span>',
+            kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-ban"></i> 無印</span>',
+            chui: '<span class="badge-chui text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-info-circle"></i> 注</span>'
+        };
+        const li = (arr, icon, cls) => (arr || []).map(x => `<li class="flex items-start"><i class="fas ${icon} ${cls} mr-2 mt-1"></i><span>${x}</span></li>`).join('');
+        const prosHTML = li(horse.pros, 'fa-check-circle', 'text-green-500');
+        const consHTML = li(horse.cons, 'fa-times-circle', 'text-red-500');
+        const expectHTML = li(horse.expect, 'fa-star', 'text-yellow-500');
+        const firstExpClass = (horse.firstExp || '').includes('★') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+        card.innerHTML = `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div class="flex items-center gap-3 mb-2 md:mb-0">
+                    <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
+                        <div class="text-sm text-gray-600">${horse.jockey} / ${horse.style || ''} / ${horse.popularity}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    ${badgeMap[horse.badge] || ''}
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
+                </div>
+            </div>
+            <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                <div class="text-sm text-gray-700">
+                    <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood || ''}</div>
+                    <div class="flex gap-4 flex-wrap">
+                        <div><span class="font-bold">斤量：</span>${horse.kinryo || ''}</div>
+                        <div><span class="font-bold">材料：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp || ''}</span></div>
+                        <div><span class="font-bold">馬体：</span>${horse.weightNote || ''}</div>
+                    </div>
+                </div>
+            </div>
+            ${horse.comment ? `<div class="mb-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-700 leading-relaxed">${horse.comment}</div>` : ''}
+            <div class="mb-4" style="height: 280px; position: relative;">
+                <div class="font-bold text-gray-700 mb-2">評価プロフィール</div>
+                <canvas id="radarChart${horse.number}" style="height: 250px;"></canvas>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 期待点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+            </div>
+        `;
+        setTimeout(() => createRadarChart(horse), 100);
+        return card;
+    }
+
+    function createRadarChart(horse) {
+        const ctx = document.getElementById(`radarChart${horse.number}`);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'radar',
+            // spanGaps: 記録なしの項目は null で渡ってくる（0点ではない）。繋がないと多角形が割れる
+            data: { labels: evaluationItems, datasets: [{ data: horse.radar, spanGaps: true, backgroundColor: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(99, 102, 241, 1)' }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderMarkGrid();
+        renderRanking();
+        renderHorseCards();
+    });
+    window.addEventListener('scroll', () => {
+        const b = document.getElementById('backToTop');
+        if (b) b.classList.toggle('visible', window.scrollY > 300);
+    });
+    </script>
+</body>
+</html>
