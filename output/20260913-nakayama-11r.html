@@ -28,6 +28,34 @@
            セルには下限幅を与えて潰れないようにする。 */
         .prose table { display: block; overflow-x: auto; max-width: 100%; }
         .prose table th, .prose table td { min-width: 6em; }
+        /* ★`.prose` に実体を与える（2026/09/13）★
+           cdn.tailwindcss.com の play CDN には typography プラグインが入らないので、
+           `class="prose"` は**名前だけで何も効いていなかった**。Markdown から起こした
+           表・見出し・箇条書きが素のまま（罫線なし・余白なし）で出ており、
+           手書きだった安田記念(2026/06/07)のページに比べて見た目が落ちていた原因。
+           ここは1か所直せば過去分も再生成で揃うので、ページ側に手書きHTMLを足さない。 */
+        .prose { line-height: 1.85; }
+        .prose p { margin: 0.85rem 0; }
+        .prose > :first-child { margin-top: 0; }
+        .prose strong { color: #1f2937; font-weight: 700; }
+        .prose code { background: #eef2ff; color: #4338ca; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+        .prose h3 { font-size: 1.05rem; font-weight: 700; color: #374151; margin: 1.6rem 0 0.6rem; padding-left: 0.6rem; border-left: 4px solid #6366f1; }
+        .prose h4 { font-weight: 700; color: #4b5563; margin: 1.2rem 0 0.4rem; }
+        .prose ul, .prose ol { margin: 0.8rem 0; padding-left: 1.4rem; }
+        .prose li { margin: 0.3rem 0; list-style: disc; }
+        .prose ol li { list-style: decimal; }
+        .prose table { border-collapse: collapse; font-size: 0.86rem; margin: 1rem 0; border: 1px solid #e5e7eb; }
+        .prose table th { background: #eef2ff; color: #3730a3; font-weight: 700; text-align: left; white-space: nowrap; }
+        .prose table th, .prose table td { padding: 0.45rem 0.75rem; border-bottom: 1px solid #eceff3; }
+        .prose table tbody tr:nth-child(even) { background: #fafbff; }
+        .prose table tbody tr:last-child td { border-bottom: none; }
+        .prose blockquote { border-left: 4px solid #f43f5e; background: linear-gradient(135deg,#fff1f2,#ffe4e6);
+                            padding: 0.7rem 1rem; border-radius: 8px; color: #9f1239; margin: 1rem 0; }
+        .prose hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+        /* ★メタ枠は5つ横並び（grid-cols-5）なので、長文を入れると崩れる★
+           値は「良（当日未確定）」のような短い一言にし、理由は本文の節に書く。
+           それでも長くなったときに枠を突き破らないよう保険をかけておく。 */
+        .meta-box .meta-value { overflow-wrap: anywhere; font-size: 0.95rem; line-height: 1.5; }
         .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
         .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
         .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
@@ -66,11 +94,11 @@
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">中山11R 朝日杯セントライト記念</h1>
             <p class="text-center text-gray-600 mb-4">芝2200m・16頭</p>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催</div><div class="font-bold text-gray-800">2026-09-13 中山11R</div></div>
-                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">条件</div><div class="font-bold text-gray-800">朝日杯セントライト記念</div></div>
-                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="font-bold text-gray-800">中山芝2200m</div></div>
-                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">頭数</div><div class="font-bold text-gray-800">16頭</div></div>
-                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">馬場</div><div class="font-bold text-amber-700">良で採点（★当日未確定★ 前日予報は曇り時々晴れだが降水の可能性あり。当日朝に baba_gate.py で実測と突き合わせる）</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催日</div><div class="meta-value font-bold text-gray-800">2026年9月13日（日）</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">競馬場</div><div class="meta-value font-bold text-gray-800">中山 11R / 4回4日目</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="meta-value font-bold text-gray-800">芝2200m（右・外回りスタート）</div></div>
+                <div class="meta-box p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">馬場</div><div class="meta-value font-bold text-amber-700">良で採点（当日未確定）</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">出走頭数</div><div class="meta-value font-bold text-gray-800">16頭 / GII</div></div>
             </div>
 
         </div>
@@ -81,11 +109,11 @@
                  チップも10個を超える。flex-row + flex-wrap 無しだと各チップが1文字幅まで
                  潰れて縦書きの列になる（実際に公開ページで起きた）。縦に積んで折り返す。 -->
             <div class="flex flex-col gap-3">
-                <div class="flex items-start gap-2"><i class="fas fa-chart-bar text-xl text-indigo-500 mt-1 shrink-0"></i><span class="font-bold text-indigo-700 min-w-0"></span></div>
-                <div class="flex flex-wrap gap-2 text-sm text-gray-600"></div>
-                <div class="md:ml-auto text-xs px-3 py-1 rounded-full font-medium bg-amber-100 text-amber-700"></div>
+                <div class="flex items-start gap-2"><i class="fas fa-chart-bar text-xl text-indigo-500 mt-1 shrink-0"></i><span class="font-bold text-indigo-700 min-w-0">採点の言い切り度：A 言い切れている（1位と2位の点差 3.0・多頭数）— 点差が開いたときの信頼が最も高い層</span></div>
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600"><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">12項目1位 ⑩バステール 62.2</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">2位 ⑥サヴォアフェール 59.2</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">点差 3.0 ＝ 同格ゾーン</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">印 6頭（◎○▲△△☆）</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">出走馬の平均キャリア 6.4走 → 通常どおり</span></div>
+                <div class="md:ml-auto text-xs px-3 py-1 rounded-full font-medium bg-amber-100 text-amber-700">荒れ度：やや堅い（8人気以下の3着内 42.9%）</div>
             </div>
-            <div class="mt-3 w-full rounded-full h-2" style="background: #e5e7eb"><div class="h-2 rounded-full" style="background: #6366f1; width: 70%"></div></div>
+            <div class="mt-3 w-full rounded-full h-2" style="background: #e5e7eb"><div class="h-2 rounded-full" style="background: #6366f1; width: 78%"></div></div>
         </div>
 
         <!-- 原則バナー -->
@@ -95,7 +123,7 @@
         </div>
 
         <div id="コース" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏇 mr-2 text-indigo-600"></i>コース特性（前残り度・ペース感受性・枠・基準時計）</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏇 mr-2 text-indigo-600"></i>コース特性 — 中山芝2200mは前残り寄り</h2>
             <div class="prose prose-sm max-w-none text-gray-700"><p><strong>前残り寄り。</strong> 中山芝2200の直近5年1,219走の実測で、3着以内馬の4コーナー平均通過は4.2番手／平均15頭立て＝<strong>位置率0.28</strong>（0.4を下回ると前残り寄りの区分）。勝ち時計の平均は134.0秒。</p>
 <p>枠は<strong>差の幅が12.0ptあり無視できない</strong>。</p>
 <table>
@@ -161,7 +189,7 @@
 <p>（全体21.1%）5枠が突出して低く、1枠と7枠が高い。▲⑯ラディアントスターの大外8枠は数字の上では中立で、△⑨サノノグレーターの5枠が最も悪い枠にあたる。</p></div>
         </div>
         <div id="馬場" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🌧 mr-2 text-indigo-600"></i>馬場状態（当日の馬場と、道悪になった場合の扱い）</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🌧 mr-2 text-indigo-600"></i>馬場 — 当日未確定。良で採点し、道悪は「守り」だけ</h2>
             <div class="prose prose-sm max-w-none text-gray-700"><p>★<strong>明日の馬場は未確定。12項目の採点は良で引いてある</strong>★</p>
 <p>9/12時点の予報では中山は曇り時々晴れで、パラパラと雨が降る可能性がある程度。ただし<strong>先週の中山開催はすでに雨を含んだ状態で行われており、「開幕週とは思えない時計のかかり方」だったという現場の証言がある</strong>（紫苑ステークスなど）。したがって「開幕2週目の高速馬場」を前提にはしない。</p>
 <p>★<strong>当日朝に <code>baba_gate.py --slug 20260913-nakayama-11r</code> を通し、実測と突き合わせてから買う</strong>★ 9/05〜06の71鞍では<strong>35鞍（49.3%）で採点時の想定と実際の馬場が食い違っており</strong>、食い違った鞍の回収は66.9%（一致した鞍は75.1%）だった。</p>
@@ -169,7 +197,7 @@
 <p>時計がかかる側に振れた場合、陣営が「体力と心肺機能がすごい」「馬場が速くならない方がいい」と明言している⑮エリプティクカーブの持ち味は出やすくなるが、<strong>これは印を上げる理由には使わない</strong>（上の守りの原則どおり）。</p></div>
         </div>
         <div id="傾向" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 📊 mr-2 text-indigo-600"></i>過去傾向（同レース/同条件の実測）</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 📊 mr-2 text-indigo-600"></i>過去傾向 — セントライト記念は「やや堅い」</h2>
             <div class="prose prose-sm max-w-none text-gray-700"><p>同レース・同条件（中山芝2200・2021年以降）の実測。</p>
 <p><strong>3着以内馬の4コーナー位置</strong></p>
 <table>
@@ -209,7 +237,7 @@
 <p><strong>父の芝2000〜2400m成績</strong>（直近5年・産駒の3着内率）では⑨サノノグレーターのグレーターロンドンが36.4%と最も高いが33走しかない。母数のある中では⑥サヴォアフェールのエピファネイア29.5%（764走）、③⑧⑬のコントレイル28.8%（163走）、⑩バステールのキタサンブラック28.5%（397走）、①②のキズナ28.4%（659走）が上位。⑪ミリオンクラウンのリーチザクラウンは8走しかなく<strong>サンプル不足</strong>（不向きという意味ではない）。</p></div>
         </div>
         <div id="展開" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏁 mr-2 text-indigo-600"></i>展開予測（脚質の機械判定にもとづくペース想定）</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏁 mr-2 text-indigo-600"></i>展開予測 — 逃げ馬らしい逃げ馬は実質1頭</h2>
             <div class="prose prose-sm max-w-none text-gray-700"><p><strong>ハナを主張できるのは実質1頭。</strong> 直近の4コーナー通過順から機械が「先行型」と判定した中で、実際に逃げて勝った実績があるのは<strong>⑦ジャスティンシカゴ</strong>（新馬の札幌芝1800を1-1-1-1、前走の東京芝2000を0-1-1-1）、<strong>①ウェイクフィールド</strong>（函館芝2000を稍重で1-1-1-1）、<strong>⑪ミリオンクラウン</strong>（札幌芝1800を1-1-1-1）の3頭だけ。いずれも12項目は下位で、無理に競り合う理由が薄い。<strong>⑦が単騎で行けるならペースは落ち着く</strong>と見る。</p>
 <p>位置取りと印の対応は次のとおり。</p>
 <table>
@@ -241,9 +269,9 @@
         <!-- 最終結論 -->
         <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論</h2>
-            <div class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 text-sm text-indigo-800"></div>
+
             <div id="markGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            <p class="text-xs text-gray-500 mt-3"></p>
+
         </div>
 
         <!-- 総合ランキング -->
@@ -257,7 +285,7 @@
                     <th class="px-3 py-3 text-center">配点</th><th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
                 </tr></thead><tbody id="rankingBody"></tbody></table>
             </div>
-            <p class="text-xs text-gray-500 mt-3"></p>
+
         </div>
 
         <!-- 個別馬評価 -->
@@ -268,7 +296,7 @@
 
         <!-- 買い目 -->
         <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-ticket-alt mr-2 text-rose-600"></i>買い目（build_bets.py が生成）</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-ticket-alt mr-2 text-rose-600"></i>買い目</h2>
             <div class="mb-4 p-4 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-800">3連複は装備しない: 重賞の3連複は回収29.1%（794R検証・最大2本抜きで5.9%）／§8.6 ワイドBOXは 10・16・8 の3頭。◎6・△9・☆2 は入っていないので、これらが絡む1-2-3着ではワイドが0円になりうる（◎を箱に入れると回収が落ちるため、承知のうえで外している）</div>
             <div class="grid md:grid-cols-2 gap-4 mb-4">
 
@@ -836,6 +864,16 @@
 ];
     const RANKING_MAX = 62;
 
+    // ★空を落として繋ぐ（2026/09/13）★
+    //   人気は「印を決めるまでオッズを見ない」(§0) ので予想時点では空が正常。
+    //   素で `${a} / ${b}` と書くと「 / 59.2pt」のように**区切りだけ**が残る。
+    function joinParts(parts, sep) {
+        return parts.filter(x => x !== null && x !== undefined && String(x).trim() !== '').join(sep || ' / ');
+    }
+    // 値があるときだけ枠ごと描く。空なら空文字＝要素自体を出さない。
+    function optBlock(value, html) {
+        return (value !== null && value !== undefined && String(value).trim() !== '') ? html : '';
+    }
     function markBadgeHTML(mark, badge) {
         return mark ? `<span class="badge-${badge || 'chui'} text-white px-2 py-0.5 rounded-full text-xs font-bold">${mark}</span>` : '';
     }
@@ -849,7 +887,7 @@
             const div = document.createElement('div');
             div.className = `border-2 rounded-lg p-4 bg-gradient-to-br ${borderMap[h.mark]}`;
             div.innerHTML = `
-                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${h.popularity} / ${h.score}pt</span></div>
+                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${joinParts([h.popularity, h.score + 'pt'])}</span></div>
                 <div class="text-xl font-bold text-gray-800 mb-2">${h.mark} ${h.number} ${h.name}</div>
                 <div class="text-sm text-gray-700">${h.headline || ''}</div>`;
             grid.appendChild(div);
@@ -914,7 +952,7 @@
                     <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
                     <div>
                         <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
-                        <div class="text-sm text-gray-600">${horse.jockey} / ${horse.style || ''} / ${horse.popularity}</div>
+                        <div class="text-sm text-gray-600">${joinParts([horse.jockey, horse.style, horse.popularity])}</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -924,11 +962,11 @@
             </div>
             <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
                 <div class="text-sm text-gray-700">
-                    <div class="mb-2"><span class="font-bold">血統：</span>${horse.blood || ''}</div>
+                    ${optBlock(horse.blood, `<div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>`)}
                     <div class="flex gap-4 flex-wrap">
-                        <div><span class="font-bold">斤量：</span>${horse.kinryo || ''}</div>
-                        <div><span class="font-bold">材料：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp || ''}</span></div>
-                        <div><span class="font-bold">馬体：</span>${horse.weightNote || ''}</div>
+                        ${optBlock(horse.kinryo, `<div><span class="font-bold">斤量：</span>${horse.kinryo}</div>`)}
+                        ${optBlock(horse.firstExp, `<div><span class="font-bold">材料：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp}</span></div>`)}
+                        ${optBlock(horse.weightNote, `<div><span class="font-bold">馬体：</span>${horse.weightNote}</div>`)}
                     </div>
                 </div>
             </div>
