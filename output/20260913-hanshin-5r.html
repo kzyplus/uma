@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026-09-13 阪神5R 2歳新馬</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8f9fa; }
+        .glass-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e9ecef; }
+        .horse-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .horse-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+        .badge-honmei { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .badge-taikou { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        .badge-tanana { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .badge-renka { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
+        .badge-ana { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+        .badge-kiken { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        .badge-chui { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        html { scroll-behavior: smooth; }
+        /* ★セクション内の表は自分の中で横スクロールさせる（2026/08/16）★
+           Markdownの表は列数が読めない。狭い画面だとセルが1文字幅まで潰れて縦書きの列になるか、
+           ページごと横にはみ出す。表自体をブロック化して独立にスクロールさせ、
+           セルには下限幅を与えて潰れないようにする。 */
+        .prose table { display: block; overflow-x: auto; max-width: 100%; }
+        .prose table th, .prose table td { min-width: 6em; }
+        /* ★`.prose` に実体を与える（2026/09/13）★
+           cdn.tailwindcss.com の play CDN には typography プラグインが入らないので、
+           `class="prose"` は**名前だけで何も効いていなかった**。Markdown から起こした
+           表・見出し・箇条書きが素のまま（罫線なし・余白なし）で出ており、
+           手書きだった安田記念(2026/06/07)のページに比べて見た目が落ちていた原因。
+           ここは1か所直せば過去分も再生成で揃うので、ページ側に手書きHTMLを足さない。 */
+        .prose { line-height: 1.85; }
+        .prose p { margin: 0.85rem 0; }
+        .prose > :first-child { margin-top: 0; }
+        .prose strong { color: #1f2937; font-weight: 700; }
+        .prose code { background: #eef2ff; color: #4338ca; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+        .prose h3 { font-size: 1.05rem; font-weight: 700; color: #374151; margin: 1.6rem 0 0.6rem; padding-left: 0.6rem; border-left: 4px solid #6366f1; }
+        .prose h4 { font-weight: 700; color: #4b5563; margin: 1.2rem 0 0.4rem; }
+        .prose ul, .prose ol { margin: 0.8rem 0; padding-left: 1.4rem; }
+        .prose li { margin: 0.3rem 0; list-style: disc; }
+        .prose ol li { list-style: decimal; }
+        .prose table { border-collapse: collapse; font-size: 0.86rem; margin: 1rem 0; border: 1px solid #e5e7eb; }
+        .prose table th { background: #eef2ff; color: #3730a3; font-weight: 700; text-align: left; white-space: nowrap; }
+        .prose table th, .prose table td { padding: 0.45rem 0.75rem; border-bottom: 1px solid #eceff3; }
+        .prose table tbody tr:nth-child(even) { background: #fafbff; }
+        .prose table tbody tr:last-child td { border-bottom: none; }
+        .prose blockquote { border-left: 4px solid #f43f5e; background: linear-gradient(135deg,#fff1f2,#ffe4e6);
+                            padding: 0.7rem 1rem; border-radius: 8px; color: #9f1239; margin: 1rem 0; }
+        .prose hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+        /* ★メタ枠は5つ横並び（grid-cols-5）なので、長文を入れると崩れる★
+           値は「良（当日未確定）」のような短い一言にし、理由は本文の節に書く。
+           それでも長くなったときに枠を突き破らないよう保険をかけておく。 */
+        .meta-box .meta-value { overflow-wrap: anywhere; font-size: 0.95rem; line-height: 1.5; }
+        .nav-index { position: fixed; top: 50%; right: 1rem; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-index a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #6366f1; font-size: 0.75rem; font-weight: bold; transition: all 0.2s; text-decoration: none; }
+        .nav-index a:hover, .nav-index a.active { background: #6366f1; color: white; transform: scale(1.1); }
+        .nav-index a:first-child { background: #6366f1; color: white; }
+        .nav-tooltip { position: absolute; right: 50px; background: #1f2937; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .nav-index a:hover .nav-tooltip { opacity: 1; }
+        #backToTop { position: fixed; bottom: 2rem; right: 1rem; width: 48px; height: 48px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 50; }
+        #backToTop.visible { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) {
+            .nav-index { display: none; }
+            .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 50; padding: 0.5rem; display: flex; overflow-x: auto; gap: 0.5rem; }
+            .mobile-nav a { flex-shrink: 0; padding: 0.5rem 0.75rem; background: #eef2ff; border-radius: 20px; font-size: 0.75rem; color: #6366f1; text-decoration: none; font-weight: 500; }
+            body { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <nav class="nav-index">
+        <a href="../index.html"><i class="fas fa-home"></i><span class="nav-tooltip">一覧へ戻る</span></a>
+        <a href="#header"><i class="fas fa-flag"></i><span class="nav-tooltip">トップ</span></a>
+        <a href="#trend"><i class="fas fa-chart-line"></i><span class="nav-tooltip">過去傾向</span></a>
+        <a href="#conclusion"><i class="fas fa-trophy"></i><span class="nav-tooltip">最終結論</span></a>
+        <a href="#ranking"><i class="fas fa-list-ol"></i><span class="nav-tooltip">ランキング</span></a>
+        <a href="#horses"><i class="fas fa-horse"></i><span class="nav-tooltip">個別評価</span></a>
+        <a href="#betting"><i class="fas fa-ticket-alt"></i><span class="nav-tooltip">買い目</span></a>
+        <a href="#phase3-check"><i class="fas fa-clipboard-check"></i><span class="nav-tooltip">最終チェック</span></a>
+    </nav>
+    <nav class="mobile-nav">
+        <a href="../index.html">一覧</a><a href="#header">トップ</a><a href="#trend">傾向</a><a href="#conclusion">結論</a><a href="#ranking">順位</a><a href="#horses">個別</a><a href="#betting">買い目</a><a href="#phase3-check">確認</a>
+    </nav>
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- ヘッダー -->
+        <div id="header" class="glass-card p-6 md:p-8 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">阪神5R 2歳新馬</h1>
+            <p class="text-center text-gray-600 mb-4">芝2000m・6頭</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">開催</div><div class="meta-value font-bold text-gray-800">2026-09-13 阪神5R</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">条件</div><div class="meta-value font-bold text-gray-800">2歳新馬</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">コース</div><div class="meta-value font-bold text-gray-800">阪神芝2000m</div></div>
+                <div class="meta-box p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-sm text-gray-600">頭数</div><div class="meta-value font-bold text-gray-800">6頭</div></div>
+                <div class="meta-box p-4 bg-amber-50 rounded-lg border border-amber-200"><div class="text-sm text-gray-600">馬場</div><div class="meta-value font-bold text-amber-700">良（実測・天候 晴）</div></div>
+            </div>
+
+        </div>
+
+        <!-- 信頼度バー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left: 4px solid #6366f1; background: linear-gradient(135deg, #eef2ff, #e0e7ff);">
+            <!-- ★横並びにしない（2026/08/16）★ 見出しは1文でなく段落のことがあり、
+                 チップも10個を超える。flex-row + flex-wrap 無しだと各チップが1文字幅まで
+                 潰れて縦書きの列になる（実際に公開ページで起きた）。縦に積んで折り返す。 -->
+            <div class="flex flex-col gap-3">
+                <div class="flex items-start gap-2"><i class="fas fa-chart-bar text-xl text-indigo-500 mt-1 shrink-0"></i><span class="font-bold text-indigo-700 min-w-0">採点の言い切り度：C ほぼ差がない（1位と2位の点差 0.0）— 6頭が5.6pt内に収まる完全な同格ゾーン</span></div>
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600"><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">12項目1位タイ ③キリマンジェロタフ／①マガスティール 36.0</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">点差 0.0</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">印 4頭（6頭立ての少頭数キャップ N−2）</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">馬場 良（実測）</span><span class="bg-white/70 px-2 py-1 rounded whitespace-nowrap">少頭数は率が高く出る＝当てずっぽう分を差し引いて読む</span></div>
+                <div class="md:ml-auto text-xs px-3 py-1 rounded-full font-medium bg-slate-100 text-slate-700">荒れ度：やや堅い／少頭数のため印は4頭まで</div>
+            </div>
+            <div class="mt-3 w-full rounded-full h-2" style="background: #e5e7eb"><div class="h-2 rounded-full" style="background: #6366f1; width: 34%"></div></div>
+        </div>
+
+        <!-- 原則バナー -->
+        <div class="glass-card p-4 md:p-5 mb-6" style="border-left:4px solid #f43f5e; background:linear-gradient(135deg,#fff1f2,#ffe4e6);">
+            <div class="font-bold text-rose-700 mb-1"><i class="fas fa-lightbulb mr-1"></i>本シートの大原則：印（強さ）は人気ブラインドの採点順／買い目（妙味）は別軸／<span class="text-indigo-700">オッズは印確定後の配分でのみ使用</span></div>
+            <p class="text-sm text-gray-700"></p>
+        </div>
+
+        <div id="コース" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏇 mr-2 text-indigo-600"></i>コース特性（前残り度・ペース感受性・枠・基準時計）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>やや前残り。</strong> 阪神芝2000（内回り）の直近5年2,328走の実測で、3着以内馬の4コーナー平均通過は4.2番手／平均12頭立て＝<strong>位置率0.34</strong>（0.4未満が前残り寄りの区分）。勝ち時計の平均は120.9秒、3着以内馬の平均枠は4.7。</p>
+<p>枠別の3着内率は次のとおり（全体26.6%）。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">枠</th>
+<th style="text-align: right;">3着内率</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">全体との差</th>
+<th>該当馬</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">29.2%</td>
+<td style="text-align: right;">236</td>
+<td style="text-align: right;">+2.7pt</td>
+<td>○①マガスティール</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">28.4%</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">+1.8pt</td>
+<td>②アーデルプレミア</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">24.2%</td>
+<td style="text-align: right;">256</td>
+<td style="text-align: right;">−2.3pt</td>
+<td><strong>◎③キリマンジェロタフ</strong></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;"><strong>32.5%</strong></td>
+<td style="text-align: right;">274</td>
+<td style="text-align: right;"><strong>+5.9pt</strong></td>
+<td>△④タガノフリアン</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">25.7%</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">−0.9pt</td>
+<td>⑤ミスティビーコン</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">25.4%</td>
+<td style="text-align: right;">311</td>
+<td style="text-align: right;">−1.2pt</td>
+<td>▲⑥マイネルグリモア</td>
+</tr>
+</tbody>
+</table>
+<p>★<strong>今日は6頭立てなので全員が1〜6枠に収まる</strong>★。最も不利な7枠（21.9%）・8枠に入る馬がいないので、枠差は今回ほとんど効かない。</p></div>
+        </div>
+        <div id="馬場" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🌧 mr-2 text-indigo-600"></i>馬場状態（当日の馬場と、道悪になった場合の扱い）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>良（実測）</strong>／天候 晴。出馬表の <code>RaceData01</code> で確認した。<strong>「良馬場想定」ではなく実測値</strong>。</p>
+<p>同じ日でも<strong>中山の芝は「重」</strong>で、阪神だけが乾いている。したがって中山の新馬戦（5R）とは前提がまったく違う。</p>
+<p>★12項目の点は馬場では動かない★（<code>score_12items</code> に馬場の項目が無い）。今回は実測が良なので、<code>prep</code> が既定で引いた良の観点をそのまま使っている（引き直しは不要）。</p>
+<p>発走は12:10。午後は雷雨の可能性が前日予報で出ていたが、発走時点では晴・良。</p></div>
+        </div>
+        <div id="傾向" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 📊 mr-2 text-indigo-600"></i>過去傾向（同レース/同条件の実測）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>全6頭が初出走</strong>なので、過去走から引ける傾向は無い。使えるのは血統と厩舎・騎手・追い切りだけになる。</p>
+<p><strong>父の芝1800〜2200m成績</strong>（直近5年・3着内率／道悪時）</p>
+<table>
+<thead>
+<tr>
+<th>父</th>
+<th>該当馬</th>
+<th style="text-align: right;">3着内率</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ダノンキングリー</td>
+<td>⑤ミスティビーコン</td>
+<td style="text-align: right;">32.7%</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr>
+<td>リアルスティール</td>
+<td><strong>○①マガスティール</strong></td>
+<td style="text-align: right;"><strong>30.3%</strong></td>
+<td style="text-align: right;">846</td>
+</tr>
+<tr>
+<td>サートゥルナーリア</td>
+<td><strong>◎③キリマンジェロタフ</strong></td>
+<td style="text-align: right;"><strong>30.1%</strong></td>
+<td style="text-align: right;">535</td>
+</tr>
+<tr>
+<td>ワールドプレミア</td>
+<td>②アーデルプレミア</td>
+<td style="text-align: right;">23.9%</td>
+<td style="text-align: right;">46</td>
+</tr>
+<tr>
+<td>ゴールドシップ</td>
+<td>▲⑥マイネルグリモア</td>
+<td style="text-align: right;">21.9%</td>
+<td style="text-align: right;">2,155</td>
+</tr>
+<tr>
+<td>アニマルキングダム</td>
+<td>△④タガノフリアン</td>
+<td style="text-align: right;">17.0%</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody>
+</table>
+<p>母数のある父ではリアルスティール（846走）とサートゥルナーリア（535走）が30%台で並ぶ。</p>
+<p><strong>母父の同距離帯</strong>では、△④タガノフリアンの母父ドゥラメンテがこの表では13走と薄いが、<strong>「阪神芝2000±200」に絞ると複勝率27.0%（89走）</strong>と母数のある実データになる。△に採った根拠はここ。</p>
+<p>★母父 Kodiac（◎③）・Palace Malice（○①）はいずれも当該条件で12走・1走しかなく<strong>サンプル不足</strong>★（不向きという意味ではない）。</p></div>
+        </div>
+        <div id="展開" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas 🏁 mr-2 text-indigo-600"></i>展開予測（脚質の機械判定にもとづくペース想定）</h2>
+            <div class="prose prose-sm max-w-none text-gray-700"><p><strong>脚質の機械判定は誰にも付いていない。</strong> 全6頭が初出走で過去の4コーナー通過が無いため、この節は<strong>予想の根拠に使っていない</strong>。★無いものを推測で埋めない★</p>
+<p>手がかりは陣営の言葉だけ。</p>
+<table>
+<thead>
+<tr>
+<th>馬</th>
+<th>陣営が話していること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>◎③キリマンジェロタフ</td>
+<td>橋口師「<strong>優等生。折り合いがつくし、反応がいい。現時点で注文がつかない</strong>」「大跳びで体は大きいけど、ゆったりしたきれいなフォーム。<strong>芝の長いところがいいかな</strong>」</td>
+</tr>
+</tbody>
+</table>
+<p>他5頭はネット・<code>fetch_horse_news.py</code> とも記事が見つからず、コメントは取れなかった（<strong>無いものは書かない</strong>）。</p>
+<p>阪神芝2000（内回り）はやや前残り（位置率0.34）だが、<strong>6頭立てでは隊列が縦に伸びにくく位置取りの差が付きにくい</strong>。折り合いが付くという◎③の評は、少頭数の折り合い勝負で効きやすい方向。</p></div>
+        </div>
+
+
+        <!-- 最終結論 -->
+        <div id="conclusion" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-trophy mr-2 text-amber-500"></i>最終結論</h2>
+
+            <div id="markGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+        </div>
+
+        <!-- 総合ランキング -->
+        <div id="ranking" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-chart-bar mr-2 text-indigo-600"></i>配点合計ランキング</h2>
+            <div id="rankingChartContainer" class="mb-8 hidden md:block" style="height: 320px; position: relative;"><canvas id="rankingChart"></canvas></div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm"><thead><tr class="bg-indigo-100">
+                    <th class="px-3 py-3 text-left">順位</th><th class="px-3 py-3 text-center">印/馬番</th><th class="px-3 py-3 text-left">馬名</th>
+                    <th class="px-3 py-3 text-center hidden md:table-cell">騎手</th><th class="px-3 py-3 text-center hidden md:table-cell">人気</th>
+                    <th class="px-3 py-3 text-center">配点</th><th class="px-3 py-3 text-left hidden md:table-cell">コメント</th>
+                </tr></thead><tbody id="rankingBody"></tbody></table>
+            </div>
+
+        </div>
+
+        <!-- 個別馬評価 -->
+        <div id="horses" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-horse mr-2 text-indigo-600"></i>個別馬評価（全6頭）</h2>
+            <div id="horseCards" class="space-y-4"></div>
+        </div>
+
+        <!-- 買い目 -->
+        <div id="betting" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center"><i class="fas fa-ticket-alt mr-2 text-rose-600"></i>買い目</h2>
+            <div class="mb-4 p-4 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-800">3連複は装備しない: 芝の3連複は回収51.2%（794R検証）／§8.6 ワイドBOXは 1・6・4 の3頭。◎3 は入っていないので、これらが絡む1-2-3着ではワイドが0円になりうる（◎を箱に入れると回収が落ちるため、承知のうえで外している）</div>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+
+            </div>
+            <div class="overflow-x-auto mb-4">
+                <table class="w-full text-sm"><tbody class="divide-y">
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>複勝</strong> ／ 単独 ／ 1・6 ／ 2点</td><td class="px-3 py-2">§8.13 複勝の主役は○▲（◎単独複勝は実測で安定して悪い）</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>馬連</strong> ／ 軸1頭ながし ／ 3・1・6・4 ／ 3点</td><td class="px-3 py-2">§8.13 馬連は◎軸でよい（1-2着を直撃する券種）</td></tr>
+                    <tr class=""><td class="px-3 py-2 font-medium"><strong>ワイド</strong> ／ ボックス ／ 1・6・4 ／ 3点</td><td class="px-3 py-2">§8.13 大原則2 ワイドの主力は○▲△BOX（◎軸1頭ながしにしない）</td></tr>
+                </tbody></table>
+            </div>
+            <div class="p-4 bg-slate-900 text-white rounded-lg text-sm mb-4">
+                <strong class="text-amber-300"><i class="fas fa-calculator mr-1"></i>単一軸依存の検算:</strong> 
+            </div>
+            <div class="p-4 bg-rose-50 rounded-lg border-2 border-rose-400 text-sm text-rose-900 mb-4">
+                <strong class="text-base"><i class="fas fa-cloud-rain mr-1"></i>馬場が変わったときの対応は事前に確定済み（書いたら必ず実行する）</strong><br>
+                <div class="overflow-x-auto mt-2"><table class="w-full text-xs bg-white rounded">
+                    <thead><tr class="bg-rose-100"><th class="p-2 text-left">馬場</th><th class="p-2 text-left">実行内容</th></tr></thead>
+                    <tbody>
+
+                    </tbody>
+                </table></div>
+            </div>
+            <div class="p-4 bg-rose-50 rounded-lg border-2 border-rose-300 text-sm text-rose-900 mb-4">
+                <strong class="text-base"><i class="fas fa-triangle-exclamation mr-1"></i>点数についての注意（ユーザー判断が必要）</strong><br>
+                
+            </div>
+            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800">券種・買い方・軸・相手・点数のみ。配分は当日オッズを見てから決める。</div>
+        </div>
+
+        <!-- Phase3 ハードゲートチェックリスト -->
+        <div id="phase3-check" class="glass-card p-6 md:p-8 mb-6 scroll-mt-4" style="border-left:4px solid #16a34a; background:linear-gradient(135deg,#f0fdf4,#dcfce7);">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center"><i class="fas fa-clipboard-check mr-2 text-green-600"></i>Phase3 ハードゲートチェックリスト（最終確認）</h2>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A1 決定ログ:</strong> [ ] tmp/20260913-hanshin-5r-lens-decision.md を作成</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A2 印数上限:</strong> [ ] 印4頭（5〜7頭以内）。◎○▲は各1頭</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A3 12項目1位の扱い:</strong> [ ] 無印にしていないか</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>A7 印馬の宙ぶらり:</strong> [ ] 印を打った全馬が買い目に出ているか</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>馬場:</strong> [ ] 実測で取得したか（想定のまま出していないか）</div>
+                <div class="p-3 bg-white rounded border-l-4 border-green-500"><strong>人気ブラインド:</strong> [ ] 印を決めるまでオッズ・人気を見ていないか</div>
+            </div>
+            <p class="mt-4 font-bold text-green-800"><strong>未確定は馬体重のみ</strong>（当日発表）。馬場は実測で「良」を取得済み。オッズは印を確定させたあとに取り、配分だけに使う。★6頭立ての少頭数キャップにより印は4頭まで（N−2）、無印を2頭残してある★。</p>
+
+        </div>
+
+        <div class="text-center text-xs text-gray-400 mb-8"></div>
+    </div>
+
+    <script>
+    const evaluationItems = ["実績", "Lv", "血統", "コース", "輸送", "休明", "展開", "騎手", "調教", "馬体", "厩舎"];
+    const horses = [
+  {
+    "number": 1,
+    "name": "マガスティール",
+    "score": 36.0,
+    "mark": "○",
+    "badge": "taikou",
+    "jockey": "亀田温心",
+    "style": "",
+    "blood": "父リアルスティール×母父Palace Malice",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "12項目1位タイ。厩舎5点と追い切り2位で組み立てた",
+    "comment": "<p>12項目は36.0で<strong>◎③と同点の1位タイ</strong>。中身は<strong>厩舎5点（高柳大輔）・調教5点</strong>で、追い切りの相手内順位は6頭中2番目。</p>\n<p>父リアルスティールは芝1800〜2200mで3着内率30.3%（846走）と母数のある数字。母父 Palace Malice は当該条件1走のみで判断材料にならない。新馬適性シグナルは5pt（★★）。</p>\n<p>陣営コメントは見つからなかった。同点の③を◎にしたのは、③に具体的な材料（重賞馬との併入・師の評・セリ4,290万）が揃っているのに対し、この馬は数字だけで裏づけが薄いため。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "number": 2,
+    "name": "アーデルプレミア",
+    "score": 30.4,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "北村友一",
+    "style": "",
+    "blood": "父ワールドプレミア×母父エイシンフラッシュ",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "★デビュー戦からブリンカー着用★ 騎手は北村友一だが厩舎の点が伸びない",
+    "comment": "<p>★<strong>出走6頭でこの馬だけがブリンカーを着けている</strong>★（JRA-VAN の出馬表データで確認）。デビュー戦から着ける形で、陣営が気性面に手を入れてきたことは読み取れる。★<strong>それが良い方に出るかは走ってみないと分からないので、印は動かしていない</strong>★。</p>\n<p>騎手は5点（北村友一）だが厩舎が2点で、12項目は30.4と出走6頭で最下位。父ワールドプレミアは芝1800〜2200mで23.9%（46走）と母数が薄く、母父エイシンフラッシュは阪神芝2000±200で9走・複勝0%。</p>\n<p>★6頭立ての少頭数キャップ（印はN−2＝4頭まで・無印を2頭残す）★により、⑤とともに無印にした。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      5,
+      5,
+      5,
+      3
+    ]
+  },
+  {
+    "number": 3,
+    "name": "キリマンジェロタフ",
+    "score": 36.0,
+    "mark": "◎",
+    "badge": "honmei",
+    "jockey": "坂井瑠星",
+    "style": "",
+    "blood": "父サートゥルナーリア×母父Kodiac",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "重賞馬セイウンハーデスと併入。師は「現時点で注文がつかない」",
+    "comment": "<p>★<strong>9月6日の栗東坂路で、重賞馬セイウンハーデスを半馬身追走して併入</strong>★。今週も2勝クラスのキスアンドクライを相手に引けを取らない動きを見せている。相手の格が抜けており、これは<strong>同じ日・同じ調教場の速さ順（6頭中3番目）では拾えない中身</strong>なので、調教を4点から5点に上げた。</p>\n<p>橋口師のコメントは強い。「<strong>優等生。折り合いがつくし、反応がいい。現時点で注文がつかないですね</strong>」「大跳びで体は大きいけど、ゆったりしたきれいなフォーム。<strong>芝の長いところがいいかな</strong>」——今回の2000mは師の言う「長いところ」に当たる。</p>\n<p>馬体は<strong>筋骨隆々の520キロ超</strong>、6ハロン79秒7の好時計も出ている。父サートゥルナーリアは芝1800〜2200mで3着内率30.1%（535走）、母ユーロナイトメアは愛国産で<strong>英G3・3着</strong>。北海道セレクションセール1歳で<strong>3,900万円（税抜）／4,290万円（税込）</strong>。</p>\n<p>12項目は①と同点の36.0（調整後37.25）で、採点v3も1位（1.43）。★ただし6頭が5.6pt内に収まる完全な同格ゾーン★なので、合計点ではなく上の具体材料で◎にした。</p>\n<p>新馬適性シグナルは3pt（★）と低く出るが、これは母父 Kodiac の当該条件が0走で加点が乗らないため。★観点関数の閾値で印を強制しない★という決まりどおり、これは印を下げる理由にしていない。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "number": 4,
+    "name": "タガノフリアン",
+    "score": 31.4,
+    "mark": "△",
+    "badge": "renka",
+    "jockey": "角田大和",
+    "style": "",
+    "blood": "父アニマルキングダム×母父ドゥラメンテ",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "母父ドゥラメンテが阪神芝2000で複勝27.0%。新馬シグナルは出走馬で最高",
+    "comment": "<p><strong>母父ドゥラメンテは「阪神芝2000±200」で複勝率27.0%（89走）</strong>と、母数のある実データ。新馬適性シグナルも<strong>6pt（★★）で出走6頭の最高</strong>。</p>\n<p>父アニマルキングダムは芝1800〜2200mで17.0%（100走）と高くはない。12項目は31.4で5位、⑤ミスティビーコン（31.9）とは0.5pt差＝同格。その中で母父の当該条件データとシグナルを採ってこちらを△にした。</p>\n<p>4枠は阪神芝2000の実測で<strong>3着内率32.5%（+5.9pt）と最も良い枠</strong>。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      3,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "number": 5,
+    "name": "ミスティビーコン",
+    "score": 31.9,
+    "mark": "",
+    "badge": "kiken",
+    "jockey": "佐々木大",
+    "style": "",
+    "blood": "父ダノンキングリー×母父ハービンジャー",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "父ダノンキングリーは3着内率32.7%だが52走と薄い",
+    "comment": "<p>父ダノンキングリーは芝1800〜2200mで3着内率32.7%と高いが<strong>52走</strong>しかない。母父ハービンジャーは同距離帯で31.1%（785走）と母数があり、血統は5点。</p>\n<p>ただ追い切りの相手内順位は6頭中4番目、調教3点。12項目は31.9で4位。△④とは0.5pt差の同格だが、母父の「阪神芝2000±200」に絞った実データ（ハービンジャー18.3%／71走 対 ドゥラメンテ27.0%／89走）で④を上に取った。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "number": 6,
+    "name": "マイネルグリモア",
+    "score": 35.0,
+    "mark": "▲",
+    "badge": "tanana",
+    "jockey": "国分恭介",
+    "style": "",
+    "blood": "父ゴールドシップ×母父スクリーンヒーロー",
+    "kinryo": "55.0kg",
+    "popularity": "",
+    "firstExp": "",
+    "weightNote": "",
+    "headline": "追い切りは出走6頭で最速。父ゴールドシップで血統は5点",
+    "comment": "<p>★<strong>追い切りの相手内順位が6頭中1位</strong>★で調教は満点。父ゴールドシップは芝1800〜2200mで3着内率21.9%と高くはないが<strong>2,155走</strong>と母数は厚く、母父スクリーンヒーローは阪神芝2000±200で25.0%（8走・母数は薄い）。血統の点は5点。</p>\n<p>差し引くのは騎手2点（国分恭介）と厩舎3点。12項目は35.0で3位、1位タイとは1.0pt差の同格ゾーン。状態の良さを買って▲にした。</p>",
+    "pros": [],
+    "cons": [],
+    "expect": [],
+    "radar": [
+      null,
+      1,
+      5,
+      null,
+      5,
+      5,
+      null,
+      3,
+      5,
+      5,
+      5
+    ]
+  }
+];
+    const RANKING_MAX = 62;
+
+    // ★空を落として繋ぐ（2026/09/13）★
+    //   人気は「印を決めるまでオッズを見ない」(§0) ので予想時点では空が正常。
+    //   素で `${a} / ${b}` と書くと「 / 59.2pt」のように**区切りだけ**が残る。
+    function joinParts(parts, sep) {
+        return parts.filter(x => x !== null && x !== undefined && String(x).trim() !== '').join(sep || ' / ');
+    }
+    // 値があるときだけ枠ごと描く。空なら空文字＝要素自体を出さない。
+    function optBlock(value, html) {
+        return (value !== null && value !== undefined && String(value).trim() !== '') ? html : '';
+    }
+    function markBadgeHTML(mark, badge) {
+        return mark ? `<span class="badge-${badge || 'chui'} text-white px-2 py-0.5 rounded-full text-xs font-bold">${mark}</span>` : '';
+    }
+
+    function renderMarkGrid() {
+        const grid = document.getElementById('markGrid');
+        const order = ['◎','○','▲','△','☆'];
+        const marked = horses.filter(h => order.includes(h.mark)).sort((a,b)=>order.indexOf(a.mark)-order.indexOf(b.mark) || b.score-a.score);
+        const borderMap = {'◎':'border-yellow-400 from-yellow-50 to-amber-50','○':'border-indigo-400 from-indigo-50 to-indigo-100','▲':'border-green-400 from-green-50 to-emerald-50','△':'border-purple-400 from-purple-50 to-fuchsia-50','☆':'border-rose-400 from-rose-50 to-pink-50'};
+        marked.forEach(h => {
+            const div = document.createElement('div');
+            div.className = `border-2 rounded-lg p-4 bg-gradient-to-br ${borderMap[h.mark]}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">${markBadgeHTML(h.mark,h.badge)}<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${joinParts([h.popularity, h.score + 'pt'])}</span></div>
+                <div class="text-xl font-bold text-gray-800 mb-2">${h.mark} ${h.number} ${h.name}</div>
+                <div class="text-sm text-gray-700">${h.headline || ''}</div>`;
+            grid.appendChild(div);
+        });
+    }
+
+    function renderRanking() {
+        const sorted = [...horses].sort((a,b) => b.score - a.score);
+        const ctx = document.getElementById('rankingChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar', data: {
+                    labels: sorted.map(h => (h.mark ? h.mark : '') + h.number + ' ' + h.name),
+                    datasets: [{ label: '配点', data: sorted.map(h => h.score),
+                        backgroundColor: sorted.map(h => {
+                            if (h.mark === '◎') return '#eab308';
+                            if (h.mark === '○') return '#6366f1';
+                            if (h.mark === '▲') return '#22c55e';
+                            if (h.mark === '△') return '#a855f7';
+                            if (h.mark === '☆') return '#f43f5e';
+                            if (h.mark === '注') return '#f59e0b';
+                            return '#d1d5db';
+                        }), borderRadius: 6 }]
+                }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: RANKING_MAX } } }
+            });
+        }
+        const tbody = document.getElementById('rankingBody');
+        let rank = 0, prev = -1;
+        sorted.forEach((h, i) => {
+            if (h.score !== prev) { rank = i + 1; prev = h.score; }
+            const bg = h.mark ? (h.mark === '◎' ? 'bg-yellow-50' : h.mark === '○' ? 'bg-indigo-50' : h.mark === '▲' ? 'bg-green-50' : h.mark === '△' ? 'bg-purple-50' : h.mark === '☆' ? 'bg-rose-50' : 'bg-amber-50') : (i % 2 ? 'bg-gray-50' : '');
+            tbody.innerHTML += `<tr class="${bg}"><td class="px-3 py-2">${rank}</td><td class="px-3 py-2 text-center font-bold">${markBadgeHTML(h.mark,h.badge)} ${h.number}</td><td class="px-3 py-2 font-medium">${h.name}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.jockey}</td><td class="px-3 py-2 text-center hidden md:table-cell">${h.popularity}</td><td class="px-3 py-2 text-center font-bold">${h.score}</td><td class="px-3 py-2 text-xs hidden md:table-cell">${h.headline || ''}</td></tr>`;
+        });
+    }
+
+    function renderHorseCards() {
+        const container = document.getElementById('horseCards');
+        container.innerHTML = '';
+        [...horses].sort((a, b) => b.score - a.score).forEach(horse => container.appendChild(createHorseCard(horse)));
+    }
+
+    function createHorseCard(horse) {
+        const card = document.createElement('div');
+        card.className = 'horse-card glass-card p-6';
+        const badgeMap = {
+            honmei: '<span class="badge-honmei text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-star"></i> 本命</span>',
+            taikou: '<span class="badge-taikou text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-medal"></i> 対抗</span>',
+            tanana: '<span class="badge-tanana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-gem"></i> 単穴</span>',
+            renka: '<span class="badge-renka text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-horse"></i> 連下</span>',
+            ana: '<span class="badge-ana text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-bolt"></i> 穴</span>',
+            kiken: '<span class="badge-kiken text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-ban"></i> 無印</span>',
+            chui: '<span class="badge-chui text-white px-4 py-1 rounded-full text-sm font-bold"><i class="fas fa-info-circle"></i> 注</span>'
+        };
+        const li = (arr, icon, cls) => (arr || []).map(x => `<li class="flex items-start"><i class="fas ${icon} ${cls} mr-2 mt-1"></i><span>${x}</span></li>`).join('');
+        const prosHTML = li(horse.pros, 'fa-check-circle', 'text-green-500');
+        const consHTML = li(horse.cons, 'fa-times-circle', 'text-red-500');
+        const expectHTML = li(horse.expect, 'fa-star', 'text-yellow-500');
+        const firstExpClass = (horse.firstExp || '').includes('★') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+        card.innerHTML = `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div class="flex items-center gap-3 mb-2 md:mb-0">
+                    <div class="text-4xl font-bold text-indigo-600">${horse.number}</div>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800">${horse.mark} ${horse.name}</div>
+                        <div class="text-sm text-gray-600">${joinParts([horse.jockey, horse.style, horse.popularity])}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    ${badgeMap[horse.badge] || ''}
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">${horse.score}pt</span>
+                </div>
+            </div>
+            <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+                <div class="text-sm text-gray-700">
+                    ${optBlock(horse.blood, `<div class="mb-2"><span class="font-bold">血統：</span>${horse.blood}</div>`)}
+                    <div class="flex gap-4 flex-wrap">
+                        ${optBlock(horse.kinryo, `<div><span class="font-bold">斤量：</span>${horse.kinryo}</div>`)}
+                        ${optBlock(horse.firstExp, `<div><span class="font-bold">材料：</span><span class="px-2 py-1 rounded text-sm ${firstExpClass}">${horse.firstExp}</span></div>`)}
+                        ${optBlock(horse.weightNote, `<div><span class="font-bold">馬体：</span>${horse.weightNote}</div>`)}
+                    </div>
+                </div>
+            </div>
+            ${horse.comment ? `<div class="mb-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-700 leading-relaxed">${horse.comment}</div>` : ''}
+            <div class="mb-4" style="height: 280px; position: relative;">
+                <div class="font-bold text-gray-700 mb-2">評価プロフィール</div>
+                <canvas id="radarChart${horse.number}" style="height: 250px;"></canvas>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                ${prosHTML ? `<div><div class="font-bold text-green-600 mb-2"><i class="fas fa-thumbs-up mr-1"></i> 良い点</div><ul class="space-y-2">${prosHTML}</ul></div>` : ''}
+                ${consHTML ? `<div><div class="font-bold text-red-600 mb-2"><i class="fas fa-thumbs-down mr-1"></i> 不安材料</div><ul class="space-y-2">${consHTML}</ul></div>` : ''}
+                ${expectHTML ? `<div><div class="font-bold text-yellow-600 mb-2"><i class="fas fa-star mr-1"></i> 期待点</div><ul class="space-y-2">${expectHTML}</ul></div>` : ''}
+            </div>
+        `;
+        setTimeout(() => createRadarChart(horse), 100);
+        return card;
+    }
+
+    function createRadarChart(horse) {
+        const ctx = document.getElementById(`radarChart${horse.number}`);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'radar',
+            // spanGaps: 記録なしの項目は null で渡ってくる（0点ではない）。繋がないと多角形が割れる
+            data: { labels: evaluationItems, datasets: [{ data: horse.radar, spanGaps: true, backgroundColor: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(99, 102, 241, 1)' }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderMarkGrid();
+        renderRanking();
+        renderHorseCards();
+    });
+    window.addEventListener('scroll', () => {
+        const b = document.getElementById('backToTop');
+        if (b) b.classList.toggle('visible', window.scrollY > 300);
+    });
+    </script>
+</body>
+</html>
