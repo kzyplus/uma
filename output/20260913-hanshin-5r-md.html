@@ -34,75 +34,58 @@
     white-space: normal;
     vertical-align: top;
   }
-  /* スマホ（640px以下）: テーブルを「行＝カード」形式に縦積み */
+  /* ★スマホ（640px以下）: 表は「表のまま」横スクロールさせる（2026/09/13 変更）★
+     以前は1行＝1カードに縦積みしていたが、**比較表が読めなくなる**。
+     実測: 414px幅で追い切り表(5列×11頭)が2,653px・12項目表(9列×11頭)が4,458px、
+     ページ全体が56,676px＝スマホ約63画面ぶんになっていた。
+     横に並べて見比べるための表なので、縦に割らず、1列目を固定して横に振る。 */
   @media (max-width: 640px) {
     .markdown-body .table-wrap {
-      overflow-x: visible;
-    }
-    .markdown-body table {
-      display: block;
-      border: 0;
-      background: transparent;
-    }
-    .markdown-body table thead {
-      display: none;
-    }
-    .markdown-body table tbody,
-    .markdown-body table tr,
-    .markdown-body table td {
-      display: block;
-      width: 100%;
-    }
-    .markdown-body table tr {
-      margin: 0 0 14px;
-      padding: 10px 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       border: 1px solid #d0d7de;
       border-radius: 8px;
-      background: #ffffff;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
-    .markdown-body table td {
+    .markdown-body table {
+      display: table;
+      width: max-content;
+      min-width: 100%;
+      font-size: 12.5px;
       border: 0;
-      padding: 7px 0;
-      text-align: left;
-      border-bottom: 1px dashed #eaeef2;
-      font-size: 14px;
-      line-height: 1.55;
     }
-    .markdown-body table td:last-child {
-      border-bottom: 0;
+    .markdown-body table th,
+    .markdown-body table td {
+      padding: 6px 8px;
+      min-width: 4.5em;
+      max-width: 13em;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.5;
     }
-    .markdown-body table td::before {
-      content: attr(data-label);
-      display: inline-block;
+    /* 1列目（馬名・項目名）は固定。横に振っても何の行か分かるようにする */
+    .markdown-body table th:first-child,
+    .markdown-body table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: #ffffff;
+      box-shadow: 1px 0 0 #d0d7de;
       font-weight: 600;
-      color: #57606a;
-      margin-right: 6px;
-      min-width: 70px;
+      /* 馬名が3行に折れると行が高くなるので、1列目だけ少し広く取る。
+         はみ出しても容器が横スクロールするので詰めすぎない。 */
+      min-width: 7.5em;
+      max-width: 9.5em;
     }
-    /* 「データ列に該当ヘッダがない」場合は擬似要素を出さない */
-    .markdown-body table td[data-label=""]::before {
-      content: "";
-      margin-right: 0;
-      min-width: 0;
-    }
-    /* 1列目（印など）はカード上部に強調表示 */
-    .markdown-body table tr td:first-child {
-      margin: -10px -12px 6px;
-      padding: 8px 12px;
+    .markdown-body table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
       background: #f6f8fa;
-      border-radius: 8px 8px 0 0;
-      border-bottom: 1px solid #d0d7de;
-      font-size: 15px;
-      font-weight: 700;
+      white-space: nowrap;
     }
-    .markdown-body table tr td:first-child::before {
-      color: #57606a;
-      font-weight: 600;
-      font-size: 12px;
-      display: block;
-      min-width: 0;
-      margin: 0 0 2px;
+    .markdown-body table thead th:first-child {
+      z-index: 3;
+      background: #f6f8fa;
     }
   }
   .footer-note {
