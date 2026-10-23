@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東京2R 2歳未勝利 総合評価シート</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+  body {
+    box-sizing: border-box;
+    min-width: 320px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 16px 80px;
+    background: #ffffff;
+  }
+  @media (max-width: 767px) {
+    body { padding: 15px 12px 60px; }
+  }
+  /* デスクトップ: テーブルは横スクロール可能 */
+  .markdown-body .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 16px;
+  }
+  .markdown-body table {
+    width: 100%;
+  }
+  .markdown-body table th,
+  .markdown-body table td {
+    word-break: break-word;
+    white-space: normal;
+    vertical-align: top;
+  }
+  /* ★スマホ（640px以下）: 表は「表のまま」横スクロールさせる（2026/09/13 変更）★
+     以前は1行＝1カードに縦積みしていたが、**比較表が読めなくなる**。
+     実測: 414px幅で追い切り表(5列×11頭)が2,653px・12項目表(9列×11頭)が4,458px、
+     ページ全体が56,676px＝スマホ約63画面ぶんになっていた。
+     横に並べて見比べるための表なので、縦に割らず、1列目を固定して横に振る。 */
+  @media (max-width: 640px) {
+    .markdown-body .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+    }
+    .markdown-body table {
+      display: table;
+      width: max-content;
+      min-width: 100%;
+      font-size: 12.5px;
+      border: 0;
+    }
+    .markdown-body table th,
+    .markdown-body table td {
+      padding: 6px 8px;
+      min-width: 4.5em;
+      max-width: 13em;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.5;
+    }
+    /* 1列目（馬名・項目名）は固定。横に振っても何の行か分かるようにする */
+    .markdown-body table th:first-child,
+    .markdown-body table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: #ffffff;
+      box-shadow: 1px 0 0 #d0d7de;
+      font-weight: 600;
+      /* 馬名が3行に折れると行が高くなるので、1列目だけ少し広く取る。
+         はみ出しても容器が横スクロールするので詰めすぎない。 */
+      min-width: 7.5em;
+      max-width: 9.5em;
+    }
+    .markdown-body table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f6f8fa;
+      white-space: nowrap;
+    }
+    .markdown-body table thead th:first-child {
+      z-index: 3;
+      background: #f6f8fa;
+    }
+  }
+  .footer-note {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid #d0d7de;
+    color: #57606a;
+    font-size: 12px;
+    text-align: center;
+  }
+  /* ★--collapse-h2: 見出しごとに畳む＋上部にジャンプ列（2026/09/20）★ */
+  .race-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #ffffff;
+    border-bottom: 1px solid #d0d7de;
+    margin: 0 -16px 16px;
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  @media (max-width: 767px) {
+    .race-nav { margin: 0 -12px 12px; padding: 8px 12px; }
+  }
+  .race-nav a, .race-nav button {
+    font: inherit;
+    font-size: 13px;
+    line-height: 1;
+    padding: 7px 10px;
+    border: 1px solid #d0d7de;
+    border-radius: 999px;
+    background: #f6f8fa;
+    color: #24292f;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .race-nav a.is-open { background: #ddf4ff; border-color: #54aeff; }
+  .race-nav .race-nav-all { margin-left: auto; }
+  details.race-section {
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    margin: 0 0 12px;
+    padding: 0;
+    scroll-margin-top: 64px;
+  }
+  details.race-section > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 14px;
+    background: #f6f8fa;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05em;
+    line-height: 1.4;
+  }
+  details.race-section > summary::-webkit-details-marker { display: none; }
+  details.race-section > summary::before {
+    content: "▶";
+    display: inline-block;
+    width: 1.2em;
+    color: #57606a;
+    font-size: 0.8em;
+  }
+  details.race-section[open] > summary::before { content: "▼"; }
+  details.race-section[open] > summary { border-radius: 8px 8px 0 0; border-bottom: 1px solid #d0d7de; }
+  details.race-section > .race-body { padding: 12px 14px 4px; }
+  details.race-section > summary a { color: inherit; }
+  /* 見出しは「▼ タイトル … [詳細 →]」の横並び。詳細ボタンは開閉と別扱い */
+  details.race-section > summary { display: flex; align-items: center; gap: 8px; }
+  details.race-section > summary .race-title { flex: 1 1 auto; min-width: 0; }
+  details.race-section > summary .race-detail {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border: 1px solid #54aeff;
+    border-radius: 999px;
+    background: #ddf4ff;
+    color: #0969da !important;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .race-detail-line { margin: 0 0 10px; font-weight: 600; }
+</style>
+</head>
+<body class="markdown-body">
+<h1 id="2r-2">東京2R 2歳未勝利 総合評価シート</h1>
+<blockquote>
+<p>芝1800m・7頭／4回東京8日目／馬場は稍重（予報から想定・当日朝に要再確認）<br />
+人気ブラインド採点（オッズを見る前に印を確定 → オッズは買い目配分にのみ使用）</p>
+</blockquote>
+<h2 id="_1">レース概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>開催</td>
+<td>2026-10-24（土） 東京2R／4回東京8日目</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>2歳未勝利</td>
+</tr>
+<tr>
+<td>コース</td>
+<td>東京 芝1800m（TrackCD=11）</td>
+</tr>
+<tr>
+<td>頭数</td>
+<td>7頭（少頭数＝印は5頭以下）。出走馬の平均キャリア1.4走（2走目以内71%）</td>
+</tr>
+<tr>
+<td>馬場</td>
+<td><strong>稍重（予報から想定）</strong>。10/24の東京地方は雨・降水確率 6時60%／12時80%。★JRAの発表値ではない／当日朝に確認し <code>baba_gate.py</code> を通す★</td>
+</tr>
+<tr>
+<td>荒れ度</td>
+<td><strong>やや堅い</strong>（総称クラス名のため場×頭数×種別の実データで判定）</td>
+</tr>
+<tr>
+<td>モード</td>
+<td>平場。芝なので3連複は装備しない</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">予想信頼度</h2>
+<p>12項目1位と2位の点差1.8pt＝「B ふつう」段。少頭数で率は高く出るが、当てずっぽうでも当たる分を差し引いて読む</p>
+<h2 id="_3">最終結論</h2>
+<table>
+<thead>
+<tr>
+<th>印</th>
+<th style="text-align: right;">馬番</th>
+<th>馬名</th>
+<th style="text-align: right;">pt</th>
+<th>一言</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>◎</td>
+<td style="text-align: right;">7</td>
+<td>ファーストアライヴ</td>
+<td style="text-align: right;">51.2</td>
+<td>新潟芝1600の新馬戦を上がり1位で勝ち馬と同タイムの2着。追い切りは同日の上位1%</td>
+</tr>
+<tr>
+<td>○</td>
+<td style="text-align: right;">1</td>
+<td>サントシャペル</td>
+<td style="text-align: right;">53.0</td>
+<td>東京芝1600の新馬戦を上がり2位で0.2秒差3着。ルメールに替わる</td>
+</tr>
+<tr>
+<td>▲</td>
+<td style="text-align: right;">5</td>
+<td>ホウオウビースト</td>
+<td style="text-align: right;">46.8</td>
+<td>京都芝1800の新馬戦を4角3番手から上がり2位で0.2秒差3着</td>
+</tr>
+<tr>
+<td>△</td>
+<td style="text-align: right;">4</td>
+<td>イニシャルポイント</td>
+<td style="text-align: right;">31.8</td>
+<td>東京芝1800の未勝利を4角2番手から0.4秒差2着。今回と同じ舞台</td>
+</tr>
+<tr>
+<td>☆</td>
+<td style="text-align: right;">3</td>
+<td>エムアイブレイズ</td>
+<td style="text-align: right;">29.5</td>
+<td>2走とも上がり2位以内の差し。112日ぶり</td>
+</tr>
+</tbody>
+</table>
+<p><strong>無印</strong>: ②ビタークレス・⑥ミツカネリゲル</p>
+<p><strong>◎⑦ファーストアライヴ。</strong> 新潟芝1600の新馬戦を上がり34.0秒（1位）で勝ち馬と同タイムの2着。追い切りは同日705頭の上位1%（相手内2/7）で、新馬戦時より速い。父シスキンの産駒は同条件で3着内率50.0%。弱点は1戦だけで1800mが初めてであること。</p>
+<p><strong>○①サントシャペル。</strong> 東京芝1600の新馬戦を上がり2位で0.2秒差3着。12項目1位でルメールへの格上げもあるが、前走3着内からの初騎乗は割り引く測定があり、内容と追い切りで⑦を上にした。</p>
+<p><strong>▲⑤ホウオウビースト。</strong> 京都芝1800の新馬戦を4角3番手から0.2秒差3着。騎手談話の「促しながら」が課題。</p>
+<p><strong>△④イニシャルポイント</strong>は今回と同じ東京芝1800を4角2番手から0.4秒差2着。<br />
+<strong>☆③エムアイブレイズ</strong>は2走とも上がり2位以内、追い切りは同日の上位8%。</p>
+<p><strong>12項目の扱い</strong>: 1位①53.0・2位⑦51.2は1.8pt差の同格。<strong>◎は12項目2位の⑦</strong>（決定ログに1行）。採点v3（参考）の1位も①で、12項目側・v3側とも①が1位だが、同格ゾーン内の定性判断で⑦を採った。</p>
+<p><strong>飛ばした馬（12項目の上位5頭のうち）</strong>: なし（◎は2位⑦、1位①は○）。</p>
+<p>印を打った5頭はすべて買い目に入っている。無印は②⑥の2頭。</p>
+<h2 id="_4">総合ランキング（全頭）</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">順</th>
+<th>印</th>
+<th style="text-align: right;">馬番</th>
+<th>馬名</th>
+<th style="text-align: right;">pt</th>
+<th style="text-align: right;">想定人気</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>○</td>
+<td style="text-align: right;">1</td>
+<td>サントシャペル</td>
+<td style="text-align: right;">53.0</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>◎</td>
+<td style="text-align: right;">7</td>
+<td>ファーストアライヴ</td>
+<td style="text-align: right;">51.2</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>▲</td>
+<td style="text-align: right;">5</td>
+<td>ホウオウビースト</td>
+<td style="text-align: right;">46.8</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>△</td>
+<td style="text-align: right;">4</td>
+<td>イニシャルポイント</td>
+<td style="text-align: right;">31.8</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>☆</td>
+<td style="text-align: right;">3</td>
+<td>エムアイブレイズ</td>
+<td style="text-align: right;">29.5</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>—</td>
+<td style="text-align: right;">6</td>
+<td>ミツカネリゲル</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>—</td>
+<td style="text-align: right;">2</td>
+<td>ビタークレス</td>
+<td style="text-align: right;">9.0</td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_5">出走馬一覧</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">枠</th>
+<th style="text-align: right;">馬番</th>
+<th>馬名</th>
+<th>性齢</th>
+<th style="text-align: right;">斤量</th>
+<th>騎手</th>
+<th>厩舎</th>
+<th>父 / 母父</th>
+<th>脚質(機械判定)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td>サントシャペル</td>
+<td>牝2</td>
+<td style="text-align: right;">55.0</td>
+<td>ルメール</td>
+<td>上原佑紀</td>
+<td>父アドマイヤマーズ×母父ドゥラメンテ</td>
+<td>先行 (最頻=先行 先1) 勝鞍脚質=先行 前掛かり=Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td>ビタークレス</td>
+<td>牡2</td>
+<td style="text-align: right;">56.0</td>
+<td>木幡巧也</td>
+<td>秋本大介</td>
+<td>父ダノンプレミアム×母父ロードカナロア</td>
+<td>追込 (最頻=追込 追1) 勝鞍脚質=不明 前掛かり=No</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td>エムアイブレイズ</td>
+<td>牡2</td>
+<td style="text-align: right;">56.0</td>
+<td>原優介</td>
+<td>青木孝文</td>
+<td>父ゴールドシップ×母父Dalakhani</td>
+<td>自在 (最頻=差し 差1/追1) 勝鞍脚質=不明 前掛かり=No</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td>イニシャルポイント</td>
+<td>牝2</td>
+<td style="text-align: right;">55.0</td>
+<td>横山武史</td>
+<td>高木登</td>
+<td>父Flightline×母父Malibu Moon</td>
+<td>自在 (最頻=先行 逃1/先1/追1) 勝鞍脚質=先行 前掛かり=Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td>ホウオウビースト</td>
+<td>牡2</td>
+<td style="text-align: right;">56.0</td>
+<td>坂井瑠星</td>
+<td>矢作芳人</td>
+<td>父コントレイル×母父Fortify</td>
+<td>先行 (最頻=先行 先1) 勝鞍脚質=先行 前掛かり=Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td>ミツカネリゲル</td>
+<td>牡2</td>
+<td style="text-align: right;">56.0</td>
+<td>石橋脩</td>
+<td>小野次郎</td>
+<td>父サトノジェネシス×母父キングカメハメハ</td>
+<td>差し (最頻=差し 差1) 勝鞍脚質=不明 前掛かり=No</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td>ファーストアライヴ</td>
+<td>牡2</td>
+<td style="text-align: right;">56.0</td>
+<td>荻野極</td>
+<td>高木登</td>
+<td>父シスキン×母父ハーツクライ</td>
+<td>差し (最頻=差し 差1) 勝鞍脚質=差し 前掛かり=No</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1800m035">コース特性（東京芝1800m／前残り寄り・位置率0.35）</h2>
+<p><strong>東京芝1800m</strong>。直近5年の3,831走で勝ち時計の平均は107.2秒。3着内馬の4コーナー平均通過は<strong>4.8番手</strong>（平均14頭立て＝<strong>位置率0.35</strong>）で前残り寄り。</p>
+<p>同条件（2歳未勝利・2021年以降）の3着以内馬の4コーナー位置:</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th style="text-align: right;">頭数</th>
+<th style="text-align: right;">構成比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1-3番手</td>
+<td style="text-align: right;">137</td>
+<td style="text-align: right;">47.6%</td>
+</tr>
+<tr>
+<td>4-6番手</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">27.8%</td>
+</tr>
+<tr>
+<td>7-9番手</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">19.8%</td>
+</tr>
+<tr>
+<td>10番手以降</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">4.9%</td>
+</tr>
+</tbody>
+</table>
+<p>勝ち時計の目安（同条件）: 良 平均1:48.3（87件）／稍重 平均1:49.5（8件）。</p>
+<p><strong>今日の舞台での実績</strong>: 東京芝1800を走ったのは△④（0.4秒差2着）と②（3.0秒差8着）。</p>
+<h2 id="_6">馬場状態（稍重＝予報から想定・当日朝に要再確認）</h2>
+<p>★<strong>稍重は「予報から想定」であって、JRAの発表値ではない</strong>★</p>
+<ul>
+<li>根拠: 10/24の東京地方は雨、降水確率 6時60%・12時80%。</li>
+<li><code>prep</code> と <code>race_prompt</code> はすべて <strong><code>--baba 稍重</code></strong> で引いた。</li>
+<li>★芝の稍重は良馬場と組み立てを変えない★（1番人気の複勝率 稍重64.2%・良65.7%）。</li>
+<li><strong>重・不良まで悪化したら</strong>: 芝の重・不良は「抜けた1頭」が崩れる側の測定。◎を厚く置かず◎○▲を横並びに扱う。</li>
+<li>道悪での好走歴（③の稍重2走など）は加点していない。</li>
+<li>★当日朝に発表を確認し、買う前に <strong><code>baba_gate.py --slug 20261024-tokyo-2r</code></strong> を通す★</li>
+</ul>
+<h2 id="_7">過去傾向（荒れ度・枠・前走・父）</h2>
+<p><strong>荒れ度</strong>: 総称クラス名なので場×頭数×種別の実データで判定 → <strong>やや堅い</strong>（荒れスコア−4.0）。</p>
+<p><strong>枠別3着内率（同条件・2歳未勝利）</strong>: 1枠21.1%／2枠30.2%／3枠22.7%／4枠29.1%／5枠25.9%／6枠27.7%／7枠28.0%／8枠20.3%。★芝の枠順は12項目で配点0★</p>
+<p><strong>前走のサーフェス別（同条件）</strong>: 前走=芝 28.2%／初出走 23.8%／前走=ダ 12.5%。今回は全頭が前走芝。</p>
+<p><strong>出走馬の父（芝1600〜2000m・2歳未勝利の産駒3着内率）</strong>: シスキン（◎⑦）50.0%（72走）／コントレイル（▲⑤）36.8%／アドマイヤマーズ（○①）29.3%／ゴールドシップ（☆③）20.6%／ダノンプレミアム（②）20.0%／サトノジェネシス（⑥）9.1%（22走）。Flightline（△④）は7走でサンプル不足。</p>
+<h2 id="_8">展開予測（逃げ・先行型と判定された馬はいない）</h2>
+<p><strong>相手の構成</strong>: 機械判定で逃げ・先行型とされた馬は<strong>0頭</strong>（6頭が1走だけで型が決まっていない）。上がりの常連は☆③の1頭。</p>
+<p>前走で前に行ったのは△④（4角2番手）・○①（4角3番手）・▲⑤（4角3番手）。7頭立てで隊列は落ち着きやすい。◎⑦は新馬戦で4角7番手から上がり1位。</p>
+<p>★「展開が向かなかった」を前走の弁護材料にしていない★</p>
+<hr />
+<h2 id="12">全頭12項目採点</h2>
+<p>★12項目の点は <code>score_12items.py</code> が計算した確定値で、ここでは付け直していない。★</p>
+<p>1位①と2位⑦は1.8pt差の同格、3位⑤とは4.4pt差、4位④以下とは15pt前後の差。</p>
+<h3 id="11530pt">○ サントシャペル（1番・1枠）<strong>53.0pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">18.0</td>
+<td>過去1走。着順に表れない実力（僅差負け・上がり最速の蓄積）は目立った地力示唆なし。直近1年に絞った実力値は2点。市場支持の履歴: ★★（元1番人気） 市場が一度クラスを認めた馬</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7.0</td>
+<td>脚質は機械判定で先行。前掛かり傾向あり。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.5</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4.0</td>
+<td>ルメールの直近3ヶ月は142騎乗 勝率32.4% 複勝率61.3%。このコース帯の複勝率は69.7%（231騎乗）＝全61騎手中 上位25%（百分位98）（この騎手はこのコース帯で信頼できる）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.0</td>
+<td>上原佑紀厩舎は目立った傾向なし</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は渋った馬場が大きくプラス</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.25</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>49.2</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+3.75</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>53.0</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1戦0勝。10/12東京芝1600mの新馬戦を4角3番手から上がり34.2秒（2位）で0.2秒差3着。荻野極騎手は「前の馬が強く、差されてしまいましたが、素質のある良い馬」。</p>
+<p>追い切りは本追い10/16の美浦坂路で終い14.7秒（同日410頭の上位11%・相手内4/7）、10/21にウッドで終い11.8秒（上位20%）。荻野極→ルメールは前年勝率で+17.1の格上げ。ただしルメールはこの馬に初めて乗る。前走から12日。</p>
+<p>12項目は53.0で1位、採点v3（参考）でも1位。○にしたのは新馬戦の内容と騎手の格上げ。◎にしなかったのは、同格（1.8pt差）の⑦が勝ち馬と同タイムの2着で追い切りも上だったことと、前走3着内からの初騎乗は割り引く測定があること。</p>
+<p><strong>強み</strong>: 新馬戦は上がり2位で0.2秒差3着 ／ 騎手は+17.1の格上げ ／ 12項目1位（53.0）<br />
+<strong>不安</strong>: 前走3着内からの初騎乗 ／ 追い切りは相手内4/7<br />
+<strong>買い目での扱い</strong>: ○ 対抗（複勝・ワイドBOX・馬連の相手）</p>
+<h3 id="77512pt">◎ ファーストアライヴ（7番・7枠）<strong>51.2pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">24.0</td>
+<td>過去1走。着順に表れない実力（僅差負け・上がり最速の蓄積）は★ 地力あり。直近1年に絞った実力値は4点。市場支持の履歴: ★★（元1番人気） 市場が一度クラスを認めた馬</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3.5</td>
+<td>脚質は機械判定で差し。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3.75</td>
+<td>該当走なし（東京 / 芝 / 1800m±200での過去走 0走）</td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>荻野極の直近3ヶ月は79騎乗 勝率17.7% 複勝率44.3%。このコース帯の複勝率は30.0%（80騎乗）＝全61騎手中 上位25%（百分位84）（この騎手はこのコース帯で信頼できる）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.5</td>
+<td>高木登厩舎は目立った傾向なし</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は中立</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.25</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>47.5</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+3.75</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>51.2</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1戦0勝。8/2新潟芝1600m（13頭立て）の新馬戦を4角7番手から<strong>上がり34.0秒（1位）で0.0秒差2着</strong>＝勝ち馬と同タイム。父シスキンの産駒は芝1600〜2000mの2歳未勝利で3着内率50.0%（72走）。</p>
+<p>追い切りは本追い10/12の美浦坂路で4F56.4秒・終い12.0秒（<strong>同日705頭の上位1%・相手内2/7</strong>）、2着した新馬戦時より0.1秒速い。10/21にはウッドで4F52.0秒・終い11.9秒。荻野極が継続。83日ぶり。</p>
+<p>12項目は51.2で2位（1位①と1.8pt差の同格）。◎にしたのは、新馬戦で勝ち馬と同タイムまで迫った内容が①の0.2秒差より上で、今週の追い切りも①より動いていること。弱点は1戦だけで、1800mが初めてであること。</p>
+<p><strong>強み</strong>: 新馬戦は上がり1位で0.0秒差2着 ／ 追い切りは同日の上位1%・相手内2/7 ／ 父の産駒は同条件で50.0%（72走）<br />
+<strong>不安</strong>: 1戦だけ ／ 1800mは初めて ／ 83日ぶり<br />
+<strong>買い目での扱い</strong>: ◎ 本命（馬連の軸）</p>
+<h3 id="55468pt">▲ ホウオウビースト（5番・5枠）<strong>46.8pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">18.0</td>
+<td>過去1走。着順に表れない実力（僅差負け・上がり最速の蓄積）は目立った地力示唆なし。直近1年に絞った実力値は2点。市場支持の履歴: ★（元1-3人気） 市場が一度クラスを認めた馬</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7.0</td>
+<td>脚質は機械判定で先行。前掛かり傾向あり。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.5</td>
+<td>該当走なし（東京 / 芝 / 1800m±200での過去走 0走）</td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.5</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4.0</td>
+<td>坂井瑠星の直近3ヶ月は183騎乗 勝率15.3% 複勝率35.5%。このコース帯の複勝率は34.0%（50騎乗）＝全61騎手中 上位25%（百分位87）（この騎手はこのコース帯で信頼できる）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.25</td>
+<td>矢作芳人厩舎は目立った傾向なし</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は渋った馬場はややマイナス</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.25</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.5</td>
+<td>関西（栗東）所属から東京への輸送。未勝利は遠征が2pt前後下がる実測あり（ダ 18.6% 対 20.6%・4升とも同じ向き）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>43.0</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+3.75</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>46.8</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1戦0勝。10/12京都芝1800m（9頭立て）の新馬戦を4角3番手から上がり34.8秒（2位）で0.2秒差3着。父コントレイルの産駒は同条件で3着内率36.8%（201走）。</p>
+<p>追い切りは本追い10/16の栗東坂路で終い14.7秒（同日478頭の上位18%・相手内6/7）、10/21に栗東ウッドで4F52.6秒。坂井瑠星が継続。坂井騎手のレース後談話は「まだ、ずっと促しながらでした」。前走から12日、関西からの輸送。</p>
+<p>12項目は46.8で3位。▲にしたのは、前で運んで僅差の内容と同じ距離の経験。上げ切れないのは、促しながらの走りで気持ちの面に課題があることと追い切りの相手内順位。</p>
+<p><strong>強み</strong>: 芝1800で0.2秒差3着 ／ 12項目46.8（3位） ／ 父の産駒は同条件で36.8%<br />
+<strong>不安</strong>: 促しながらの走り（騎手談話） ／ 追い切りは相手内6/7 ／ 関西からの輸送<br />
+<strong>買い目での扱い</strong>: ▲ 単穴（複勝・ワイドBOX・馬連の相手）</p>
+<h3 id="44318pt">△ イニシャルポイント（4番・4枠）<strong>31.8pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">6.0</td>
+<td>過去3走。着順に表れない実力（僅差負け・上がり最速の蓄積）は★ 地力あり。直近1年に絞った実力値は2点。市場支持の履歴: ★（元1-3人気） 市場が一度クラスを認めた馬</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">5.25</td>
+<td>脚質は機械判定で自在。前掛かり傾向あり。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.5</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3.0</td>
+<td>横山武史の直近3ヶ月は204騎乗 勝率14.2% 複勝率37.3%。このコース帯の複勝率は34.8%（210騎乗）＝全61騎手中 上位25%（百分位89）（この騎手はこのコース帯で信頼できる）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.5</td>
+<td>高木登厩舎は目立った傾向なし</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は中立</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.0</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>31.8</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>31.8</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>3戦0勝。前走10/04東京芝1800mを<strong>4角2番手から上がり34.6秒（3位）で0.4秒差2着</strong>。今回と同じ東京芝1800で走っている。その前の中山芝1600mは1角11番手と位置が取れず1.1秒差5着、初戦は新潟ダ1200mで0.2秒差2着。</p>
+<p>追い切りは本追い10/21の美浦坂路で終い12.6秒（同日733頭の上位16%・相手内5/7）、2着した前走時より0.3秒速い。丹内祐次→横山武史。前走から20日。</p>
+<p>12項目は31.8で4位、採点v3（参考）では2位。△にしたのは同じ舞台での好走。上げ切れないのは上位3頭との点差が15pt前後あること。</p>
+<p><strong>強み</strong>: 東京芝1800で0.4秒差2着 ／ 前で運べる ／ 追い切りは前走時より速い<br />
+<strong>不安</strong>: 12項目31.8（4位）・3位と15.0pt差 ／ 位置取りにむらがある<br />
+<strong>買い目での扱い</strong>: △ 連下（ワイドBOX・馬連の相手）</p>
+<h3 id="33295pt">☆ エムアイブレイズ（3番・3枠）<strong>29.5pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">12.0</td>
+<td>過去2走。着順に表れない実力（僅差負け・上がり最速の蓄積）は★ 地力あり。直近1年に絞った実力値は2点。市場支持の履歴: 元4-5人気＝支持は弱い</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3.5</td>
+<td>脚質は機械判定で自在。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.5</td>
+<td>該当走なし（東京 / 芝 / 1800m±200での過去走 0走）</td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3.75</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.0</td>
+<td>原優介の直近3ヶ月は184騎乗 勝率5.4% 複勝率16.3%。このコース帯の複勝率は9.0%（145騎乗）＝全61騎手中 下位25%（百分位25）（この騎手はこのコース帯では割り引きたい）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.75</td>
+<td>青木孝文厩舎は平均人気8.9→着順8.1 人気以上の結果</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は渋った馬場はややプラス</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.5</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>29.5</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>29.5</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>2戦0勝。東京芝1400m（稍重）は4角9番手から上がり33.6秒（2位）で1.2秒差4着、福島芝1800m（稍重）は上がり35.6秒（1位）で0.9秒差5着。上がりの上位が続いているのはメンバーでこの馬だけ。</p>
+<p>追い切りは本追い10/21の美浦坂路で4F54.7秒・終い12.3秒（同日733頭の上位8%・相手内3/7）。原優介が継続。112日ぶり。</p>
+<p>12項目は29.5で5位。☆にしたのは末脚と追い切りの動き。上げ切れないのは2走とも着差が0.9秒以上あること。</p>
+<p><strong>強み</strong>: 2走とも上がり2位以内 ／ 追い切りは同日の上位8%<br />
+<strong>不安</strong>: 2走とも0.9秒差以上 ／ 112日ぶり ／ 12項目29.5（5位）<br />
+<strong>買い目での扱い</strong>: ☆ 押さえ（複勝・馬連の相手）</p>
+<h3 id="66210pt">無印 ミツカネリゲル（6番・6枠）<strong>21.0pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">0.0</td>
+<td>過去1走。着順に表れない実力（僅差負け・上がり最速の蓄積）は目立った地力示唆なし。市場支持の履歴: 元4-5人気＝支持は弱い</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.0</td>
+<td>脚質は機械判定で差し。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3.75</td>
+<td>該当走なし（東京 / 芝 / 1800m±200での過去走 0走）</td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.0</td>
+<td>石橋脩の直近3ヶ月は123騎乗 勝率4.1% 複勝率14.6%。このコース帯の複勝率は9.7%（93騎乗）＝全61騎手中 中位（百分位26）（中立）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.75</td>
+<td>小野次郎厩舎は平均人気9.5→着順8.3 人気以上の結果</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は中立</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.25</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>17.2</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+3.75</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>21.0</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1戦0勝。8/22新潟芝1600mの新馬戦を4角8番手から上がり33.3秒（3位）で0.4秒差4着。</p>
+<p>追い切りは本追い10/15の美浦坂路で4F55.0秒・終い12.0秒（同日531頭の上位1%・相手内1/7）。石橋脩が継続。63日ぶり。</p>
+<p>12項目は21.0で6位。印を付けなかったのは、少頭数で印を5頭以下に絞るなか、上位5頭との点差（☆③と8.5pt差）があること。父サトノジェネシスの産駒は同条件で3着内率9.1%（22走）。</p>
+<p><strong>強み</strong>: 追い切りは相手内1位・同日の上位1% ／ 新馬戦0.4秒差<br />
+<strong>不安</strong>: 12項目21.0（6位） ／ 父の産駒は同条件で9.1%（22走）<br />
+<strong>買い目での扱い</strong>: 無印</p>
+<h3 id="2290pt">無印 ビタークレス（2番・2枠）<strong>9.0pt</strong></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">配点</th>
+<th style="text-align: right;">得点</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去実績</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">0.0</td>
+<td>過去1走。着順に表れない実力（僅差負け・上がり最速の蓄積）は目立った地力示唆なし。市場支持の履歴: 過去1年に市場支持なし</td>
+</tr>
+<tr>
+<td>レースレベル</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.0</td>
+<td>負かした／負けた相手のその後の活躍を着差で重みづけると0.0（中立（相手躍進の裏付けなし））</td>
+</tr>
+<tr>
+<td>展開</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.0</td>
+<td>脚質は機械判定で追込。当該コースは前30.5%/後11.4%・前残り[弱]</td>
+</tr>
+<tr>
+<td>コース適性</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">-1.25</td>
+<td></td>
+</tr>
+<tr>
+<td>馬体</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>馬体重は当日発表（未取得は中立扱い）</td>
+</tr>
+<tr>
+<td>調教</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>騎手</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.0</td>
+<td>木幡巧也の直近3ヶ月は138騎乗 勝率1.4% 複勝率9.4%。このコース帯の複勝率は8.8%（171騎乗）＝全61騎手中 下位25%（百分位23）（この騎手はこのコース帯では割り引きたい）</td>
+</tr>
+<tr>
+<td>厩舎</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.75</td>
+<td>秋本大介厩舎は2026年勝率5.9%・例年比+5.9pt 厩舎絶好調★ / 平均人気9.5→着順8.6 人気以上の結果</td>
+</tr>
+<tr>
+<td>血統</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.0</td>
+<td>父・母父の産駒成績から見た渋った馬場への適性は中立</td>
+</tr>
+<tr>
+<td>休養</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.0</td>
+<td></td>
+</tr>
+<tr>
+<td>輸送</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.5</td>
+<td>関東（美浦）所属で東京は地元圏。輸送の負担が軽い（未勝利のみ差あり）</td>
+</tr>
+<tr>
+<td>枠順</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
+<td>開催週の枠内外バイアス: 内−外=1.0 有利=フラット</td>
+</tr>
+<tr>
+<td><strong>小計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>9.0</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>馬場適性（今回と同じ馬場質での走り＋血統）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>この場が得意かどうか（同じ場だけを抜き出した成績）</td>
+</tr>
+<tr>
+<td>補正</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>+0</strong></td>
+<td>追い切りの相対評価（今週の相手内順位・同じ日の同じ調教場での位置）</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>9.0</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1戦0勝。10/03東京芝1800mの新馬戦は4角9番手から上がり35.5秒（7位）で3.0秒差8着。</p>
+<p>追い切りは本追い10/16の美浦ウッドで終い12.1秒（同日83頭の上位36%・相手内7/7）。12項目は9.0で最下位。印は付けていない。</p>
+<p><strong>強み</strong>: 同じ東京芝1800を経験<br />
+<strong>不安</strong>: 新馬戦3.0秒差 ／ 追い切りは相手内7/7 ／ 12項目9.0（7位）<br />
+<strong>買い目での扱い</strong>: 無印</p>
+<hr />
+<h2 id="build_betspy">買い目（build_bets.py が生成）</h2>
+<p>3連複は装備しない: 芝の3連複は回収51.2%（794R検証）／§8.6 ワイドBOXは 1・5・4 の3頭。◎7・☆3 は入っていないので、これらが絡む1-2-3着ではワイドが0円になりうる（◎を箱に入れると回収が落ちるため、承知のうえで外している）</p>
+<table>
+<thead>
+<tr>
+<th>券種・買い目</th>
+<th>意図</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>複勝</strong> ／ 単独 ／ 1・5 ／ 2点</td>
+<td>§8.13 複勝の主役は○▲（◎単独複勝は実測で安定して悪い）</td>
+</tr>
+<tr>
+<td><strong>馬連</strong> ／ 軸1頭ながし ／ 7・1・5・4・3 ／ 4点</td>
+<td>§8.13 馬連は◎軸でよい（1-2着を直撃する券種）</td>
+</tr>
+<tr>
+<td><strong>ワイド</strong> ／ ボックス ／ 1・5・4 ／ 3点</td>
+<td>§8.13 大原則2 ワイドの主力は○▲△BOX（◎軸1頭ながしにしない）</td>
+</tr>
+<tr>
+<td><strong>複勝</strong> ／ 単独 ／ 3 ／ 1点</td>
+<td>芝の☆複勝は794R検証で回収109.5%（前半117.0%/後半104.7%）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">馬場が変わったときの対応（成立したら必ず実行する）</h3>
+<table>
+<thead>
+<tr>
+<th>馬場</th>
+<th>実行内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>稍重（採点の前提）</td>
+<td>このまま。同条件の勝ち時計ベースラインは稍重1:49.5（8件）</td>
+</tr>
+<tr>
+<td>良にとどまったら</td>
+<td>印・買い目とも変更なし（芝の稍重と良で組み替えない）。ベースラインは良1:48.3（87件）</td>
+</tr>
+<tr>
+<td>重・不良になったら</td>
+<td><code>race_prompt --step 採点 --baba 重</code> で引き直す。◎を厚くしない。可なのは買い目の縮小だけで、道悪の実走歴を理由に印を上げない</td>
+</tr>
+<tr>
+<td>当日朝の確認</td>
+<td><code>baba_gate.py --slug 20261024-tokyo-2r</code> を通してから買う</td>
+</tr>
+</tbody>
+</table>
+<p>買い目は build_bets.py が印から組んでいる。文章から手で組み直していない。金額はここでは扱わない。</p>
+<hr />
+<h2 id="phase3">Phase3 ハードゲートチェックリスト（最終確認）</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>判定・根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1 決定ログ</td>
+<td>[x] <code>tmp/20261024-tokyo-2r-lens-decision.md</code> に観点シグナル→採用/無視→最終印を記載</td>
+</tr>
+<tr>
+<td>A2 印数上限</td>
+<td>[x] ◎1+○1+▲1+△1+☆1＝<strong>5頭</strong>（7頭立て・N−2＝5頭以内）。無印は②⑥。注・×は使っていない</td>
+</tr>
+<tr>
+<td>A3 12項目1位の扱い</td>
+<td>[x] 1位①（53.0）と2位⑦（51.2）は1.8pt差の同格。内容と追い切り、①の初騎乗で⑦を◎、①を○</td>
+</tr>
+<tr>
+<td>A3b 上位5頭に無印がないか</td>
+<td>[x] 上位5頭（①⑦⑤④③）すべてに印</td>
+</tr>
+<tr>
+<td>A7 印馬の宙ぶらり</td>
+<td>[x] 印5頭すべてが買い目に入っている（◎⑦は馬連の軸）</td>
+</tr>
+<tr>
+<td>A9b 見送りの根拠</td>
+<td>[x] 見送りの文言は出していない（平均キャリア1.4走）</td>
+</tr>
+<tr>
+<td>追い切り</td>
+<td>[x] DB由来で7頭読んだ。相手内順位と同じ日の同じ調教場での位置で見ている</td>
+</tr>
+<tr>
+<td>休み明け</td>
+<td>[x] 最長は③の112日。120日超の馬はいない。◎⑦は83日</td>
+</tr>
+<tr>
+<td>陣営コメント</td>
+<td>[x] ⑤の「ずっと促しながら」を気性面の課題として読んだ。自信の言葉は加点にしていない</td>
+</tr>
+<tr>
+<td>馬場</td>
+<td>[ ] <strong>稍重は予報からの想定</strong>。当日朝に <code>baba_gate.py --slug 20261024-tokyo-2r</code> を通す</td>
+</tr>
+<tr>
+<td>馬体重</td>
+<td>[ ] 当日朝発表。<strong>±11kgを超えたときだけ減点材料</strong>（2歳の増加は成長分）。★前夜に馬体重で印を下げていない★</td>
+</tr>
+<tr>
+<td>人気ブラインド</td>
+<td>[x] 印を決める段階でオッズ・人気を見ていない</td>
+</tr>
+<tr>
+<td>採点v3の扱い</td>
+<td>[x] v3（参考）の1位は①で12項目1位と同じ。◎は同格ゾーン内の判断で⑦（決定ログに記載）</td>
+</tr>
+<tr>
+<td>×の使い方</td>
+<td>[x] ×は1頭も付けていない</td>
+</tr>
+</tbody>
+</table>
+<p>当日朝: (1) 馬場を確認 (2) <code>baba_gate.py --slug 20261024-tokyo-2r</code> (3) 馬体重と騎乗変更を確認</p>
+<h3 id="_10">未取得情報の開示</h3>
+<p>★平場（2歳未勝利）。平場モードで作成★</p>
+<p><strong>DBから取り切ったもの</strong><br />
+- 追い切りタイム: <strong>7頭</strong>全頭。相手内順位・同じ日の同じ調教場での位置・本追い後の1本<br />
+- 全7頭の過去走、同条件の4コーナー位置分布・枠別3着内率・前走サーフェス別・勝ち時計ベースライン、父の芝1600〜2000m成績<br />
+- 相手の構成、騎手の格差・初騎乗、次走注目の帳簿（④）、陣営・騎手コメント（①⑤）</p>
+<p><strong>取りに行っていないもの</strong><br />
+- パドック、併せ馬の相手、追い切りVTR。<strong>DBに無いので語らない</strong></p>
+<p><strong>まだ確定していないもの</strong><br />
+- <strong>馬場</strong>: 稍重は<strong>予報からの想定</strong>。発表は当日朝<br />
+- <strong>馬体重</strong>: 当日朝発表<br />
+- <strong>当日変更</strong>: 騎乗変更・出走取消・除外</p>
+<p><strong>使っていないもの</strong><br />
+- オッズ・人気（印が確定するまで一切見ていない＝§0）。過去走テーブルの人気は<strong>その過去走時点の事実</strong><br />
+- 採点v3（参考・併走中）</p>
+<hr />
+<p>※この予想は参考情報です。馬券購入は自己責任でお願いします。</p>
+<div class="footer-note">Markdown → HTML 変換: db/scripts/md_to_html.py</div>
+<script>hljs.highlightAll();</script>
+<script>
+  // テーブルを横スクロール用ラッパで囲み、tbodyのtdに data-label を付与
+  document.querySelectorAll('.markdown-body table').forEach(function(table) {
+    if (!table.parentElement.classList.contains('table-wrap')) {
+      var wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      table.parentNode.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    }
+    var headers = Array.from(table.querySelectorAll('thead th')).map(function(th) {
+      return th.textContent.trim();
+    });
+    table.querySelectorAll('tbody tr').forEach(function(tr) {
+      tr.querySelectorAll('td').forEach(function(td, i) {
+        td.setAttribute('data-label', headers[i] || '');
+      });
+    });
+  });
+</script>
+<script>
+  // --collapse-h2: ジャンプ列 → 該当の節を開いてそこへ移動。すべて開く／閉じる。URLの #id でも開く
+  (function() {
+    var nav = document.querySelector('.race-nav');
+    if (!nav) return;
+    function openAndGo(id) {
+      var d = document.getElementById(id);
+      if (!d) return;
+      d.open = true;
+      d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    nav.querySelectorAll('a[data-target]').forEach(function(a) {
+      a.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        openAndGo(a.getAttribute('data-target'));
+        history.replaceState(null, '', '#' + a.getAttribute('data-target'));
+      });
+    });
+    nav.querySelectorAll('button[data-all]').forEach(function(b) {
+      b.addEventListener('click', function() {
+        var open = b.getAttribute('data-all') === 'open';
+        document.querySelectorAll('details.race-section').forEach(function(d) { d.open = open; });
+      });
+    });
+    function syncNav() {
+      nav.querySelectorAll('a[data-target]').forEach(function(a) {
+        var d = document.getElementById(a.getAttribute('data-target'));
+        a.classList.toggle('is-open', !!(d && d.open));
+      });
+    }
+    document.querySelectorAll('details.race-section').forEach(function(d) {
+      d.addEventListener('toggle', syncNav);
+    });
+    if (location.hash) openAndGo(location.hash.slice(1));
+    syncNav();
+  })();
+</script>
+</body>
+</html>
